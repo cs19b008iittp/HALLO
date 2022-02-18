@@ -1,0 +1,11 @@
+num i.
+num sum is 0.
+num prod is 1.
+num diff is 0.
+num quotient is 0.
+
+repeat i from 1 to 10 inc by 1:
+          sum is sum plus i,
+          prod is prod into i,
+          quotient is quotient dividedby i.	
+display sum.
