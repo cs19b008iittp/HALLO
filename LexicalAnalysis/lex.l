@@ -1,4 +1,9 @@
-%{    
+%{  
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <string.h>
+   int lineno = 1; // initialize to 1
+   void yyerror();  
 %}
 
 digit                   [0-9]
@@ -34,9 +39,17 @@ delimiters              "."|[ \n\t]|","
 {numberconst}|{floatconst}                                       {printf("Number Constants :  %s\n",yytext);}
 {strconst}                                                	 {printf("String Constants : %s\n",yytext);}
 {specialchars}                                            	 {printf("Special Characters : %s\n",yytext);}
+"\n"                                                         { lineno += 1; }
+[ \t\r\f]+	                                                /* eat up whitespace */      
+.                                                            {yyerror("Unrecognized character");}
 
 
 %%
+
+void yyerror(char *message){
+    printf("Error: \"%s\" in line %d. Token = %s\n", message, lineno, yytext);
+    exit(1);
+}
 
 int main(int argc, char* argv[])
 {
