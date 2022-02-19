@@ -16,10 +16,8 @@ STRCONST                "\"".*"\""
 SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
 COMMENTS                "ignore".*|"skip"(.|\n)*"skip"
 DELIMITERS              "."|[ \n\t]|","
-
-
 DATATYPE                "num"|"string"|"com"|"flag"|"data"|"matrix"
-CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"|"end"|"start"
+CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"
 FUNCTIONS               "note"|"send"|"call"
 IOCOMMAND               "display"|"get"
 RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
@@ -32,15 +30,30 @@ LOGICAL                 "or"|"and"
 
 {COMMENTS}                                               	 ;
 {DELIMITERS}                                          	    ;
-{ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext);}
 {RELATIONAL}                                              	 {printf("Relational Operators : %s\n",yytext);}
 {ARITHMETIC}                                              	 {printf("Arithmetic Operators : %s\n",yytext);}
 {LOGICAL}                                                 	 {printf("Logical Operators : %s\n",yytext);}
 {DATATYPE}|{CONTROLSTATEMENT}|{FUNCTIONS}|{IOCOMMAND}|{CONTAINER}   {printf("Keywords :  %s\n",yytext);}
-{LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext);}
-{NUMBERCONST}|{FLOATCONST}                                       {printf("Number Constants :  %s\n",yytext);}
 {STRCONST}                                                	 {printf("String Constants : %s\n",yytext);}
 {SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);}
+
+
+"num"                                               	       {return (NUM);}    
+"string"                                            	       {return (STRING);}
+"com"                                                   	    {return (COM);}
+"flag"                                                     	 {return (FLAG);}
+"data"                                                     	 {return (DATA);}
+"matrix"                                                	    {return (MATRIX);}
+"start"                                                	    {return (START);}
+"end"                                                	       {return (END);}
+{NUMBERCONST}                                                {return (NUMBERCONST);}
+{FLOATCONST}                                                 {return (FLOATCONST);}
+{LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return (ID);}
+{ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);}
+","                                                	       {return (COMMA);}
+"."                                                	       {return (FULLSTOP);}
+
+
 "\n"                                                         { lineno += 1; }
 [ \t\r\f]+	                                                /* eat up whitespace */      
 .                                                            {yyerror("Unrecognized character");}
