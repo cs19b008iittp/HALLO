@@ -22,7 +22,7 @@
 
 
 %%
-program: functions_optional START declarations statements END '.' functions_optional;
+program: functions_optional START declarations statements END FULLSTOP functions_optional;
 
 
 declarations: declarations declaration | declaration;
