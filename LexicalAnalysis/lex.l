@@ -6,39 +6,41 @@
    void yyerror();  
 %}
 
-digit                   [0-9]
-letter                  [A-Za-z]
-letter_                 [A-Za-z_]
-datatype                "num"|"string"|"com"|"flag"|"data"|"matrix"
-container               {datatype}"s"
-controlstatement        "if"|"otherwise"|"repeat"|"leave"|"done"|"end"|"start"
-functions               "note"|"send"|"call"
-iocommand               "display"|"get"
-numberconst             {digit}* 
-floatconst              {digit}*+"."+{digit}{digit}*
-strconst                "\"".*"\""  
-assignment              "is"             
-relational              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
-arithmetic              "+"|"-"|"*"|"/"|"%"|"plus"|"minus"|"into"|"dividedby"|"remainder"|"inc by"|"dec by"
-logical                 "or"|"and"
-specialchars            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
-comments                "ignore".*|"skip"(.|\n)*"skip"
-delimiters              "."|[ \n\t]|","
+DIGIT                   [0-9]
+LETTER                  [A-Za-z]
+LETTER_                 [A-Za-z_]
+CONTAINER               {DATATYPE}"s"
+NUMBERCONST             {DIGIT}* 
+FLOATCONST              {DIGIT}*+"."+{DIGIT}{DIGIT}*
+STRCONST                "\"".*"\""             
+SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
+COMMENTS                "ignore".*|"skip"(.|\n)*"skip"
+DELIMITERS              "."|[ \n\t]|","
+
+
+DATATYPE                "num"|"string"|"com"|"flag"|"data"|"matrix"
+CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"|"end"|"start"
+FUNCTIONS               "note"|"send"|"call"
+IOCOMMAND               "display"|"get"
+RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
+ARITHMETIC              "+"|"-"|"*"|"/"|"%"|"plus"|"minus"|"into"|"dividedby"|"remainder"|"inc by"|"dec by"
+ASSIGNMENT              "is"  
+LOGICAL                 "or"|"and"
 
 %option noyywrap
 %%
 
-{comments}                                               	 ;
-{delimiters}                                          	    ;
-{assignment}                                              	 {printf("Assignment Operators : %s\n",yytext);}
-{relational}                                              	 {printf("Relational Operators : %s\n",yytext);}
-{arithmetic}                                              	 {printf("Arithmetic Operators : %s\n",yytext);}
-{logical}                                                 	 {printf("Logical Operators : %s\n",yytext);}
-{datatype}|{controlstatement}|{functions}|{iocommand}|{container}   {printf("Keywords :  %s\n",yytext);}
-{letter_}*                                                 	 {printf("Identifier : %s\n",yytext);}
-{numberconst}|{floatconst}                                       {printf("Number Constants :  %s\n",yytext);}
-{strconst}                                                	 {printf("String Constants : %s\n",yytext);}
-{specialchars}                                            	 {printf("Special Characters : %s\n",yytext);}
+{COMMENTS}                                               	 ;
+{DELIMITERS}                                          	    ;
+{ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext);}
+{RELATIONAL}                                              	 {printf("Relational Operators : %s\n",yytext);}
+{ARITHMETIC}                                              	 {printf("Arithmetic Operators : %s\n",yytext);}
+{LOGICAL}                                                 	 {printf("Logical Operators : %s\n",yytext);}
+{DATATYPE}|{CONTROLSTATEMENT}|{FUNCTIONS}|{IOCOMMAND}|{CONTAINER}   {printf("Keywords :  %s\n",yytext);}
+{LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext);}
+{NUMBERCONST}|{FLOATCONST}                                       {printf("Number Constants :  %s\n",yytext);}
+{STRCONST}                                                	 {printf("String Constants : %s\n",yytext);}
+{SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);}
 "\n"                                                         { lineno += 1; }
 [ \t\r\f]+	                                                /* eat up whitespace */      
 .                                                            {yyerror("Unrecognized character");}
