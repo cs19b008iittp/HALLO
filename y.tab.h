@@ -57,7 +57,10 @@ extern int yydebug;
     COMMA = 263,
     FULLSTOP = 264,
     ID = 265,
-    TYPE = 266
+    TYPE = 266,
+    COLON = 267,
+    NOTE = 268,
+    SEND = 269
   };
 #endif
 /* Tokens.  */
@@ -70,6 +73,9 @@ extern int yydebug;
 #define FULLSTOP 264
 #define ID 265
 #define TYPE 266
+#define COLON 267
+#define NOTE 268
+#define SEND 269
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

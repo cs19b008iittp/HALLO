@@ -1,25 +1,42 @@
+State 11 conflicts: 1 shift/reduce
+
+
 Grammar
 
     0 $accept: program $end
 
-    1 program: START declarations END FULLSTOP
+    1 program: functions_optional START body END FULLSTOP functions_optional
 
-    2 declarations: declarations declaration
-    3             | declaration
+    2 body: body declarations
+    3     | %empty
 
-    4 declaration: TYPE names FULLSTOP
+    4 declarations: declarations declaration
+    5             | declaration
 
-    5 names: names COMMA variable
-    6      | names COMMA init
-    7      | variable
-    8      | init
+    6 declaration: TYPE names FULLSTOP
 
-    9 init: ID ASSIGNMENT constant
+    7 names: names COMMA variable
+    8      | names COMMA init
+    9      | variable
+   10      | init
 
-   10 constant: NUMBERCONST
-   11         | FLOATCONST
+   11 init: ID ASSIGNMENT constant
 
-   12 variable: ID
+   12 constant: NUMBERCONST
+   13         | FLOATCONST
+
+   14 variable: ID
+
+   15 functions_optional: functions_optional function_call
+   16                   | %empty
+
+   17 function_call: NOTE ID param COLON body function_end
+
+   18 param: param COMMA ID
+   19      | ID
+
+   20 function_end: SEND ID FULLSTOP
+   21             | SEND FULLSTOP
 
 
 Terminals, with rules where they appear
@@ -28,217 +45,386 @@ Terminals, with rules where they appear
     error (256)
     START (258) 1
     END (259) 1
-    ASSIGNMENT (260) 9
-    NUMBERCONST (261) 10
-    FLOATCONST (262) 11
-    COMMA (263) 5 6
-    FULLSTOP (264) 1 4
-    ID (265) 9 12
-    TYPE (266) 4
+    ASSIGNMENT (260) 11
+    NUMBERCONST (261) 12
+    FLOATCONST (262) 13
+    COMMA (263) 7 8 18
+    FULLSTOP (264) 1 6 20 21
+    ID (265) 11 14 17 18 19 20
+    TYPE (266) 6
+    COLON (267) 17
+    NOTE (268) 17
+    SEND (269) 20 21
 
 
 Nonterminals, with rules where they appear
 
-    $accept (12)
+    $accept (15)
         on left: 0
-    program (13)
+    program (16)
         on left: 1
         on right: 0
-    declarations (14)
+    body (17)
         on left: 2 3
-        on right: 1 2
-    declaration (15)
-        on left: 4
-        on right: 2 3
-    names (16)
-        on left: 5 6 7 8
-        on right: 4 5 6
-    init (17)
-        on left: 9
-        on right: 6 8
-    constant (18)
-        on left: 10 11
-        on right: 9
-    variable (19)
-        on left: 12
-        on right: 5 7
+        on right: 1 2 17
+    declarations (18)
+        on left: 4 5
+        on right: 2 4
+    declaration (19)
+        on left: 6
+        on right: 4 5
+    names (20)
+        on left: 7 8 9 10
+        on right: 6 7 8
+    init (21)
+        on left: 11
+        on right: 8 10
+    constant (22)
+        on left: 12 13
+        on right: 11
+    variable (23)
+        on left: 14
+        on right: 7 9
+    functions_optional (24)
+        on left: 15 16
+        on right: 1 15
+    function_call (25)
+        on left: 17
+        on right: 15
+    param (26)
+        on left: 18 19
+        on right: 17 18
+    function_end (27)
+        on left: 20 21
+        on right: 17
 
 
 State 0
 
     0 $accept: . program $end
 
-    START  shift, and go to state 1
+    $default  reduce using rule 16 (functions_optional)
 
-    program  go to state 2
+    program             go to state 1
+    functions_optional  go to state 2
 
 
 State 1
 
-    1 program: START . declarations END FULLSTOP
+    0 $accept: program . $end
 
-    TYPE  shift, and go to state 3
-
-    declarations  go to state 4
-    declaration   go to state 5
+    $end  shift, and go to state 3
 
 
 State 2
 
-    0 $accept: program . $end
+    1 program: functions_optional . START body END FULLSTOP functions_optional
+   15 functions_optional: functions_optional . function_call
 
-    $end  shift, and go to state 6
+    START  shift, and go to state 4
+    NOTE   shift, and go to state 5
+
+    function_call  go to state 6
 
 
 State 3
-
-    4 declaration: TYPE . names FULLSTOP
-
-    ID  shift, and go to state 7
-
-    names     go to state 8
-    init      go to state 9
-    variable  go to state 10
-
-
-State 4
-
-    1 program: START declarations . END FULLSTOP
-    2 declarations: declarations . declaration
-
-    END   shift, and go to state 11
-    TYPE  shift, and go to state 3
-
-    declaration  go to state 12
-
-
-State 5
-
-    3 declarations: declaration .
-
-    $default  reduce using rule 3 (declarations)
-
-
-State 6
 
     0 $accept: program $end .
 
     $default  accept
 
 
+State 4
+
+    1 program: functions_optional START . body END FULLSTOP functions_optional
+
+    $default  reduce using rule 3 (body)
+
+    body  go to state 7
+
+
+State 5
+
+   17 function_call: NOTE . ID param COLON body function_end
+
+    ID  shift, and go to state 8
+
+
+State 6
+
+   15 functions_optional: functions_optional function_call .
+
+    $default  reduce using rule 15 (functions_optional)
+
+
 State 7
 
-    9 init: ID . ASSIGNMENT constant
-   12 variable: ID .
+    1 program: functions_optional START body . END FULLSTOP functions_optional
+    2 body: body . declarations
 
-    ASSIGNMENT  shift, and go to state 13
+    END   shift, and go to state 9
+    TYPE  shift, and go to state 10
 
-    $default  reduce using rule 12 (variable)
+    declarations  go to state 11
+    declaration   go to state 12
 
 
 State 8
 
-    4 declaration: TYPE names . FULLSTOP
-    5 names: names . COMMA variable
-    6      | names . COMMA init
+   17 function_call: NOTE ID . param COLON body function_end
 
-    COMMA     shift, and go to state 14
-    FULLSTOP  shift, and go to state 15
+    ID  shift, and go to state 13
+
+    param  go to state 14
 
 
 State 9
 
-    8 names: init .
+    1 program: functions_optional START body END . FULLSTOP functions_optional
 
-    $default  reduce using rule 8 (names)
+    FULLSTOP  shift, and go to state 15
 
 
 State 10
 
-    7 names: variable .
+    6 declaration: TYPE . names FULLSTOP
 
-    $default  reduce using rule 7 (names)
+    ID  shift, and go to state 16
+
+    names     go to state 17
+    init      go to state 18
+    variable  go to state 19
 
 
 State 11
 
-    1 program: START declarations END . FULLSTOP
+    2 body: body declarations .
+    4 declarations: declarations . declaration
 
-    FULLSTOP  shift, and go to state 16
+    TYPE  shift, and go to state 10
+
+    TYPE      [reduce using rule 2 (body)]
+    $default  reduce using rule 2 (body)
+
+    declaration  go to state 20
 
 
 State 12
 
-    2 declarations: declarations declaration .
+    5 declarations: declaration .
 
-    $default  reduce using rule 2 (declarations)
+    $default  reduce using rule 5 (declarations)
 
 
 State 13
 
-    9 init: ID ASSIGNMENT . constant
+   19 param: ID .
 
-    NUMBERCONST  shift, and go to state 17
-    FLOATCONST   shift, and go to state 18
-
-    constant  go to state 19
+    $default  reduce using rule 19 (param)
 
 
 State 14
 
-    5 names: names COMMA . variable
-    6      | names COMMA . init
+   17 function_call: NOTE ID param . COLON body function_end
+   18 param: param . COMMA ID
 
-    ID  shift, and go to state 7
-
-    init      go to state 20
-    variable  go to state 21
+    COMMA  shift, and go to state 21
+    COLON  shift, and go to state 22
 
 
 State 15
 
-    4 declaration: TYPE names FULLSTOP .
+    1 program: functions_optional START body END FULLSTOP . functions_optional
 
-    $default  reduce using rule 4 (declaration)
+    $default  reduce using rule 16 (functions_optional)
+
+    functions_optional  go to state 23
 
 
 State 16
 
-    1 program: START declarations END FULLSTOP .
+   11 init: ID . ASSIGNMENT constant
+   14 variable: ID .
 
-    $default  reduce using rule 1 (program)
+    ASSIGNMENT  shift, and go to state 24
+
+    $default  reduce using rule 14 (variable)
 
 
 State 17
 
-   10 constant: NUMBERCONST .
+    6 declaration: TYPE names . FULLSTOP
+    7 names: names . COMMA variable
+    8      | names . COMMA init
 
-    $default  reduce using rule 10 (constant)
+    COMMA     shift, and go to state 25
+    FULLSTOP  shift, and go to state 26
 
 
 State 18
 
-   11 constant: FLOATCONST .
+   10 names: init .
 
-    $default  reduce using rule 11 (constant)
+    $default  reduce using rule 10 (names)
 
 
 State 19
 
-    9 init: ID ASSIGNMENT constant .
+    9 names: variable .
 
-    $default  reduce using rule 9 (init)
+    $default  reduce using rule 9 (names)
 
 
 State 20
 
-    6 names: names COMMA init .
+    4 declarations: declarations declaration .
 
-    $default  reduce using rule 6 (names)
+    $default  reduce using rule 4 (declarations)
 
 
 State 21
 
-    5 names: names COMMA variable .
+   18 param: param COMMA . ID
 
-    $default  reduce using rule 5 (names)
+    ID  shift, and go to state 27
+
+
+State 22
+
+   17 function_call: NOTE ID param COLON . body function_end
+
+    $default  reduce using rule 3 (body)
+
+    body  go to state 28
+
+
+State 23
+
+    1 program: functions_optional START body END FULLSTOP functions_optional .
+   15 functions_optional: functions_optional . function_call
+
+    NOTE  shift, and go to state 5
+
+    $default  reduce using rule 1 (program)
+
+    function_call  go to state 6
+
+
+State 24
+
+   11 init: ID ASSIGNMENT . constant
+
+    NUMBERCONST  shift, and go to state 29
+    FLOATCONST   shift, and go to state 30
+
+    constant  go to state 31
+
+
+State 25
+
+    7 names: names COMMA . variable
+    8      | names COMMA . init
+
+    ID  shift, and go to state 16
+
+    init      go to state 32
+    variable  go to state 33
+
+
+State 26
+
+    6 declaration: TYPE names FULLSTOP .
+
+    $default  reduce using rule 6 (declaration)
+
+
+State 27
+
+   18 param: param COMMA ID .
+
+    $default  reduce using rule 18 (param)
+
+
+State 28
+
+    2 body: body . declarations
+   17 function_call: NOTE ID param COLON body . function_end
+
+    TYPE  shift, and go to state 10
+    SEND  shift, and go to state 34
+
+    declarations  go to state 11
+    declaration   go to state 12
+    function_end  go to state 35
+
+
+State 29
+
+   12 constant: NUMBERCONST .
+
+    $default  reduce using rule 12 (constant)
+
+
+State 30
+
+   13 constant: FLOATCONST .
+
+    $default  reduce using rule 13 (constant)
+
+
+State 31
+
+   11 init: ID ASSIGNMENT constant .
+
+    $default  reduce using rule 11 (init)
+
+
+State 32
+
+    8 names: names COMMA init .
+
+    $default  reduce using rule 8 (names)
+
+
+State 33
+
+    7 names: names COMMA variable .
+
+    $default  reduce using rule 7 (names)
+
+
+State 34
+
+   20 function_end: SEND . ID FULLSTOP
+   21             | SEND . FULLSTOP
+
+    FULLSTOP  shift, and go to state 36
+    ID        shift, and go to state 37
+
+
+State 35
+
+   17 function_call: NOTE ID param COLON body function_end .
+
+    $default  reduce using rule 17 (function_call)
+
+
+State 36
+
+   21 function_end: SEND FULLSTOP .
+
+    $default  reduce using rule 21 (function_end)
+
+
+State 37
+
+   20 function_end: SEND ID . FULLSTOP
+
+    FULLSTOP  shift, and go to state 38
+
+
+State 38
+
+   20 function_end: SEND ID FULLSTOP .
+
+    $default  reduce using rule 20 (function_end)

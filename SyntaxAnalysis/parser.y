@@ -9,14 +9,16 @@
 
 %token START END ASSIGNMENT NUMBERCONST FLOATCONST
 
-%token COMMA FULLSTOP ID TYPE
+%token COMMA FULLSTOP ID TYPE COLON
+
+%token NOTE SEND 
 
 
 
 %%
 program: functions_optional START body END FULLSTOP functions_optional;
 
-body: body declarations | body statements | ;
+body: body declarations |  body statements | ;
 
 declarations: declarations declaration | declaration;
 
@@ -33,6 +35,14 @@ variable: ID;
 statements: statements statement | statement;
 
 statement: if_statement | for_statement | while_statement | assigment FULLSTOP | function_call FULLSTOP; 
+
+functions_optional : functions_optional function_call | ;
+
+function_call : NOTE ID param COLON body function_end;
+
+param : param COMMA ID | ID ;
+
+function_end : SEND ID FULLSTOP | SEND FULLSTOP ;
 
 %%
 

@@ -34,16 +34,16 @@ COMMA                     ","
 
  
 {DATATYPE}                                                   {return TYPE;};
-{START}                                               	    {return START;};
-{END}                                              	       {return END;};
-{COMMA}                                            	       {return (COMMA);};
-{FULLSTOP}                                                	       {return (FULLSTOP);};
+{START}                                               	     {return START;};
+{END}                                              	     {return END;};
+{COMMA}                                            	     {return COMMA;};
+{FULLSTOP}                                                   {return FULLSTOP;};
+"note"                                                       {return NOTE;};
+"send"                                                       {return SEND;};
+":"							     {return COLON;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
-
-
-
 {COMMENTS}                                               	 ;
 {DELIMITERS}                                          	         ;
 {RELATIONAL}                                              	 {printf("Relational Operators : %s\n",yytext);};
@@ -53,9 +53,9 @@ COMMA                     ","
 {STRCONST}                                                	 {printf("String Constants : %s\n",yytext);};
 {SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);};
 {LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
-
-"\n"                                                         { lineno += 1; };
-[ \t\r\f]+	                                                /* eat up whitespace */      
+"\n"                                                             { lineno += 1; };
+[ \t\r\f]+	                                                 {}
+  
 
 
 %%
