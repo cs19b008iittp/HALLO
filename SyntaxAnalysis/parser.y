@@ -1,35 +1,26 @@
 %{
     #include<stdio.h>
     #include<ctype.h>
-    void yyerror(char const*s){
-        fprintf(stderr,"%s\n",s);
-    }
+ int yylex(void);
+ void yyerror(char *); 
+
 %}
-
-
-
 
 
 %token START END ASSIGNMENT NUMBERCONST FLOATCONST
 
-%token NUM STRING FLAG DATA
-
-%token COMMA FULLSTOP
-
-
-
+%token COMMA FULLSTOP ID TYPE
 
 
 
 %%
-program: functions_optional START declarations statements END FULLSTOP functions_optional;
+program: functions_optional START body END FULLSTOP functions_optional;
 
+body: body declarations | body statements | ;
 
 declarations: declarations declaration | declaration;
 
-declaration: type names FULLSTOP;
-
-type: NUM | STRING | FLAG | DATA;
+declaration: TYPE names FULLSTOP;
 
 names: names COMMA variable | names COMMA init | variable | init ;
 
@@ -39,17 +30,20 @@ constant: NUMBERCONST | FLOATCONST;
 
 variable: ID;
 
-
 statements: statements statement | statement;
 
 statement: if_statement | for_statement | while_statement | assigment FULLSTOP | function_call FULLSTOP; 
+
 %%
 
 
 
-
-int yyparse(void);
-
-int main () {
-	return yyparse( ) ;
+void yyerror(char *s) {
+ fprintf(stderr, "%s\n", s);
 }
+
+int main(void) {
+ yyparse();
+ return 0;
+} 
+
