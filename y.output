@@ -1,0 +1,244 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: START declarations END FULLSTOP
+
+    2 declarations: declarations declaration
+    3             | declaration
+
+    4 declaration: TYPE names FULLSTOP
+
+    5 names: names COMMA variable
+    6      | names COMMA init
+    7      | variable
+    8      | init
+
+    9 init: ID ASSIGNMENT constant
+
+   10 constant: NUMBERCONST
+   11         | FLOATCONST
+
+   12 variable: ID
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    START (258) 1
+    END (259) 1
+    ASSIGNMENT (260) 9
+    NUMBERCONST (261) 10
+    FLOATCONST (262) 11
+    COMMA (263) 5 6
+    FULLSTOP (264) 1 4
+    ID (265) 9 12
+    TYPE (266) 4
+
+
+Nonterminals, with rules where they appear
+
+    $accept (12)
+        on left: 0
+    program (13)
+        on left: 1
+        on right: 0
+    declarations (14)
+        on left: 2 3
+        on right: 1 2
+    declaration (15)
+        on left: 4
+        on right: 2 3
+    names (16)
+        on left: 5 6 7 8
+        on right: 4 5 6
+    init (17)
+        on left: 9
+        on right: 6 8
+    constant (18)
+        on left: 10 11
+        on right: 9
+    variable (19)
+        on left: 12
+        on right: 5 7
+
+
+State 0
+
+    0 $accept: . program $end
+
+    START  shift, and go to state 1
+
+    program  go to state 2
+
+
+State 1
+
+    1 program: START . declarations END FULLSTOP
+
+    TYPE  shift, and go to state 3
+
+    declarations  go to state 4
+    declaration   go to state 5
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    4 declaration: TYPE . names FULLSTOP
+
+    ID  shift, and go to state 7
+
+    names     go to state 8
+    init      go to state 9
+    variable  go to state 10
+
+
+State 4
+
+    1 program: START declarations . END FULLSTOP
+    2 declarations: declarations . declaration
+
+    END   shift, and go to state 11
+    TYPE  shift, and go to state 3
+
+    declaration  go to state 12
+
+
+State 5
+
+    3 declarations: declaration .
+
+    $default  reduce using rule 3 (declarations)
+
+
+State 6
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 7
+
+    9 init: ID . ASSIGNMENT constant
+   12 variable: ID .
+
+    ASSIGNMENT  shift, and go to state 13
+
+    $default  reduce using rule 12 (variable)
+
+
+State 8
+
+    4 declaration: TYPE names . FULLSTOP
+    5 names: names . COMMA variable
+    6      | names . COMMA init
+
+    COMMA     shift, and go to state 14
+    FULLSTOP  shift, and go to state 15
+
+
+State 9
+
+    8 names: init .
+
+    $default  reduce using rule 8 (names)
+
+
+State 10
+
+    7 names: variable .
+
+    $default  reduce using rule 7 (names)
+
+
+State 11
+
+    1 program: START declarations END . FULLSTOP
+
+    FULLSTOP  shift, and go to state 16
+
+
+State 12
+
+    2 declarations: declarations declaration .
+
+    $default  reduce using rule 2 (declarations)
+
+
+State 13
+
+    9 init: ID ASSIGNMENT . constant
+
+    NUMBERCONST  shift, and go to state 17
+    FLOATCONST   shift, and go to state 18
+
+    constant  go to state 19
+
+
+State 14
+
+    5 names: names COMMA . variable
+    6      | names COMMA . init
+
+    ID  shift, and go to state 7
+
+    init      go to state 20
+    variable  go to state 21
+
+
+State 15
+
+    4 declaration: TYPE names FULLSTOP .
+
+    $default  reduce using rule 4 (declaration)
+
+
+State 16
+
+    1 program: START declarations END FULLSTOP .
+
+    $default  reduce using rule 1 (program)
+
+
+State 17
+
+   10 constant: NUMBERCONST .
+
+    $default  reduce using rule 10 (constant)
+
+
+State 18
+
+   11 constant: FLOATCONST .
+
+    $default  reduce using rule 11 (constant)
+
+
+State 19
+
+    9 init: ID ASSIGNMENT constant .
+
+    $default  reduce using rule 9 (init)
+
+
+State 20
+
+    6 names: names COMMA init .
+
+    $default  reduce using rule 6 (names)
+
+
+State 21
+
+    5 names: names COMMA variable .
+
+    $default  reduce using rule 5 (names)
