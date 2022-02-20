@@ -16,7 +16,7 @@ STRCONST                "\"".*"\""
 SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
 COMMENTS                "ignore".|"skip"(.|\n)"skip"
 DELIMITERS              "."|[ \n\t]|","
-DATATYPE                "num"|"string"|"com"|"flag"|"data"|"matrix"
+DATATYPE                "num"|"string"|"com"|"flag"|"data"
 CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"
 FUNCTIONS               "note"|"send"|"call"
 IOCOMMAND               "display"|"get"
@@ -33,25 +33,19 @@ COMMA                     ","
 %%
 
  
-{DATATYPE}                                                   {return TYPE;};
+{DATATYPE}                                                    {return TYPE;};
+"matrix"                                                      {return MATRIX;};
+{CONTAINER}                                                   {return CONTAINER;};
 {START}                                               	     {return START;};
 {END}                                              	     {return END;};
 {COMMA}                                            	     {return COMMA;};
 {FULLSTOP}                                                   {return FULLSTOP;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
-":"							     {return COLON;};
+":"							                                     {return COLON;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
-{COMMENTS}                                               	 ;
-{DELIMITERS}                                          	         ;
-{RELATIONAL}                                              	 {printf("Relational Operators : %s\n",yytext);};
-{ARITHMETIC}                                              	 {printf("Arithmetic Operators : %s\n",yytext);};
-{LOGICAL}                                                 	 {printf("Logical Operators : %s\n",yytext);};
-{DATATYPE}|{CONTROLSTATEMENT}|{FUNCTIONS}|{IOCOMMAND}|{CONTAINER}   {printf("Keywords :  %s\n",yytext);};
-{STRCONST}                                                	 {printf("String Constants : %s\n",yytext);};
-{SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);};
 {LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
 "\n"                                                             { lineno += 1; };
 [ \t\r\f]+	                                                 {}
