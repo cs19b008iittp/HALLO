@@ -7,9 +7,11 @@
 %}
 
 
-%token START END ASSIGNMENT NUMBERCONST FLOATCONST CONTAINER MATRIX
+%token START END ASSIGNMENT NUMBERCONST FLOATCONST CONTAINER MATRIX ARITHMETIC
 
 %token COMMA FULLSTOP ID TYPE COLON
+
+%token REPEAT FROM TO DONE
 
 %token NOTE SEND 
 
@@ -37,11 +39,19 @@ constant: NUMBERCONST | FLOATCONST;
 
 variable: ID;
 
-
 statements: statements statement | statement;
 
-statement: if_statement | for_statement | while_statement | assigment FULLSTOP | function_call FULLSTOP; 
+statement: if_statement | repeat_statement | assigment FULLSTOP | function_call FULLSTOP; 
 
+repeat_statement: REPEAT variable initialization termination incrementation statements done | REPEAT COLON statements done ;
+
+initialization: FROM constant | FROM variable | COLON ;
+
+termination: TO constant | TO variable | COLON ;
+
+incrementation: ARITHMETIC constant | ARITHMETIC variable | COLON ;
+
+done: DONE FULLSTOP | FULLSTOP ;
 
 functions_optional : functions_optional function_call | ;
 
