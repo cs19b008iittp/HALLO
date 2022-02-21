@@ -17,7 +17,7 @@ SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
 COMMENTS                "ignore".|"skip"(.|\n)"skip"
 DELIMITERS              "."|[ \n\t]|","
 DATATYPE                "num"|"string"|"com"|"flag"|"data"
-CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"
+CONTROLSTATEMENT        "if"|"otherwise"|"leave"
 FUNCTIONS               "note"|"send"|"call"
 IOCOMMAND               "display"|"get"
 RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
@@ -26,28 +26,38 @@ ASSIGNMENT              "is"
 LOGICAL                 "or"|"and"
 START                   "start"
 END                     "end"
-FULLSTOP                 "."
-COMMA                     ","
+FULLSTOP                "."
+COMMA                   ","
+COLON                   ":"
+DONE                    "done"
+REPEAT                  "repeat"
+FROM                    "from"
+TO                      "to"
 
 %option noyywrap
 %%
 
  
-{DATATYPE}                                                    {return TYPE;};
-"matrix"                                                      {return MATRIX;};
-{CONTAINER}                                                   {return CONTAINER;};
-{START}                                               	     {return START;};
-{END}                                              	     {return END;};
-{COMMA}                                            	     {return COMMA;};
+{DATATYPE}                                                   {return TYPE;};
+"matrix"                                                     {return MATRIX;};
+{CONTAINER}                                                  {return CONTAINER;};
+{START}                                               	    {return START;};
+{END}                                              	       {return END;};
+{COMMA}                                            	       {return COMMA;};
+{COLON}                                                      {return COLON;};
 {FULLSTOP}                                                   {return FULLSTOP;};
+{DONE}                                                       {return DONE;};
+{REPEAT}                                                     {return REPEAT;};
+{FROM}                                                       {return FROM;};
+{TO}                                                         {return TO;};
+{ARITHMETIC}                                                 {return ARITHMETIC;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
-":"							                                     {return COLON;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
 {LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
-"\n"                                                             { lineno += 1; };
+"\n"                                                         { lineno += 1; };
 [ \t\r\f]+	                                                 {}
   
 
