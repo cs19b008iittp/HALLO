@@ -15,6 +15,17 @@
 
 %token NOTE SEND 
 
+%token ID DIGIT IF OTHERWISE THEN 
+
+%right '='
+
+%left '+' '-'
+
+%left '*' '/'
+
+
+
+
 
 
 %%
@@ -43,6 +54,16 @@ statements: statements statement | statement;
 
 statement: if_statement | repeat_statement | assigment FULLSTOP | function_call FULLSTOP; 
 
+if_statement: IF '{'cond'}' THEN print_statements FULLSTOP | IF '{'cond'} THEN print_statements OTHERWISE print_statements FULLSTOP ;
+
+cond: variable '<' expr | variable '>' expr | variable 'less than' expr | variable 'greater than' expr | variable '<=' expr | variable '>=' expr | variable 'greater than equals' expr | variable 'less than equals' expr;
+
+print_statements: variable '=' expr;
+
+expr: expr '+' expr | expr '-' expr | expr '*' expr | expr '/' expr | '(' expr ')' | variable;
+
+variable : ID;
+
 repeat_statement: REPEAT variable initialization termination incrementation statements done | REPEAT COLON statements done ;
 
 initialization: FROM constant | FROM variable | COLON ;
@@ -60,6 +81,8 @@ function_call : NOTE ID param COLON body function_end;
 param : param COMMA ID | ID ;
 
 function_end : SEND ID FULLSTOP | SEND FULLSTOP ;
+
+
 
 %%
 
