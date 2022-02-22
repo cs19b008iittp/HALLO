@@ -54,11 +54,11 @@ statements: statements statement | statement;
 
 statement: if_statement | repeat_statement | assigment FULLSTOP | function_call FULLSTOP; 
 
-if_statement: IF '{'cond'}' THEN print_statements FULLSTOP | IF '{'cond'} THEN print_statements OTHERWISE print_statements FULLSTOP ;
+if_statement: IF '{'cond'}' THEN run_statements FULLSTOP | IF '{'cond'}' THEN run_statements FULLSTOP OTHERWISE '{'cond'}' THEN run_statements FULLSTOP OTHERWISE THEN run_statements FULLSTOP  | IF '{'cond'} THEN run_statements OTHERWISE print_statements FULLSTOP ;
 
 cond: variable '<' expr | variable '>' expr | variable 'less than' expr | variable 'greater than' expr | variable '<=' expr | variable '>=' expr | variable 'greater than equals' expr | variable 'less than equals' expr;
 
-print_statements: variable '=' expr;
+run_statements: variable '=' expr;
 
 expr: expr '+' expr | expr '-' expr | expr '*' expr | expr '/' expr | '(' expr ')' | variable;
 
