@@ -9,7 +9,7 @@
 DIGIT                   [0-9]
 LETTER                  [A-Za-z]
 LETTER_                 [A-Za-z_]
-CHAR                    [A-Za-z][A-Za-z_0-9]+
+ID                      [A-Za-z][A-Za-z_0-9]+
 CONTAINER               {DATATYPE}"s"
 NUMBERCONST             {DIGIT}* 
 FLOATCONST              {DIGIT}+"."+{DIGIT}{DIGIT}
@@ -34,7 +34,7 @@ DONE                    "done"
 REPEAT                  "repeat"
 FROM                    "from"
 TO                      "to"
-%x CONDSTART
+
 %option noyywrap
 %%
 
@@ -57,7 +57,7 @@ TO                      "to"
 "if"                                                         {return IF;};
 "otherwise"                                                  {return OTHERWISE;};
 "then"                                                       {return THEN;};
-{ID}                                                       {return ID;};
+{ID}                                                         {return ID;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
