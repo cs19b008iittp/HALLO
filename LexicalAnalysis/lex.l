@@ -9,6 +9,7 @@
 DIGIT                   [0-9]
 LETTER                  [A-Za-z]
 LETTER_                 [A-Za-z_]
+CHAR                    [A-Za-z][A-Za-z_0-9]+
 CONTAINER               {DATATYPE}"s"
 NUMBERCONST             {DIGIT}* 
 FLOATCONST              {DIGIT}+"."+{DIGIT}{DIGIT}
@@ -17,12 +18,12 @@ SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
 COMMENTS                "ignore".|"skip"(.|\n)"skip"
 DELIMITERS              "."|[ \n\t]|","
 DATATYPE                "num"|"string"|"com"|"flag"|"data"
-CONTROLSTATEMENT        "if"|"otherwise"|"leave"
+CONTROLSTATEMENT        "if"|"otherwise"|"leave"|"then
 FUNCTIONS               "note"|"send"|"call"
 IOCOMMAND               "display"|"get"
 RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
 ARITHMETIC              "+"|"-"|"*"|"/"|"%"|"plus"|"minus"|"into"|"dividedby"|"remainder"|"inc by"|"dec by"
-ASSIGNMENT              "is"  
+ASSIGNMENT              "is"
 LOGICAL                 "or"|"and"
 START                   "start"
 END                     "end"
@@ -33,7 +34,7 @@ DONE                    "done"
 REPEAT                  "repeat"
 FROM                    "from"
 TO                      "to"
-
+%x CONDSTART
 %option noyywrap
 %%
 
@@ -53,10 +54,15 @@ TO                      "to"
 {ARITHMETIC}                                                 {return ARITHMETIC;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
+"if"                                                         {return IF;};
+"otherwise"                                                  {return OTHERWISE;};
+"then"                                                       {return THEN;};
+{ID}                                                       {return ID;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
 {LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
+{}
 "\n"                                                         { lineno += 1; };
 [ \t\r\f]+	                                                 {}
   
