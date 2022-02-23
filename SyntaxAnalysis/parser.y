@@ -7,15 +7,18 @@
 %}
 
 
-%token START END ASSIGNMENT NUMBERCONST FLOATCONST CONTAINER MATRIX ARITHMETIC
+%token START END ASSIGNMENT NUMBERCONST FLOATCONST CONTAINER MATRIX 
+
+%token ARITHMETIC RELATIONAL LOGICAL
 
 %token COMMA FULLSTOP ID TYPE COLON BY
 
 %token REPEAT FROM TO DONE
 
-%token NOTE SEND 
+%token NOTE SEND CALL
 
-%token DIGIT IF OTHERWISE THEN EQUALS LE GE EQ GT LT NE OR AND
+%token DIGIT IF OTHERWISE THEN 
+
 %right '='
 %left AND OR
 %left LE GE EQ NE
@@ -26,13 +29,17 @@
 %left '!'
 
 %%
-program: functions_optional START body END FULLSTOP functions_optional;
+program: functions_optional START body END FULLSTOP functions_optional ;
 
-body: body declarations |  body statements ;
+body: bodytypes body | ;
+ 
+bodytypes : declarations | statement ;
 
-declarations: declarations declaration | declaration;
+//declarations 
 
-declaration: TYPE names FULLSTOP | CONTAINER contnames FULLSTOP | TYPE MATRIX matnames FULLSTOP;
+declarations: declaration FULLSTOP;
+
+declaration: TYPE names | CONTAINER contnames | TYPE MATRIX matnames ;
 
 names: names COMMA variable | names COMMA init | variable | init;
 
@@ -40,73 +47,58 @@ matnames: matnames NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST BY NUMB
 
 contnames: names COMMA variable | variable;
 
-init: ID ASSIGNMENT constant;
-
+init: variable ASSIGNMENT constant;
+     
 constant: NUMBERCONST | FLOATCONST;
 
 variable: ID;
 
-statements_list : statements_list  statement| statement;
+//statements
 
-statement: if_statement | repeat_statement | assignment FULLSTOP | function_call FULLSTOP {printf("Input accepted.\n");exit(0);};  
+statement: if_statement | repeat_statement |  assignment FULLSTOP | function_call FULLSTOP;  
 
-if_statement  : IF '(' E2 ')' THEN statement1 FULLSTOP OTHERWISE  statement1 FULLSTOP
-        | IF '(' E2 ')' THEN statement1 FULLSTOP | IF '('E2')' THEN statement1 FULLSTOP OTHERWISE '('E2')' THEN  statement1 FULLSTOP OTHERWISE statement1 FULLSTOP;
+//assignment statement
 
-statement1 : statement
-        | E ;
+assignment : variable ASSIGNMENT varconst ARITHMETIC varconst ;
 
-        E    : ID'='E
-      | E'+'E
-      | E'-'E
-      | E'*'E
-      | E'/'E
-      | E'<'E
-      | E'>'E
-      | E LE E
-      | E GE E
-      | E LT E
-      | E  GT E
-      | E EQ E
-      | E NE E
-      | E OR E
-      | E AND E
-      | ID
-      | DIGIT
+//if statement
 
-      E2  : E'<'E
-      | E'>'E
-      | E LT E
-      | E GT E
-      | E LE E
-      | E GE E
-      | E EQ E
-      | E NE E
-      | E OR E
-      | E AND E
-      | ID
-      | DIGIT
-      ;
+if_statement :  IF  cond  THEN COLON body done otherwise;
 
-repeat_statement: REPEAT variable initialization termination incrementation statements done | REPEAT COLON statements done ;
+otherwise : OTHERWISE cond THEN COLON body done otherwise | OTHERWISE THEN COLON body done;
 
-initialization: FROM constant | FROM variable | COLON ;
+cond : varconst RELATIONAL varconst LOGICAL cond | varconst RELATIONAL varconst ; 
 
-termination: TO constant | TO variable | COLON ;
+varconst :  variable | constant ;
 
-incrementation: ARITHMETIC constant | ARITHMETIC variable | COLON ;
+//repeat
+
+repeat_statement: REPEAT variable initialization termination incrementation COLON body done ;
+
+initialization: FROM varconst |  ;
+
+termination: TO varconst |  ;
+
+incrementation: ARITHMETIC varconst | ;
 
 done: DONE FULLSTOP | FULLSTOP ;
 
-functions_optional : functions_optional function_call | ;
+//function_call
 
-function_call : NOTE ID param COLON body function_end;
+function_call : CALL variable param FULLSTOP;
+
+//functions
+
+functions_optional : functions_optional function_call_outside | ;
+
+function_call_outside : NOTE ID param COLON body function_end;
 
 param : param COMMA ID | ID ;
 
 function_end : SEND ID FULLSTOP | SEND FULLSTOP ;
 
 
+ 
 
 %%
 
@@ -117,7 +109,7 @@ void yyerror(char *s) {
 }
 
 int main(void) {
-     printf("Enter the code: ");
+ printf("Enter the code: \n");
  yyparse();
  return 0;
 } 

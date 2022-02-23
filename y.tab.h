@@ -54,13 +54,37 @@ extern int yydebug;
     ASSIGNMENT = 260,
     NUMBERCONST = 261,
     FLOATCONST = 262,
-    COMMA = 263,
-    FULLSTOP = 264,
-    ID = 265,
-    TYPE = 266,
-    COLON = 267,
-    NOTE = 268,
-    SEND = 269
+    CONTAINER = 263,
+    MATRIX = 264,
+    ARITHMETIC = 265,
+    RELATIONAL = 266,
+    LOGICAL = 267,
+    COMMA = 268,
+    FULLSTOP = 269,
+    ID = 270,
+    TYPE = 271,
+    COLON = 272,
+    BY = 273,
+    REPEAT = 274,
+    FROM = 275,
+    TO = 276,
+    DONE = 277,
+    NOTE = 278,
+    SEND = 279,
+    CALL = 280,
+    DIGIT = 281,
+    IF = 282,
+    OTHERWISE = 283,
+    THEN = 284,
+    AND = 285,
+    OR = 286,
+    LE = 287,
+    GE = 288,
+    EQ = 289,
+    NE = 290,
+    LT = 291,
+    GT = 292,
+    UMINUS = 293
   };
 #endif
 /* Tokens.  */
@@ -69,13 +93,37 @@ extern int yydebug;
 #define ASSIGNMENT 260
 #define NUMBERCONST 261
 #define FLOATCONST 262
-#define COMMA 263
-#define FULLSTOP 264
-#define ID 265
-#define TYPE 266
-#define COLON 267
-#define NOTE 268
-#define SEND 269
+#define CONTAINER 263
+#define MATRIX 264
+#define ARITHMETIC 265
+#define RELATIONAL 266
+#define LOGICAL 267
+#define COMMA 268
+#define FULLSTOP 269
+#define ID 270
+#define TYPE 271
+#define COLON 272
+#define BY 273
+#define REPEAT 274
+#define FROM 275
+#define TO 276
+#define DONE 277
+#define NOTE 278
+#define SEND 279
+#define CALL 280
+#define DIGIT 281
+#define IF 282
+#define OTHERWISE 283
+#define THEN 284
+#define AND 285
+#define OR 286
+#define LE 287
+#define GE 288
+#define EQ 289
+#define NE 290
+#define LT 291
+#define GT 292
+#define UMINUS 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

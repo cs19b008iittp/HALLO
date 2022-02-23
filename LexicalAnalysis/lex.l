@@ -11,23 +11,23 @@ LETTER                  [A-Za-z]
 LETTER_                 [A-Za-z_]
 CONTAINER               {DATATYPE}"s"
 NUMBERCONST             {DIGIT}* 
-FLOATCONST              {DIGIT}+"."+{DIGIT}{DIGIT}
-STRCONST                "\"".*"\""             
+FLOATCONST              {DIGIT}*+"."+{DIGIT}{DIGIT}*
+STRCONST                "\"".*"\""              
 SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
-COMMENTS                "ignore".|"skip"(.|\n)"skip"
+COMMENTS                "ignore".*|"skip"(.|\n)*"skip"
 DELIMITERS              "."|[ \n\t]|","
-DATATYPE                "num"|"string"|"com"|"flag"|"data"
-CONTROLSTATEMENT        "if"|"otherwise"|"leave"|"then
+DATATYPE                "num"|"string"|"com"|"flag"|"data"  
+CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"
 FUNCTIONS               "note"|"send"|"call"
 IOCOMMAND               "display"|"get"
-RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"|"or"|"&"| "and"| 
+RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
 ARITHMETIC              "+"|"-"|"*"|"/"|"%"|"plus"|"minus"|"into"|"dividedby"|"remainder"|"inc by"|"dec by"
-ASSIGNMENT              "is"
+ASSIGNMENT              "is"  
 LOGICAL                 "or"|"and"
 START                   "start"
 END                     "end"
-FULLSTOP                "."
-COMMA                   ","
+FULLSTOP                 "."
+COMMA                     ","
 COLON                   ":"
 DONE                    "done"
 REPEAT                  "repeat"
@@ -37,37 +37,39 @@ TO                      "to"
 %option noyywrap
 %%
 
- 
 {DATATYPE}                                                   {return TYPE;};
-"matrix"                                                     {return MATRIX;};
 {CONTAINER}                                                  {return CONTAINER;};
-{START}                                               	    {return START;};
-{END}                                              	       {return END;};
-{COMMA}                                            	       {return COMMA;};
+"matrix"                                                     {return MATRIX;};
+{START}                                               	     {return START;};
+{END}                                              	     {return END;};
+{COMMA}                                            	     {return COMMA;};
 {COLON}                                                      {return COLON;};
 {FULLSTOP}                                                   {return FULLSTOP;};
 {DONE}                                                       {return DONE;};
+"call"                                                       {return CALL;};
 {REPEAT}                                                     {return REPEAT;};
 {FROM}                                                       {return FROM;};
 {TO}                                                         {return TO;};
-{ARITHMETIC}                                                 {return ARITHMETIC;};
+{NUMBERCONST}                                                {return NUMBERCONST;};
+{FLOATCONST}                                                 {return FLOATCONST;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
 "if"                                                         {return IF;};
 "otherwise"                                                  {return OTHERWISE;};
 "then"                                                       {return THEN;};
-{NUMBERCONST}                                                {return NUMBERCONST}
-{FLOATCONST}                                                 {return FLOATCONST;};
-{ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
-{LETTER_}{{DIGIT}|{LETTER_}}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
-{ "=" | {equals}}                               {printf("Relational Operators : %s\n",yytext);return  EQ;};
-{">"  | {greater than}}                         {printf("Relational Operators : %s\n",yytext);return GT;};
-{"<" | {less than}}                                     {printf("Relational Operators : %s\n",yytext);return LT;};
-{ "!" | {not equals}}                                    {printf("Relational Operators : %s\n",yytext);return NE;};
-{">="  | {greater than or equals} }       {printf("Relational Operators : %s\n",yytext);return GE;};
-{"<="  | {less than or equals}  }            {printf("Relational Operators : %s\n",yytext);return LE};;
- "or"                                                                        {printf("Relational Operators : %s\n",yytext);return OR;};
-{"&" | { and}}                                                             {printf("Relational Operators : %s\n",yytext);return AND;};
-"\n"                                                         { lineno += 1; };
-[ \t\r\f]+	                                                 {}
-  %%
+"\n"                                                         { lineno += 1; };  
+{COMMENTS}                                               	 ;
+{DELIMITERS}                                          	         ;
+{RELATIONAL}                                                 {return RELATIONAL;};
+{ARITHMETIC}                                                 {return ARITHMETIC;};
+{ASSIGNMENT}                                                 {return (ASSIGNMENT);};
+{LOGICAL}                                                    {return LOGICAL;};
+{CONTROLSTATEMENT}|{FUNCTIONS}|{IOCOMMAND}|{CONTAINER}        {printf("Keywords :  %s\n",yytext);};
+{STRCONST}                                                	 {printf("String Constants : %s\n",yytext);};
+{SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);};
+{LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
+
+
+
+%%
+
