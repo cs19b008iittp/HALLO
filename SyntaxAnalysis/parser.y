@@ -15,24 +15,20 @@
 
 %token NOTE SEND 
 
-%token  DIGIT IF OTHERWISE THEN 
-
+%token DIGIT IF OTHERWISE THEN EQUALS LE GE EQ GT LT NE OR AND
 %right '='
-
-%left '+' '-'
-
-%left '*' '/'
-
-
-
-
-
+%left AND OR
+%left LE GE EQ NE
+%left  LT GT
+%left '+''-'
+%left '*''/'
+%right UMINUS
+%left '!'
 
 %%
 program: functions_optional START body END FULLSTOP functions_optional;
 
-body: body declarations |  body statements | ;
-
+body: body declarations |  body statements ;
 
 declarations: declarations declaration | declaration;
 
@@ -50,20 +46,47 @@ constant: NUMBERCONST | FLOATCONST;
 
 variable: ID;
 
-statements: statements statement | statement;
+statements_list : statements_list  statement| statement;
 
-//assignment FULLSTOP
-statement: if_statement | repeat_statement  | function_call FULLSTOP; 
+statement: if_statement | repeat_statement | assignment FULLSTOP | function_call FULLSTOP {printf("Input accepted.\n");exit(0);};  
 
-if_statement: IF '{'cond'}' THEN run_statements FULLSTOP | IF '{'cond'}' THEN run_statements FULLSTOP OTHERWISE '{'cond'}' THEN run_statements FULLSTOP OTHERWISE THEN run_statements FULLSTOP  | IF '{'cond'}' THEN run_statements OTHERWISE run_statements FULLSTOP ;
+if_statement  : IF '(' E2 ')' THEN statement1 FULLSTOP OTHERWISE  statement1 FULLSTOP
+        | IF '(' E2 ')' THEN statement1 FULLSTOP | IF '('E2')' THEN statement1 FULLSTOP OTHERWISE '('E2')' THEN  statement1 FULLSTOP OTHERWISE statement1 FULLSTOP;
 
-cond: variable '<' expr | variable '>' expr  variable '<=' expr | variable '>=' expr | variable 'greater than equals' expr | variable 'less than equals' expr;
+statement1 : statement
+        | E ;
 
-run_statements: variable '=' expr;
+        E    : ID'='E
+      | E'+'E
+      | E'-'E
+      | E'*'E
+      | E'/'E
+      | E'<'E
+      | E'>'E
+      | E LE E
+      | E GE E
+      | E LT E
+      | E  GT E
+      | E EQ E
+      | E NE E
+      | E OR E
+      | E AND E
+      | ID
+      | DIGIT
 
-expr: expr '+' expr | expr '-' expr | expr '*' expr | expr '/' expr | '(' expr ')' | variable;
-
-//variable : ID;
+      E2  : E'<'E
+      | E'>'E
+      | E LT E
+      | E GT E
+      | E LE E
+      | E GE E
+      | E EQ E
+      | E NE E
+      | E OR E
+      | E AND E
+      | ID
+      | DIGIT
+      ;
 
 repeat_statement: REPEAT variable initialization termination incrementation statements done | REPEAT COLON statements done ;
 
@@ -94,6 +117,7 @@ void yyerror(char *s) {
 }
 
 int main(void) {
+     printf("Enter the code: ");
  yyparse();
  return 0;
 } 

@@ -20,7 +20,7 @@ DATATYPE                "num"|"string"|"com"|"flag"|"data"
 CONTROLSTATEMENT        "if"|"otherwise"|"leave"|"then
 FUNCTIONS               "note"|"send"|"call"
 IOCOMMAND               "display"|"get"
-RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"
+RELATIONAL              "="|">"|"<"|">="|"<="|"!"|"equals"|"greater than"|"less than"|"less than or equals"|"greater than or equals"|"not equals"|"or"|"&"| "and"| 
 ARITHMETIC              "+"|"-"|"*"|"/"|"%"|"plus"|"minus"|"into"|"dividedby"|"remainder"|"inc by"|"dec by"
 ASSIGNMENT              "is"
 LOGICAL                 "or"|"and"
@@ -56,14 +56,18 @@ TO                      "to"
 "if"                                                         {return IF;};
 "otherwise"                                                  {return OTHERWISE;};
 "then"                                                       {return THEN;};
-{NUMBERCONST}                                                {return NUMBERCONST;};
+{NUMBERCONST}                                                {return NUMBERCONST}
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
-{LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
-{}
+{LETTER_}{{DIGIT}|{LETTER_}}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
+{ "=" | {equals}}                               {printf("Relational Operators : %s\n",yytext);return  EQ;};
+{">"  | {greater than}}                         {printf("Relational Operators : %s\n",yytext);return GT;};
+{"<" | {less than}}                                     {printf("Relational Operators : %s\n",yytext);return LT;};
+{ "!" | {not equals}}                                    {printf("Relational Operators : %s\n",yytext);return NE;};
+{">="  | {greater than or equals} }       {printf("Relational Operators : %s\n",yytext);return GE;};
+{"<="  | {less than or equals}  }            {printf("Relational Operators : %s\n",yytext);return LE};;
+ "or"                                                                        {printf("Relational Operators : %s\n",yytext);return OR;};
+{"&" | { and}}                                                             {printf("Relational Operators : %s\n",yytext);return AND;};
 "\n"                                                         { lineno += 1; };
 [ \t\r\f]+	                                                 {}
-  
-
-
-%%
+  %%
