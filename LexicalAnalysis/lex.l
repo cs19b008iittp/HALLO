@@ -9,7 +9,6 @@
 DIGIT                   [0-9]
 LETTER                  [A-Za-z]
 LETTER_                 [A-Za-z_]
-ID                      [A-Za-z][A-Za-z_0-9]+
 CONTAINER               {DATATYPE}"s"
 NUMBERCONST             {DIGIT}* 
 FLOATCONST              {DIGIT}+"."+{DIGIT}{DIGIT}
@@ -57,7 +56,6 @@ TO                      "to"
 "if"                                                         {return IF;};
 "otherwise"                                                  {return OTHERWISE;};
 "then"                                                       {return THEN;};
-{ID}                                                         {return ID;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 {ASSIGNMENT}                                              	 {printf("Assignment Operators : %s\n",yytext); return (ASSIGNMENT);};
