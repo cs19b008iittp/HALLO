@@ -26,8 +26,8 @@ ASSIGNMENT              "is"
 LOGICAL                 "or"|"and"
 START                   "start"
 END                     "end"
-FULLSTOP                 "."
-COMMA                     ","
+FULLSTOP                "."
+COMMA                   ","
 COLON                   ":"
 DONE                    "done"
 REPEAT                  "repeat"
@@ -40,9 +40,9 @@ TO                      "to"
 {DATATYPE}                                                   {return TYPE;};
 {CONTAINER}                                                  {return CONTAINER;};
 "matrix"                                                     {return MATRIX;};
-{START}                                               	     {return START;};
-{END}                                              	     {return END;};
-{COMMA}                                            	     {return COMMA;};
+{START}                                               	    {return START;};
+{END}                                              	       {return END;};
+{COMMA}                                            	       {return COMMA;};
 {COLON}                                                      {return COLON;};
 {FULLSTOP}                                                   {return FULLSTOP;};
 {DONE}                                                       {return DONE;};
@@ -71,12 +71,12 @@ TO                      "to"
 "leave"                                                      {return LEAVE;};
 "\n"                                                         { lineno += 1; };  
 {COMMENTS}                                               	 ;
-{DELIMITERS}                                          	         ;
+{DELIMITERS}                                          	    ;
 {RELATIONAL}                                                 {return RELATIONAL;};
 {ARITHMETIC}                                                 {return ARITHMETIC;};
 {ASSIGNMENT}                                                 {return (ASSIGNMENT);};
 {LOGICAL}                                                    {return LOGICAL;};
-{STRCONST}                                                  {return STRCONST;};
+{STRCONST}                                                   {return STRCONST;};
 {SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);};
 {LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
 

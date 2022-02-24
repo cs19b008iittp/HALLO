@@ -1,5 +1,5 @@
 parser: y.tab.c lex.yy.c y.tab.h
-	gcc y.tab.c lex.yy.c -ll -ly -o parser
+	gcc y.tab.c lex.yy.c -ll -o parser
 lex.yy.c: ./LexicalAnalysis/lex.l
 	lex ./LexicalAnalysis/lex.l
 y.tab.c: ./SyntaxAnalysis/parser.y
