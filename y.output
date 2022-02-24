@@ -44,8 +44,8 @@ Grammar
    14 matnames: matnames NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST BY NUMBERCONST
    15         | variable NUMBERCONST BY NUMBERCONST
 
-   16 contnames: names COMMA variable
-   17          | variable
+   16 contnames: names COMMA varconst
+   17          | varconst
 
    18 init: variable ASSIGNMENT constant
 
@@ -58,46 +58,122 @@ Grammar
    23          | repeat_statement
    24          | assignment FULLSTOP
    25          | function_call FULLSTOP
+   26          | array_state FULLSTOP
+   27          | print FULLSTOP
+   28          | get FULLSTOP
+   29          | leave FULLSTOP
 
-   26 assignment: variable ASSIGNMENT varconst ARITHMETIC varconst
+   30 print: DISPLAY variable
 
-   27 if_statement: IF cond THEN COLON body done otherwise
+   31 get: GET variable
 
-   28 otherwise: OTHERWISE cond THEN COLON body done otherwise
-   29          | OTHERWISE THEN COLON body done
+   32 leave: LEAVE
 
-   30 cond: varconst RELATIONAL varconst LOGICAL cond
-   31     | varconst RELATIONAL varconst
+   33 assignment: leftside_types ASSIGNMENT rightside_types
 
-   32 varconst: variable
-   33         | constant
+   34 leftside_types: variable assignment_types
+   35               | variable
+   36               | variable assignment_types assignment_types
 
-   34 repeat_statement: REPEAT variable initialization termination incrementation COLON body done
+   37 rightside_types: function_call
+   38                | variable assign_var
+   39                | constant assign_const
+   40                | size
+   41                | STRCONST
 
-   35 initialization: FROM varconst
-   36               | %empty
+   42 assign_var: assignment_types
+   43           | ARITHMETIC varconst
+   44           | assignment_types assignment_types
+   45           | %empty
 
-   37 termination: TO varconst
-   38            | %empty
+   46 assign_const: ARITHMETIC varconst
+   47             | %empty
 
-   39 incrementation: ARITHMETIC varconst
-   40               | %empty
+   48 assignment_types: varconst ARITHMETIC varconst
+   49                 | varconst
 
-   41 done: DONE FULLSTOP
-   42     | FULLSTOP
+   50 size: SIZE OF variable
+   51     | ROWSIZE OF variable
+   52     | COLUMNSIZE OF variable
 
-   43 function_call: CALL variable param FULLSTOP
+   53 array_state: REMOVE FROM variable
+   54            | ADD varconst TO variable
+   55            | DELETE variable varconst
+   56            | CHANGE varconst TO varconst IN variable
 
-   44 functions_optional: functions_optional function_call_outside
-   45                   | %empty
+   57 if_statement: IF cond THEN COLON body_inside done otherwise
 
-   46 function_call_outside: NOTE ID param COLON body function_end
+   58 otherwise: OTHERWISE cond THEN COLON body_inside done otherwise
+   59          | OTHERWISE THEN COLON body_inside done
 
-   47 param: param COMMA ID
-   48      | ID
+   60 cond: varconst RELATIONAL varconst LOGICAL cond
+   61     | varconst RELATIONAL varconst
 
-   49 function_end: SEND ID FULLSTOP
-   50             | SEND FULLSTOP
+   62 varconst: variable
+   63         | constant
+
+   64 repeat_statement: REPEAT variable initialization termination incrementation COLON body_inside done
+
+   65 initialization: FROM varconst
+   66               | %empty
+
+   67 termination: TO varconst
+   68            | %empty
+
+   69 incrementation: ARITHMETIC varconst
+   70               | %empty
+
+   71 done: DONE FULLSTOP
+   72     | FULLSTOP
+
+   73 function_call: CALL variable param FULLSTOP
+
+   74 functions_optional: functions_optional function_call_outside
+   75                   | %empty
+
+   76 function_call_outside: NOTE ID param COLON body_inside_function function_end
+
+   77 param: param COMMA ID
+   78      | ID
+
+   79 function_end: SEND ID FULLSTOP
+   80             | SEND FULLSTOP
+
+   81 body_inside_function: bodytypes_inside_function body_inside_function
+   82                     | %empty
+
+   83 bodytypes_inside_function: statement_inside_function
+
+   84 statement_inside_function: if_statement
+   85                          | repeat_statement
+   86                          | assignment COMMA
+   87                          | function_call COMMA
+   88                          | array_state COMMA
+   89                          | print COMMA
+   90                          | get COMMA
+   91                          | leave COMMA
+
+   92 body_inside: bodytypes_inside body_inside
+   93            | bodytypes_inside1
+   94            | %empty
+
+   95 bodytypes_inside: statement_inside
+
+   96 statement_inside: if_statement
+   97                 | repeat_statement
+   98                 | assignment COMMA
+   99                 | function_call COMMA
+  100                 | array_state COMMA
+  101                 | print COMMA
+  102                 | get COMMA
+  103                 | leave COMMA
+
+  104 bodytypes_inside1: assignment
+  105                  | function_call
+  106                  | array_state
+  107                  | print
+  108                  | get
+  109                  | leave
 
 
 Terminals, with rules where they appear
@@ -112,134 +188,198 @@ Terminals, with rules where they appear
     error (256)
     START (258) 1
     END (259) 1
-    ASSIGNMENT (260) 18 26
+    ASSIGNMENT (260) 18 33
     NUMBERCONST (261) 14 15 19
     FLOATCONST (262) 20
     CONTAINER (263) 8
     MATRIX (264) 9
-    ARITHMETIC (265) 26 39
-    RELATIONAL (266) 30 31
-    LOGICAL (267) 30
-    COMMA (268) 10 11 14 16 47
-    FULLSTOP (269) 1 6 24 25 41 42 43 49 50
-    ID (270) 21 46 47 48 49
-    TYPE (271) 7 9
-    COLON (272) 27 28 29 34 46
-    BY (273) 14 15
-    REPEAT (274) 34
-    FROM (275) 35
-    TO (276) 37
-    DONE (277) 41
-    NOTE (278) 46
-    SEND (279) 49 50
-    CALL (280) 43
-    DIGIT (281)
-    IF (282) 27
-    OTHERWISE (283) 28 29
-    THEN (284) 27 28 29
-    AND (285)
-    OR (286)
-    LE (287)
-    GE (288)
-    EQ (289)
-    NE (290)
-    LT (291)
-    GT (292)
-    UMINUS (293)
+    STRCONST (265) 41
+    ARITHMETIC (266) 43 46 48 69
+    RELATIONAL (267) 60 61
+    LOGICAL (268) 60
+    COMMA (269) 10 11 14 16 77 86 87 88 89 90 91 98 99 100 101 102 103
+    FULLSTOP (270) 1 6 24 25 26 27 28 29 71 72 73 79 80
+    ID (271) 21 76 77 78 79
+    TYPE (272) 7 9
+    COLON (273) 57 58 59 64 76
+    BY (274) 14 15
+    REPEAT (275) 64
+    FROM (276) 53 65
+    TO (277) 54 56 67
+    DONE (278) 71
+    NOTE (279) 76
+    SEND (280) 79 80
+    CALL (281) 73
+    ADD (282) 54
+    DELETE (283) 55
+    REMOVE (284) 53
+    IN (285) 56
+    OF (286) 50 51 52
+    SIZE (287) 50
+    CHANGE (288) 56
+    ROWSIZE (289) 51
+    COLUMNSIZE (290) 52
+    DIGIT (291)
+    IF (292) 57
+    OTHERWISE (293) 58 59
+    THEN (294) 57 58 59
+    DISPLAY (295) 30
+    GET (296) 31
+    LEAVE (297) 32
+    AND (298)
+    OR (299)
+    LE (300)
+    GE (301)
+    EQ (302)
+    NE (303)
+    LT (304)
+    GT (305)
+    UMINUS (306)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (45)
+    $accept (58)
         on left: 0
-    program (46)
+    program (59)
         on left: 1
         on right: 0
-    body (47)
+    body (60)
         on left: 2 3
-        on right: 1 2 27 28 29 34 46
-    bodytypes (48)
+        on right: 1 2
+    bodytypes (61)
         on left: 4 5
         on right: 2
-    declarations (49)
+    declarations (62)
         on left: 6
         on right: 4
-    declaration (50)
+    declaration (63)
         on left: 7 8 9
         on right: 6
-    names (51)
+    names (64)
         on left: 10 11 12 13
         on right: 7 10 11 16
-    matnames (52)
+    matnames (65)
         on left: 14 15
         on right: 9 14
-    contnames (53)
+    contnames (66)
         on left: 16 17
         on right: 8
-    init (54)
+    init (67)
         on left: 18
         on right: 11 13
-    constant (55)
+    constant (68)
         on left: 19 20
-        on right: 18 33
-    variable (56)
+        on right: 18 39 63
+    variable (69)
         on left: 21
-        on right: 10 12 14 15 16 17 18 26 32 34 43
-    statement (57)
-        on left: 22 23 24 25
+        on right: 10 12 14 15 18 30 31 34 35 36 38 50 51 52 53 54 55 56 62 64 73
+    statement (70)
+        on left: 22 23 24 25 26 27 28 29
         on right: 5
-    assignment (58)
-        on left: 26
-        on right: 24
-    if_statement (59)
-        on left: 27
-        on right: 22
-    otherwise (60)
-        on left: 28 29
-        on right: 27 28
-    cond (61)
-        on left: 30 31
-        on right: 27 28 30
-    varconst (62)
-        on left: 32 33
-        on right: 26 30 31 35 37 39
-    repeat_statement (63)
-        on left: 34
-        on right: 23
-    initialization (64)
-        on left: 35 36
-        on right: 34
-    termination (65)
-        on left: 37 38
-        on right: 34
-    incrementation (66)
-        on left: 39 40
-        on right: 34
-    done (67)
-        on left: 41 42
-        on right: 27 28 29 34
-    function_call (68)
-        on left: 43
-        on right: 25
-    functions_optional (69)
-        on left: 44 45
-        on right: 1 44
-    function_call_outside (70)
-        on left: 46
-        on right: 44
-    param (71)
-        on left: 47 48
-        on right: 43 46 47
-    function_end (72)
-        on left: 49 50
-        on right: 46
+    print (71)
+        on left: 30
+        on right: 27 89 101 107
+    get (72)
+        on left: 31
+        on right: 28 90 102 108
+    leave (73)
+        on left: 32
+        on right: 29 91 103 109
+    assignment (74)
+        on left: 33
+        on right: 24 86 98 104
+    leftside_types (75)
+        on left: 34 35 36
+        on right: 33
+    rightside_types (76)
+        on left: 37 38 39 40 41
+        on right: 33
+    assign_var (77)
+        on left: 42 43 44 45
+        on right: 38
+    assign_const (78)
+        on left: 46 47
+        on right: 39
+    assignment_types (79)
+        on left: 48 49
+        on right: 34 36 42 44
+    size (80)
+        on left: 50 51 52
+        on right: 40
+    array_state (81)
+        on left: 53 54 55 56
+        on right: 26 88 100 106
+    if_statement (82)
+        on left: 57
+        on right: 22 84 96
+    otherwise (83)
+        on left: 58 59
+        on right: 57 58
+    cond (84)
+        on left: 60 61
+        on right: 57 58 60
+    varconst (85)
+        on left: 62 63
+        on right: 16 17 43 46 48 49 54 55 56 60 61 65 67 69
+    repeat_statement (86)
+        on left: 64
+        on right: 23 85 97
+    initialization (87)
+        on left: 65 66
+        on right: 64
+    termination (88)
+        on left: 67 68
+        on right: 64
+    incrementation (89)
+        on left: 69 70
+        on right: 64
+    done (90)
+        on left: 71 72
+        on right: 57 58 59 64
+    function_call (91)
+        on left: 73
+        on right: 25 37 87 99 105
+    functions_optional (92)
+        on left: 74 75
+        on right: 1 74
+    function_call_outside (93)
+        on left: 76
+        on right: 74
+    param (94)
+        on left: 77 78
+        on right: 73 76 77
+    function_end (95)
+        on left: 79 80
+        on right: 76
+    body_inside_function (96)
+        on left: 81 82
+        on right: 76 81
+    bodytypes_inside_function (97)
+        on left: 83
+        on right: 81
+    statement_inside_function (98)
+        on left: 84 85 86 87 88 89 90 91
+        on right: 83
+    body_inside (99)
+        on left: 92 93 94
+        on right: 57 58 59 64 92
+    bodytypes_inside (100)
+        on left: 95
+        on right: 92
+    statement_inside (101)
+        on left: 96 97 98 99 100 101 102 103
+        on right: 95
+    bodytypes_inside1 (102)
+        on left: 104 105 106 107 108 109
+        on right: 93
 
 
 State 0
 
     0 $accept: . program $end
 
-    $default  reduce using rule 45 (functions_optional)
+    $default  reduce using rule 75 (functions_optional)
 
     program             go to state 1
     functions_optional  go to state 2
@@ -255,7 +395,7 @@ State 1
 State 2
 
     1 program: functions_optional . START body END FULLSTOP functions_optional
-   44 functions_optional: functions_optional . function_call_outside
+   74 functions_optional: functions_optional . function_call_outside
 
     START  shift, and go to state 4
     NOTE   shift, and go to state 5
@@ -279,46 +419,62 @@ State 4
     TYPE       shift, and go to state 9
     REPEAT     shift, and go to state 10
     CALL       shift, and go to state 11
-    IF         shift, and go to state 12
+    ADD        shift, and go to state 12
+    DELETE     shift, and go to state 13
+    REMOVE     shift, and go to state 14
+    CHANGE     shift, and go to state 15
+    IF         shift, and go to state 16
+    DISPLAY    shift, and go to state 17
+    GET        shift, and go to state 18
+    LEAVE      shift, and go to state 19
 
     $default  reduce using rule 3 (body)
 
-    body              go to state 13
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
+    body              go to state 20
+    bodytypes         go to state 21
+    declarations      go to state 22
+    declaration       go to state 23
+    variable          go to state 24
+    statement         go to state 25
+    print             go to state 26
+    get               go to state 27
+    leave             go to state 28
+    assignment        go to state 29
+    leftside_types    go to state 30
+    array_state       go to state 31
+    if_statement      go to state 32
+    repeat_statement  go to state 33
+    function_call     go to state 34
 
 
 State 5
 
-   46 function_call_outside: NOTE . ID param COLON body function_end
+   76 function_call_outside: NOTE . ID param COLON body_inside_function function_end
 
-    ID  shift, and go to state 23
+    ID  shift, and go to state 35
 
 
 State 6
 
-   44 functions_optional: functions_optional function_call_outside .
+   74 functions_optional: functions_optional function_call_outside .
 
-    $default  reduce using rule 44 (functions_optional)
+    $default  reduce using rule 74 (functions_optional)
 
 
 State 7
 
     8 declaration: CONTAINER . contnames
 
-    ID  shift, and go to state 8
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
 
-    names      go to state 24
-    contnames  go to state 25
-    init       go to state 26
-    variable   go to state 27
+    names      go to state 38
+    contnames  go to state 39
+    init       go to state 40
+    constant   go to state 41
+    variable   go to state 42
+    varconst   go to state 43
 
 
 State 8
@@ -333,54 +489,121 @@ State 9
     7 declaration: TYPE . names
     9            | TYPE . MATRIX matnames
 
-    MATRIX  shift, and go to state 28
+    MATRIX  shift, and go to state 44
     ID      shift, and go to state 8
 
-    names     go to state 29
-    init      go to state 26
-    variable  go to state 30
+    names     go to state 45
+    init      go to state 40
+    variable  go to state 46
 
 
 State 10
 
-   34 repeat_statement: REPEAT . variable initialization termination incrementation COLON body done
+   64 repeat_statement: REPEAT . variable initialization termination incrementation COLON body_inside done
 
     ID  shift, and go to state 8
 
-    variable  go to state 31
+    variable  go to state 47
 
 
 State 11
 
-   43 function_call: CALL . variable param FULLSTOP
+   73 function_call: CALL . variable param FULLSTOP
 
     ID  shift, and go to state 8
 
-    variable  go to state 32
+    variable  go to state 48
 
 
 State 12
 
-   27 if_statement: IF . cond THEN COLON body done otherwise
+   54 array_state: ADD . varconst TO variable
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    cond      go to state 37
-    varconst  go to state 38
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 50
 
 
 State 13
 
-    1 program: functions_optional START body . END FULLSTOP functions_optional
+   55 array_state: DELETE . variable varconst
 
-    END  shift, and go to state 39
+    ID  shift, and go to state 8
+
+    variable  go to state 51
 
 
 State 14
+
+   53 array_state: REMOVE . FROM variable
+
+    FROM  shift, and go to state 52
+
+
+State 15
+
+   56 array_state: CHANGE . varconst TO varconst IN variable
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 53
+
+
+State 16
+
+   57 if_statement: IF . cond THEN COLON body_inside done otherwise
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    constant  go to state 41
+    variable  go to state 49
+    cond      go to state 54
+    varconst  go to state 55
+
+
+State 17
+
+   30 print: DISPLAY . variable
+
+    ID  shift, and go to state 8
+
+    variable  go to state 56
+
+
+State 18
+
+   31 get: GET . variable
+
+    ID  shift, and go to state 8
+
+    variable  go to state 57
+
+
+State 19
+
+   32 leave: LEAVE .
+
+    $default  reduce using rule 32 (leave)
+
+
+State 20
+
+    1 program: functions_optional START body . END FULLSTOP functions_optional
+
+    END  shift, and go to state 58
+
+
+State 21
 
     2 body: bodytypes . body
 
@@ -389,559 +612,905 @@ State 14
     TYPE       shift, and go to state 9
     REPEAT     shift, and go to state 10
     CALL       shift, and go to state 11
-    IF         shift, and go to state 12
+    ADD        shift, and go to state 12
+    DELETE     shift, and go to state 13
+    REMOVE     shift, and go to state 14
+    CHANGE     shift, and go to state 15
+    IF         shift, and go to state 16
+    DISPLAY    shift, and go to state 17
+    GET        shift, and go to state 18
+    LEAVE      shift, and go to state 19
 
     $default  reduce using rule 3 (body)
 
-    body              go to state 40
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
+    body              go to state 59
+    bodytypes         go to state 21
+    declarations      go to state 22
+    declaration       go to state 23
+    variable          go to state 24
+    statement         go to state 25
+    print             go to state 26
+    get               go to state 27
+    leave             go to state 28
+    assignment        go to state 29
+    leftside_types    go to state 30
+    array_state       go to state 31
+    if_statement      go to state 32
+    repeat_statement  go to state 33
+    function_call     go to state 34
 
 
-State 15
+State 22
 
     4 bodytypes: declarations .
 
     $default  reduce using rule 4 (bodytypes)
 
 
-State 16
+State 23
 
     6 declarations: declaration . FULLSTOP
 
-    FULLSTOP  shift, and go to state 41
+    FULLSTOP  shift, and go to state 60
 
 
-State 17
+State 24
 
-   26 assignment: variable . ASSIGNMENT varconst ARITHMETIC varconst
+   34 leftside_types: variable . assignment_types
+   35               | variable .
+   36               | variable . assignment_types assignment_types
 
-    ASSIGNMENT  shift, and go to state 42
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    $default  reduce using rule 35 (leftside_types)
+
+    constant          go to state 41
+    variable          go to state 49
+    assignment_types  go to state 61
+    varconst          go to state 62
 
 
-State 18
+State 25
 
     5 bodytypes: statement .
 
     $default  reduce using rule 5 (bodytypes)
 
 
-State 19
+State 26
+
+   27 statement: print . FULLSTOP
+
+    FULLSTOP  shift, and go to state 63
+
+
+State 27
+
+   28 statement: get . FULLSTOP
+
+    FULLSTOP  shift, and go to state 64
+
+
+State 28
+
+   29 statement: leave . FULLSTOP
+
+    FULLSTOP  shift, and go to state 65
+
+
+State 29
 
    24 statement: assignment . FULLSTOP
 
-    FULLSTOP  shift, and go to state 43
+    FULLSTOP  shift, and go to state 66
 
 
-State 20
+State 30
+
+   33 assignment: leftside_types . ASSIGNMENT rightside_types
+
+    ASSIGNMENT  shift, and go to state 67
+
+
+State 31
+
+   26 statement: array_state . FULLSTOP
+
+    FULLSTOP  shift, and go to state 68
+
+
+State 32
 
    22 statement: if_statement .
 
     $default  reduce using rule 22 (statement)
 
 
-State 21
+State 33
 
    23 statement: repeat_statement .
 
     $default  reduce using rule 23 (statement)
 
 
-State 22
+State 34
 
    25 statement: function_call . FULLSTOP
 
-    FULLSTOP  shift, and go to state 44
+    FULLSTOP  shift, and go to state 69
 
 
-State 23
+State 35
 
-   46 function_call_outside: NOTE ID . param COLON body function_end
+   76 function_call_outside: NOTE ID . param COLON body_inside_function function_end
 
-    ID  shift, and go to state 45
+    ID  shift, and go to state 70
 
-    param  go to state 46
-
-
-State 24
-
-   10 names: names . COMMA variable
-   11      | names . COMMA init
-   16 contnames: names . COMMA variable
-
-    COMMA  shift, and go to state 47
+    param  go to state 71
 
 
-State 25
-
-    8 declaration: CONTAINER contnames .
-
-    $default  reduce using rule 8 (declaration)
-
-
-State 26
-
-   13 names: init .
-
-    $default  reduce using rule 13 (names)
-
-
-State 27
-
-   12 names: variable .
-   17 contnames: variable .
-   18 init: variable . ASSIGNMENT constant
-
-    ASSIGNMENT  shift, and go to state 48
-
-    FULLSTOP  reduce using rule 17 (contnames)
-    $default  reduce using rule 12 (names)
-
-
-State 28
-
-    9 declaration: TYPE MATRIX . matnames
-
-    ID  shift, and go to state 8
-
-    matnames  go to state 49
-    variable  go to state 50
-
-
-State 29
-
-    7 declaration: TYPE names .
-   10 names: names . COMMA variable
-   11      | names . COMMA init
-
-    COMMA  shift, and go to state 51
-
-    $default  reduce using rule 7 (declaration)
-
-
-State 30
-
-   12 names: variable .
-   18 init: variable . ASSIGNMENT constant
-
-    ASSIGNMENT  shift, and go to state 48
-
-    $default  reduce using rule 12 (names)
-
-
-State 31
-
-   34 repeat_statement: REPEAT variable . initialization termination incrementation COLON body done
-
-    FROM  shift, and go to state 52
-
-    $default  reduce using rule 36 (initialization)
-
-    initialization  go to state 53
-
-
-State 32
-
-   43 function_call: CALL variable . param FULLSTOP
-
-    ID  shift, and go to state 45
-
-    param  go to state 54
-
-
-State 33
+State 36
 
    19 constant: NUMBERCONST .
 
     $default  reduce using rule 19 (constant)
 
 
-State 34
+State 37
 
    20 constant: FLOATCONST .
 
     $default  reduce using rule 20 (constant)
 
 
-State 35
-
-   33 varconst: constant .
-
-    $default  reduce using rule 33 (varconst)
-
-
-State 36
-
-   32 varconst: variable .
-
-    $default  reduce using rule 32 (varconst)
-
-
-State 37
-
-   27 if_statement: IF cond . THEN COLON body done otherwise
-
-    THEN  shift, and go to state 55
-
-
 State 38
 
-   30 cond: varconst . RELATIONAL varconst LOGICAL cond
-   31     | varconst . RELATIONAL varconst
+   10 names: names . COMMA variable
+   11      | names . COMMA init
+   16 contnames: names . COMMA varconst
 
-    RELATIONAL  shift, and go to state 56
+    COMMA  shift, and go to state 72
 
 
 State 39
 
-    1 program: functions_optional START body END . FULLSTOP functions_optional
+    8 declaration: CONTAINER contnames .
 
-    FULLSTOP  shift, and go to state 57
+    $default  reduce using rule 8 (declaration)
 
 
 State 40
+
+   13 names: init .
+
+    $default  reduce using rule 13 (names)
+
+
+State 41
+
+   63 varconst: constant .
+
+    $default  reduce using rule 63 (varconst)
+
+
+State 42
+
+   12 names: variable .
+   18 init: variable . ASSIGNMENT constant
+   62 varconst: variable .
+
+    ASSIGNMENT  shift, and go to state 73
+
+    FULLSTOP  reduce using rule 62 (varconst)
+    $default  reduce using rule 12 (names)
+
+
+State 43
+
+   17 contnames: varconst .
+
+    $default  reduce using rule 17 (contnames)
+
+
+State 44
+
+    9 declaration: TYPE MATRIX . matnames
+
+    ID  shift, and go to state 8
+
+    matnames  go to state 74
+    variable  go to state 75
+
+
+State 45
+
+    7 declaration: TYPE names .
+   10 names: names . COMMA variable
+   11      | names . COMMA init
+
+    COMMA  shift, and go to state 76
+
+    $default  reduce using rule 7 (declaration)
+
+
+State 46
+
+   12 names: variable .
+   18 init: variable . ASSIGNMENT constant
+
+    ASSIGNMENT  shift, and go to state 73
+
+    $default  reduce using rule 12 (names)
+
+
+State 47
+
+   64 repeat_statement: REPEAT variable . initialization termination incrementation COLON body_inside done
+
+    FROM  shift, and go to state 77
+
+    $default  reduce using rule 66 (initialization)
+
+    initialization  go to state 78
+
+
+State 48
+
+   73 function_call: CALL variable . param FULLSTOP
+
+    ID  shift, and go to state 70
+
+    param  go to state 79
+
+
+State 49
+
+   62 varconst: variable .
+
+    $default  reduce using rule 62 (varconst)
+
+
+State 50
+
+   54 array_state: ADD varconst . TO variable
+
+    TO  shift, and go to state 80
+
+
+State 51
+
+   55 array_state: DELETE variable . varconst
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 81
+
+
+State 52
+
+   53 array_state: REMOVE FROM . variable
+
+    ID  shift, and go to state 8
+
+    variable  go to state 82
+
+
+State 53
+
+   56 array_state: CHANGE varconst . TO varconst IN variable
+
+    TO  shift, and go to state 83
+
+
+State 54
+
+   57 if_statement: IF cond . THEN COLON body_inside done otherwise
+
+    THEN  shift, and go to state 84
+
+
+State 55
+
+   60 cond: varconst . RELATIONAL varconst LOGICAL cond
+   61     | varconst . RELATIONAL varconst
+
+    RELATIONAL  shift, and go to state 85
+
+
+State 56
+
+   30 print: DISPLAY variable .
+
+    $default  reduce using rule 30 (print)
+
+
+State 57
+
+   31 get: GET variable .
+
+    $default  reduce using rule 31 (get)
+
+
+State 58
+
+    1 program: functions_optional START body END . FULLSTOP functions_optional
+
+    FULLSTOP  shift, and go to state 86
+
+
+State 59
 
     2 body: bodytypes body .
 
     $default  reduce using rule 2 (body)
 
 
-State 41
+State 60
 
     6 declarations: declaration FULLSTOP .
 
     $default  reduce using rule 6 (declarations)
 
 
-State 42
+State 61
 
-   26 assignment: variable ASSIGNMENT . varconst ARITHMETIC varconst
+   34 leftside_types: variable assignment_types .
+   36               | variable assignment_types . assignment_types
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    varconst  go to state 58
+    $default  reduce using rule 34 (leftside_types)
+
+    constant          go to state 41
+    variable          go to state 49
+    assignment_types  go to state 87
+    varconst          go to state 62
 
 
-State 43
+State 62
+
+   48 assignment_types: varconst . ARITHMETIC varconst
+   49                 | varconst .
+
+    ARITHMETIC  shift, and go to state 88
+
+    $default  reduce using rule 49 (assignment_types)
+
+
+State 63
+
+   27 statement: print FULLSTOP .
+
+    $default  reduce using rule 27 (statement)
+
+
+State 64
+
+   28 statement: get FULLSTOP .
+
+    $default  reduce using rule 28 (statement)
+
+
+State 65
+
+   29 statement: leave FULLSTOP .
+
+    $default  reduce using rule 29 (statement)
+
+
+State 66
 
    24 statement: assignment FULLSTOP .
 
     $default  reduce using rule 24 (statement)
 
 
-State 44
+State 67
+
+   33 assignment: leftside_types ASSIGNMENT . rightside_types
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    STRCONST     shift, and go to state 89
+    ID           shift, and go to state 8
+    CALL         shift, and go to state 11
+    SIZE         shift, and go to state 90
+    ROWSIZE      shift, and go to state 91
+    COLUMNSIZE   shift, and go to state 92
+
+    constant         go to state 93
+    variable         go to state 94
+    rightside_types  go to state 95
+    size             go to state 96
+    function_call    go to state 97
+
+
+State 68
+
+   26 statement: array_state FULLSTOP .
+
+    $default  reduce using rule 26 (statement)
+
+
+State 69
 
    25 statement: function_call FULLSTOP .
 
     $default  reduce using rule 25 (statement)
 
 
-State 45
+State 70
 
-   48 param: ID .
+   78 param: ID .
 
-    $default  reduce using rule 48 (param)
-
-
-State 46
-
-   46 function_call_outside: NOTE ID param . COLON body function_end
-   47 param: param . COMMA ID
-
-    COMMA  shift, and go to state 59
-    COLON  shift, and go to state 60
+    $default  reduce using rule 78 (param)
 
 
-State 47
+State 71
+
+   76 function_call_outside: NOTE ID param . COLON body_inside_function function_end
+   77 param: param . COMMA ID
+
+    COMMA  shift, and go to state 98
+    COLON  shift, and go to state 99
+
+
+State 72
 
    10 names: names COMMA . variable
    11      | names COMMA . init
-   16 contnames: names COMMA . variable
+   16 contnames: names COMMA . varconst
 
-    ID  shift, and go to state 8
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
 
-    init      go to state 61
-    variable  go to state 62
+    init      go to state 100
+    constant  go to state 41
+    variable  go to state 101
+    varconst  go to state 102
 
 
-State 48
+State 73
 
    18 init: variable ASSIGNMENT . constant
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
 
-    constant  go to state 63
+    constant  go to state 103
 
 
-State 49
+State 74
 
     9 declaration: TYPE MATRIX matnames .
    14 matnames: matnames . NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST BY NUMBERCONST
 
-    NUMBERCONST  shift, and go to state 64
+    NUMBERCONST  shift, and go to state 104
 
     $default  reduce using rule 9 (declaration)
 
 
-State 50
+State 75
 
    15 matnames: variable . NUMBERCONST BY NUMBERCONST
 
-    NUMBERCONST  shift, and go to state 65
+    NUMBERCONST  shift, and go to state 105
 
 
-State 51
+State 76
 
    10 names: names COMMA . variable
    11      | names COMMA . init
 
     ID  shift, and go to state 8
 
-    init      go to state 61
-    variable  go to state 66
+    init      go to state 100
+    variable  go to state 106
 
 
-State 52
+State 77
 
-   35 initialization: FROM . varconst
+   65 initialization: FROM . varconst
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    varconst  go to state 67
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 107
 
 
-State 53
+State 78
 
-   34 repeat_statement: REPEAT variable initialization . termination incrementation COLON body done
+   64 repeat_statement: REPEAT variable initialization . termination incrementation COLON body_inside done
 
-    TO  shift, and go to state 68
+    TO  shift, and go to state 108
 
-    $default  reduce using rule 38 (termination)
+    $default  reduce using rule 68 (termination)
 
-    termination  go to state 69
-
-
-State 54
-
-   43 function_call: CALL variable param . FULLSTOP
-   47 param: param . COMMA ID
-
-    COMMA     shift, and go to state 59
-    FULLSTOP  shift, and go to state 70
+    termination  go to state 109
 
 
-State 55
+State 79
 
-   27 if_statement: IF cond THEN . COLON body done otherwise
+   73 function_call: CALL variable param . FULLSTOP
+   77 param: param . COMMA ID
 
-    COLON  shift, and go to state 71
+    COMMA     shift, and go to state 98
+    FULLSTOP  shift, and go to state 110
 
 
-State 56
+State 80
 
-   30 cond: varconst RELATIONAL . varconst LOGICAL cond
-   31     | varconst RELATIONAL . varconst
+   54 array_state: ADD varconst TO . variable
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    ID  shift, and go to state 8
+
+    variable  go to state 111
+
+
+State 81
+
+   55 array_state: DELETE variable varconst .
+
+    $default  reduce using rule 55 (array_state)
+
+
+State 82
+
+   53 array_state: REMOVE FROM variable .
+
+    $default  reduce using rule 53 (array_state)
+
+
+State 83
+
+   56 array_state: CHANGE varconst TO . varconst IN variable
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    varconst  go to state 72
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 112
 
 
-State 57
+State 84
+
+   57 if_statement: IF cond THEN . COLON body_inside done otherwise
+
+    COLON  shift, and go to state 113
+
+
+State 85
+
+   60 cond: varconst RELATIONAL . varconst LOGICAL cond
+   61     | varconst RELATIONAL . varconst
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 114
+
+
+State 86
 
     1 program: functions_optional START body END FULLSTOP . functions_optional
 
-    $default  reduce using rule 45 (functions_optional)
+    $default  reduce using rule 75 (functions_optional)
 
-    functions_optional  go to state 73
-
-
-State 58
-
-   26 assignment: variable ASSIGNMENT varconst . ARITHMETIC varconst
-
-    ARITHMETIC  shift, and go to state 74
+    functions_optional  go to state 115
 
 
-State 59
+State 87
 
-   47 param: param COMMA . ID
+   36 leftside_types: variable assignment_types assignment_types .
 
-    ID  shift, and go to state 75
-
-
-State 60
-
-   46 function_call_outside: NOTE ID param COLON . body function_end
-
-    CONTAINER  shift, and go to state 7
-    ID         shift, and go to state 8
-    TYPE       shift, and go to state 9
-    REPEAT     shift, and go to state 10
-    CALL       shift, and go to state 11
-    IF         shift, and go to state 12
-
-    $default  reduce using rule 3 (body)
-
-    body              go to state 76
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
+    $default  reduce using rule 36 (leftside_types)
 
 
-State 61
+State 88
+
+   48 assignment_types: varconst ARITHMETIC . varconst
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 116
+
+
+State 89
+
+   41 rightside_types: STRCONST .
+
+    $default  reduce using rule 41 (rightside_types)
+
+
+State 90
+
+   50 size: SIZE . OF variable
+
+    OF  shift, and go to state 117
+
+
+State 91
+
+   51 size: ROWSIZE . OF variable
+
+    OF  shift, and go to state 118
+
+
+State 92
+
+   52 size: COLUMNSIZE . OF variable
+
+    OF  shift, and go to state 119
+
+
+State 93
+
+   39 rightside_types: constant . assign_const
+
+    ARITHMETIC  shift, and go to state 120
+
+    $default  reduce using rule 47 (assign_const)
+
+    assign_const  go to state 121
+
+
+State 94
+
+   38 rightside_types: variable . assign_var
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ARITHMETIC   shift, and go to state 122
+    ID           shift, and go to state 8
+
+    $default  reduce using rule 45 (assign_var)
+
+    constant          go to state 41
+    variable          go to state 49
+    assign_var        go to state 123
+    assignment_types  go to state 124
+    varconst          go to state 62
+
+
+State 95
+
+   33 assignment: leftside_types ASSIGNMENT rightside_types .
+
+    $default  reduce using rule 33 (assignment)
+
+
+State 96
+
+   40 rightside_types: size .
+
+    $default  reduce using rule 40 (rightside_types)
+
+
+State 97
+
+   37 rightside_types: function_call .
+
+    $default  reduce using rule 37 (rightside_types)
+
+
+State 98
+
+   77 param: param COMMA . ID
+
+    ID  shift, and go to state 125
+
+
+State 99
+
+   76 function_call_outside: NOTE ID param COLON . body_inside_function function_end
+
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
+
+    $default  reduce using rule 82 (body_inside_function)
+
+    variable                   go to state 24
+    print                      go to state 126
+    get                        go to state 127
+    leave                      go to state 128
+    assignment                 go to state 129
+    leftside_types             go to state 30
+    array_state                go to state 130
+    if_statement               go to state 131
+    repeat_statement           go to state 132
+    function_call              go to state 133
+    body_inside_function       go to state 134
+    bodytypes_inside_function  go to state 135
+    statement_inside_function  go to state 136
+
+
+State 100
 
    11 names: names COMMA init .
 
     $default  reduce using rule 11 (names)
 
 
-State 62
+State 101
 
    10 names: names COMMA variable .
-   16 contnames: names COMMA variable .
    18 init: variable . ASSIGNMENT constant
+   62 varconst: variable .
 
-    ASSIGNMENT  shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 73
 
-    FULLSTOP  reduce using rule 16 (contnames)
+    FULLSTOP  reduce using rule 62 (varconst)
     $default  reduce using rule 10 (names)
 
 
-State 63
+State 102
+
+   16 contnames: names COMMA varconst .
+
+    $default  reduce using rule 16 (contnames)
+
+
+State 103
 
    18 init: variable ASSIGNMENT constant .
 
     $default  reduce using rule 18 (init)
 
 
-State 64
+State 104
 
    14 matnames: matnames NUMBERCONST . BY NUMBERCONST COMMA variable NUMBERCONST BY NUMBERCONST
 
-    BY  shift, and go to state 77
+    BY  shift, and go to state 137
 
 
-State 65
+State 105
 
    15 matnames: variable NUMBERCONST . BY NUMBERCONST
 
-    BY  shift, and go to state 78
+    BY  shift, and go to state 138
 
 
-State 66
+State 106
 
    10 names: names COMMA variable .
    18 init: variable . ASSIGNMENT constant
 
-    ASSIGNMENT  shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 73
 
     $default  reduce using rule 10 (names)
 
 
-State 67
+State 107
 
-   35 initialization: FROM varconst .
+   65 initialization: FROM varconst .
 
-    $default  reduce using rule 35 (initialization)
+    $default  reduce using rule 65 (initialization)
 
 
-State 68
+State 108
 
-   37 termination: TO . varconst
+   67 termination: TO . varconst
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    varconst  go to state 79
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 139
 
 
-State 69
+State 109
 
-   34 repeat_statement: REPEAT variable initialization termination . incrementation COLON body done
+   64 repeat_statement: REPEAT variable initialization termination . incrementation COLON body_inside done
 
-    ARITHMETIC  shift, and go to state 80
+    ARITHMETIC  shift, and go to state 140
 
-    $default  reduce using rule 40 (incrementation)
+    $default  reduce using rule 70 (incrementation)
 
-    incrementation  go to state 81
-
-
-State 70
-
-   43 function_call: CALL variable param FULLSTOP .
-
-    $default  reduce using rule 43 (function_call)
+    incrementation  go to state 141
 
 
-State 71
+State 110
 
-   27 if_statement: IF cond THEN COLON . body done otherwise
+   73 function_call: CALL variable param FULLSTOP .
 
-    CONTAINER  shift, and go to state 7
-    ID         shift, and go to state 8
-    TYPE       shift, and go to state 9
-    REPEAT     shift, and go to state 10
-    CALL       shift, and go to state 11
-    IF         shift, and go to state 12
-
-    $default  reduce using rule 3 (body)
-
-    body              go to state 82
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
+    $default  reduce using rule 73 (function_call)
 
 
-State 72
+State 111
 
-   30 cond: varconst RELATIONAL varconst . LOGICAL cond
-   31     | varconst RELATIONAL varconst .
+   54 array_state: ADD varconst TO variable .
 
-    LOGICAL  shift, and go to state 83
-
-    $default  reduce using rule 31 (cond)
+    $default  reduce using rule 54 (array_state)
 
 
-State 73
+State 112
+
+   56 array_state: CHANGE varconst TO varconst . IN variable
+
+    IN  shift, and go to state 142
+
+
+State 113
+
+   57 if_statement: IF cond THEN COLON . body_inside done otherwise
+
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
+
+    $default  reduce using rule 94 (body_inside)
+
+    variable           go to state 24
+    print              go to state 143
+    get                go to state 144
+    leave              go to state 145
+    assignment         go to state 146
+    leftside_types     go to state 30
+    array_state        go to state 147
+    if_statement       go to state 148
+    repeat_statement   go to state 149
+    function_call      go to state 150
+    body_inside        go to state 151
+    bodytypes_inside   go to state 152
+    statement_inside   go to state 153
+    bodytypes_inside1  go to state 154
+
+
+State 114
+
+   60 cond: varconst RELATIONAL varconst . LOGICAL cond
+   61     | varconst RELATIONAL varconst .
+
+    LOGICAL  shift, and go to state 155
+
+    $default  reduce using rule 61 (cond)
+
+
+State 115
 
     1 program: functions_optional START body END FULLSTOP functions_optional .
-   44 functions_optional: functions_optional . function_call_outside
+   74 functions_optional: functions_optional . function_call_outside
 
     NOTE  shift, and go to state 5
 
@@ -950,413 +1519,885 @@ State 73
     function_call_outside  go to state 6
 
 
-State 74
+State 116
 
-   26 assignment: variable ASSIGNMENT varconst ARITHMETIC . varconst
+   48 assignment_types: varconst ARITHMETIC varconst .
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    $default  reduce using rule 48 (assignment_types)
+
+
+State 117
+
+   50 size: SIZE OF . variable
+
+    ID  shift, and go to state 8
+
+    variable  go to state 156
+
+
+State 118
+
+   51 size: ROWSIZE OF . variable
+
+    ID  shift, and go to state 8
+
+    variable  go to state 157
+
+
+State 119
+
+   52 size: COLUMNSIZE OF . variable
+
+    ID  shift, and go to state 8
+
+    variable  go to state 158
+
+
+State 120
+
+   46 assign_const: ARITHMETIC . varconst
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    varconst  go to state 84
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 159
 
 
-State 75
+State 121
 
-   47 param: param COMMA ID .
+   39 rightside_types: constant assign_const .
 
-    $default  reduce using rule 47 (param)
-
-
-State 76
-
-   46 function_call_outside: NOTE ID param COLON body . function_end
-
-    SEND  shift, and go to state 85
-
-    function_end  go to state 86
+    $default  reduce using rule 39 (rightside_types)
 
 
-State 77
+State 122
+
+   43 assign_var: ARITHMETIC . varconst
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 160
+
+
+State 123
+
+   38 rightside_types: variable assign_var .
+
+    $default  reduce using rule 38 (rightside_types)
+
+
+State 124
+
+   42 assign_var: assignment_types .
+   44           | assignment_types . assignment_types
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
+    ID           shift, and go to state 8
+
+    $default  reduce using rule 42 (assign_var)
+
+    constant          go to state 41
+    variable          go to state 49
+    assignment_types  go to state 161
+    varconst          go to state 62
+
+
+State 125
+
+   77 param: param COMMA ID .
+
+    $default  reduce using rule 77 (param)
+
+
+State 126
+
+   89 statement_inside_function: print . COMMA
+
+    COMMA  shift, and go to state 162
+
+
+State 127
+
+   90 statement_inside_function: get . COMMA
+
+    COMMA  shift, and go to state 163
+
+
+State 128
+
+   91 statement_inside_function: leave . COMMA
+
+    COMMA  shift, and go to state 164
+
+
+State 129
+
+   86 statement_inside_function: assignment . COMMA
+
+    COMMA  shift, and go to state 165
+
+
+State 130
+
+   88 statement_inside_function: array_state . COMMA
+
+    COMMA  shift, and go to state 166
+
+
+State 131
+
+   84 statement_inside_function: if_statement .
+
+    $default  reduce using rule 84 (statement_inside_function)
+
+
+State 132
+
+   85 statement_inside_function: repeat_statement .
+
+    $default  reduce using rule 85 (statement_inside_function)
+
+
+State 133
+
+   87 statement_inside_function: function_call . COMMA
+
+    COMMA  shift, and go to state 167
+
+
+State 134
+
+   76 function_call_outside: NOTE ID param COLON body_inside_function . function_end
+
+    SEND  shift, and go to state 168
+
+    function_end  go to state 169
+
+
+State 135
+
+   81 body_inside_function: bodytypes_inside_function . body_inside_function
+
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
+
+    $default  reduce using rule 82 (body_inside_function)
+
+    variable                   go to state 24
+    print                      go to state 126
+    get                        go to state 127
+    leave                      go to state 128
+    assignment                 go to state 129
+    leftside_types             go to state 30
+    array_state                go to state 130
+    if_statement               go to state 131
+    repeat_statement           go to state 132
+    function_call              go to state 133
+    body_inside_function       go to state 170
+    bodytypes_inside_function  go to state 135
+    statement_inside_function  go to state 136
+
+
+State 136
+
+   83 bodytypes_inside_function: statement_inside_function .
+
+    $default  reduce using rule 83 (bodytypes_inside_function)
+
+
+State 137
 
    14 matnames: matnames NUMBERCONST BY . NUMBERCONST COMMA variable NUMBERCONST BY NUMBERCONST
 
-    NUMBERCONST  shift, and go to state 87
+    NUMBERCONST  shift, and go to state 171
 
 
-State 78
+State 138
 
    15 matnames: variable NUMBERCONST BY . NUMBERCONST
 
-    NUMBERCONST  shift, and go to state 88
+    NUMBERCONST  shift, and go to state 172
 
 
-State 79
+State 139
 
-   37 termination: TO varconst .
+   67 termination: TO varconst .
 
-    $default  reduce using rule 37 (termination)
+    $default  reduce using rule 67 (termination)
 
 
-State 80
+State 140
 
-   39 incrementation: ARITHMETIC . varconst
+   69 incrementation: ARITHMETIC . varconst
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    varconst  go to state 89
+    constant  go to state 41
+    variable  go to state 49
+    varconst  go to state 173
 
 
-State 81
+State 141
 
-   34 repeat_statement: REPEAT variable initialization termination incrementation . COLON body done
+   64 repeat_statement: REPEAT variable initialization termination incrementation . COLON body_inside done
 
-    COLON  shift, and go to state 90
-
-
-State 82
-
-   27 if_statement: IF cond THEN COLON body . done otherwise
-
-    FULLSTOP  shift, and go to state 91
-    DONE      shift, and go to state 92
-
-    done  go to state 93
+    COLON  shift, and go to state 174
 
 
-State 83
+State 142
 
-   30 cond: varconst RELATIONAL varconst LOGICAL . cond
+   56 array_state: CHANGE varconst TO varconst IN . variable
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    ID  shift, and go to state 8
+
+    variable  go to state 175
+
+
+State 143
+
+  101 statement_inside: print . COMMA
+  107 bodytypes_inside1: print .
+
+    COMMA  shift, and go to state 176
+
+    $default  reduce using rule 107 (bodytypes_inside1)
+
+
+State 144
+
+  102 statement_inside: get . COMMA
+  108 bodytypes_inside1: get .
+
+    COMMA  shift, and go to state 177
+
+    $default  reduce using rule 108 (bodytypes_inside1)
+
+
+State 145
+
+  103 statement_inside: leave . COMMA
+  109 bodytypes_inside1: leave .
+
+    COMMA  shift, and go to state 178
+
+    $default  reduce using rule 109 (bodytypes_inside1)
+
+
+State 146
+
+   98 statement_inside: assignment . COMMA
+  104 bodytypes_inside1: assignment .
+
+    COMMA  shift, and go to state 179
+
+    $default  reduce using rule 104 (bodytypes_inside1)
+
+
+State 147
+
+  100 statement_inside: array_state . COMMA
+  106 bodytypes_inside1: array_state .
+
+    COMMA  shift, and go to state 180
+
+    $default  reduce using rule 106 (bodytypes_inside1)
+
+
+State 148
+
+   96 statement_inside: if_statement .
+
+    $default  reduce using rule 96 (statement_inside)
+
+
+State 149
+
+   97 statement_inside: repeat_statement .
+
+    $default  reduce using rule 97 (statement_inside)
+
+
+State 150
+
+   99 statement_inside: function_call . COMMA
+  105 bodytypes_inside1: function_call .
+
+    COMMA  shift, and go to state 181
+
+    $default  reduce using rule 105 (bodytypes_inside1)
+
+
+State 151
+
+   57 if_statement: IF cond THEN COLON body_inside . done otherwise
+
+    FULLSTOP  shift, and go to state 182
+    DONE      shift, and go to state 183
+
+    done  go to state 184
+
+
+State 152
+
+   92 body_inside: bodytypes_inside . body_inside
+
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
+
+    $default  reduce using rule 94 (body_inside)
+
+    variable           go to state 24
+    print              go to state 143
+    get                go to state 144
+    leave              go to state 145
+    assignment         go to state 146
+    leftside_types     go to state 30
+    array_state        go to state 147
+    if_statement       go to state 148
+    repeat_statement   go to state 149
+    function_call      go to state 150
+    body_inside        go to state 185
+    bodytypes_inside   go to state 152
+    statement_inside   go to state 153
+    bodytypes_inside1  go to state 154
+
+
+State 153
+
+   95 bodytypes_inside: statement_inside .
+
+    $default  reduce using rule 95 (bodytypes_inside)
+
+
+State 154
+
+   93 body_inside: bodytypes_inside1 .
+
+    $default  reduce using rule 93 (body_inside)
+
+
+State 155
+
+   60 cond: varconst RELATIONAL varconst LOGICAL . cond
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
 
-    constant  go to state 35
-    variable  go to state 36
-    cond      go to state 94
-    varconst  go to state 38
+    constant  go to state 41
+    variable  go to state 49
+    cond      go to state 186
+    varconst  go to state 55
 
 
-State 84
+State 156
 
-   26 assignment: variable ASSIGNMENT varconst ARITHMETIC varconst .
+   50 size: SIZE OF variable .
 
-    $default  reduce using rule 26 (assignment)
-
-
-State 85
-
-   49 function_end: SEND . ID FULLSTOP
-   50             | SEND . FULLSTOP
-
-    FULLSTOP  shift, and go to state 95
-    ID        shift, and go to state 96
+    $default  reduce using rule 50 (size)
 
 
-State 86
+State 157
 
-   46 function_call_outside: NOTE ID param COLON body function_end .
+   51 size: ROWSIZE OF variable .
 
-    $default  reduce using rule 46 (function_call_outside)
+    $default  reduce using rule 51 (size)
 
 
-State 87
+State 158
+
+   52 size: COLUMNSIZE OF variable .
+
+    $default  reduce using rule 52 (size)
+
+
+State 159
+
+   46 assign_const: ARITHMETIC varconst .
+
+    $default  reduce using rule 46 (assign_const)
+
+
+State 160
+
+   43 assign_var: ARITHMETIC varconst .
+
+    $default  reduce using rule 43 (assign_var)
+
+
+State 161
+
+   44 assign_var: assignment_types assignment_types .
+
+    $default  reduce using rule 44 (assign_var)
+
+
+State 162
+
+   89 statement_inside_function: print COMMA .
+
+    $default  reduce using rule 89 (statement_inside_function)
+
+
+State 163
+
+   90 statement_inside_function: get COMMA .
+
+    $default  reduce using rule 90 (statement_inside_function)
+
+
+State 164
+
+   91 statement_inside_function: leave COMMA .
+
+    $default  reduce using rule 91 (statement_inside_function)
+
+
+State 165
+
+   86 statement_inside_function: assignment COMMA .
+
+    $default  reduce using rule 86 (statement_inside_function)
+
+
+State 166
+
+   88 statement_inside_function: array_state COMMA .
+
+    $default  reduce using rule 88 (statement_inside_function)
+
+
+State 167
+
+   87 statement_inside_function: function_call COMMA .
+
+    $default  reduce using rule 87 (statement_inside_function)
+
+
+State 168
+
+   79 function_end: SEND . ID FULLSTOP
+   80             | SEND . FULLSTOP
+
+    FULLSTOP  shift, and go to state 187
+    ID        shift, and go to state 188
+
+
+State 169
+
+   76 function_call_outside: NOTE ID param COLON body_inside_function function_end .
+
+    $default  reduce using rule 76 (function_call_outside)
+
+
+State 170
+
+   81 body_inside_function: bodytypes_inside_function body_inside_function .
+
+    $default  reduce using rule 81 (body_inside_function)
+
+
+State 171
 
    14 matnames: matnames NUMBERCONST BY NUMBERCONST . COMMA variable NUMBERCONST BY NUMBERCONST
 
-    COMMA  shift, and go to state 97
+    COMMA  shift, and go to state 189
 
 
-State 88
+State 172
 
    15 matnames: variable NUMBERCONST BY NUMBERCONST .
 
     $default  reduce using rule 15 (matnames)
 
 
-State 89
+State 173
 
-   39 incrementation: ARITHMETIC varconst .
+   69 incrementation: ARITHMETIC varconst .
 
-    $default  reduce using rule 39 (incrementation)
-
-
-State 90
-
-   34 repeat_statement: REPEAT variable initialization termination incrementation COLON . body done
-
-    CONTAINER  shift, and go to state 7
-    ID         shift, and go to state 8
-    TYPE       shift, and go to state 9
-    REPEAT     shift, and go to state 10
-    CALL       shift, and go to state 11
-    IF         shift, and go to state 12
-
-    $default  reduce using rule 3 (body)
-
-    body              go to state 98
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
+    $default  reduce using rule 69 (incrementation)
 
 
-State 91
+State 174
 
-   42 done: FULLSTOP .
+   64 repeat_statement: REPEAT variable initialization termination incrementation COLON . body_inside done
 
-    $default  reduce using rule 42 (done)
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
 
+    $default  reduce using rule 94 (body_inside)
 
-State 92
-
-   41 done: DONE . FULLSTOP
-
-    FULLSTOP  shift, and go to state 99
-
-
-State 93
-
-   27 if_statement: IF cond THEN COLON body done . otherwise
-
-    OTHERWISE  shift, and go to state 100
-
-    otherwise  go to state 101
-
-
-State 94
-
-   30 cond: varconst RELATIONAL varconst LOGICAL cond .
-
-    $default  reduce using rule 30 (cond)
-
-
-State 95
-
-   50 function_end: SEND FULLSTOP .
-
-    $default  reduce using rule 50 (function_end)
+    variable           go to state 24
+    print              go to state 143
+    get                go to state 144
+    leave              go to state 145
+    assignment         go to state 146
+    leftside_types     go to state 30
+    array_state        go to state 147
+    if_statement       go to state 148
+    repeat_statement   go to state 149
+    function_call      go to state 150
+    body_inside        go to state 190
+    bodytypes_inside   go to state 152
+    statement_inside   go to state 153
+    bodytypes_inside1  go to state 154
 
 
-State 96
+State 175
 
-   49 function_end: SEND ID . FULLSTOP
+   56 array_state: CHANGE varconst TO varconst IN variable .
 
-    FULLSTOP  shift, and go to state 102
+    $default  reduce using rule 56 (array_state)
 
 
-State 97
+State 176
+
+  101 statement_inside: print COMMA .
+
+    $default  reduce using rule 101 (statement_inside)
+
+
+State 177
+
+  102 statement_inside: get COMMA .
+
+    $default  reduce using rule 102 (statement_inside)
+
+
+State 178
+
+  103 statement_inside: leave COMMA .
+
+    $default  reduce using rule 103 (statement_inside)
+
+
+State 179
+
+   98 statement_inside: assignment COMMA .
+
+    $default  reduce using rule 98 (statement_inside)
+
+
+State 180
+
+  100 statement_inside: array_state COMMA .
+
+    $default  reduce using rule 100 (statement_inside)
+
+
+State 181
+
+   99 statement_inside: function_call COMMA .
+
+    $default  reduce using rule 99 (statement_inside)
+
+
+State 182
+
+   72 done: FULLSTOP .
+
+    $default  reduce using rule 72 (done)
+
+
+State 183
+
+   71 done: DONE . FULLSTOP
+
+    FULLSTOP  shift, and go to state 191
+
+
+State 184
+
+   57 if_statement: IF cond THEN COLON body_inside done . otherwise
+
+    OTHERWISE  shift, and go to state 192
+
+    otherwise  go to state 193
+
+
+State 185
+
+   92 body_inside: bodytypes_inside body_inside .
+
+    $default  reduce using rule 92 (body_inside)
+
+
+State 186
+
+   60 cond: varconst RELATIONAL varconst LOGICAL cond .
+
+    $default  reduce using rule 60 (cond)
+
+
+State 187
+
+   80 function_end: SEND FULLSTOP .
+
+    $default  reduce using rule 80 (function_end)
+
+
+State 188
+
+   79 function_end: SEND ID . FULLSTOP
+
+    FULLSTOP  shift, and go to state 194
+
+
+State 189
 
    14 matnames: matnames NUMBERCONST BY NUMBERCONST COMMA . variable NUMBERCONST BY NUMBERCONST
 
     ID  shift, and go to state 8
 
-    variable  go to state 103
+    variable  go to state 195
 
 
-State 98
+State 190
 
-   34 repeat_statement: REPEAT variable initialization termination incrementation COLON body . done
+   64 repeat_statement: REPEAT variable initialization termination incrementation COLON body_inside . done
 
-    FULLSTOP  shift, and go to state 91
-    DONE      shift, and go to state 92
+    FULLSTOP  shift, and go to state 182
+    DONE      shift, and go to state 183
 
-    done  go to state 104
-
-
-State 99
-
-   41 done: DONE FULLSTOP .
-
-    $default  reduce using rule 41 (done)
+    done  go to state 196
 
 
-State 100
+State 191
 
-   28 otherwise: OTHERWISE . cond THEN COLON body done otherwise
-   29          | OTHERWISE . THEN COLON body done
+   71 done: DONE FULLSTOP .
 
-    NUMBERCONST  shift, and go to state 33
-    FLOATCONST   shift, and go to state 34
+    $default  reduce using rule 71 (done)
+
+
+State 192
+
+   58 otherwise: OTHERWISE . cond THEN COLON body_inside done otherwise
+   59          | OTHERWISE . THEN COLON body_inside done
+
+    NUMBERCONST  shift, and go to state 36
+    FLOATCONST   shift, and go to state 37
     ID           shift, and go to state 8
-    THEN         shift, and go to state 105
+    THEN         shift, and go to state 197
 
-    constant  go to state 35
-    variable  go to state 36
-    cond      go to state 106
-    varconst  go to state 38
-
-
-State 101
-
-   27 if_statement: IF cond THEN COLON body done otherwise .
-
-    $default  reduce using rule 27 (if_statement)
+    constant  go to state 41
+    variable  go to state 49
+    cond      go to state 198
+    varconst  go to state 55
 
 
-State 102
+State 193
 
-   49 function_end: SEND ID FULLSTOP .
+   57 if_statement: IF cond THEN COLON body_inside done otherwise .
 
-    $default  reduce using rule 49 (function_end)
+    $default  reduce using rule 57 (if_statement)
 
 
-State 103
+State 194
+
+   79 function_end: SEND ID FULLSTOP .
+
+    $default  reduce using rule 79 (function_end)
+
+
+State 195
 
    14 matnames: matnames NUMBERCONST BY NUMBERCONST COMMA variable . NUMBERCONST BY NUMBERCONST
 
-    NUMBERCONST  shift, and go to state 107
+    NUMBERCONST  shift, and go to state 199
 
 
-State 104
+State 196
 
-   34 repeat_statement: REPEAT variable initialization termination incrementation COLON body done .
+   64 repeat_statement: REPEAT variable initialization termination incrementation COLON body_inside done .
 
-    $default  reduce using rule 34 (repeat_statement)
-
-
-State 105
-
-   29 otherwise: OTHERWISE THEN . COLON body done
-
-    COLON  shift, and go to state 108
+    $default  reduce using rule 64 (repeat_statement)
 
 
-State 106
+State 197
 
-   28 otherwise: OTHERWISE cond . THEN COLON body done otherwise
+   59 otherwise: OTHERWISE THEN . COLON body_inside done
 
-    THEN  shift, and go to state 109
+    COLON  shift, and go to state 200
 
 
-State 107
+State 198
+
+   58 otherwise: OTHERWISE cond . THEN COLON body_inside done otherwise
+
+    THEN  shift, and go to state 201
+
+
+State 199
 
    14 matnames: matnames NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST . BY NUMBERCONST
 
-    BY  shift, and go to state 110
+    BY  shift, and go to state 202
 
 
-State 108
+State 200
 
-   29 otherwise: OTHERWISE THEN COLON . body done
+   59 otherwise: OTHERWISE THEN COLON . body_inside done
 
-    CONTAINER  shift, and go to state 7
-    ID         shift, and go to state 8
-    TYPE       shift, and go to state 9
-    REPEAT     shift, and go to state 10
-    CALL       shift, and go to state 11
-    IF         shift, and go to state 12
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
 
-    $default  reduce using rule 3 (body)
+    $default  reduce using rule 94 (body_inside)
 
-    body              go to state 111
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
-
-
-State 109
-
-   28 otherwise: OTHERWISE cond THEN . COLON body done otherwise
-
-    COLON  shift, and go to state 112
+    variable           go to state 24
+    print              go to state 143
+    get                go to state 144
+    leave              go to state 145
+    assignment         go to state 146
+    leftside_types     go to state 30
+    array_state        go to state 147
+    if_statement       go to state 148
+    repeat_statement   go to state 149
+    function_call      go to state 150
+    body_inside        go to state 203
+    bodytypes_inside   go to state 152
+    statement_inside   go to state 153
+    bodytypes_inside1  go to state 154
 
 
-State 110
+State 201
+
+   58 otherwise: OTHERWISE cond THEN . COLON body_inside done otherwise
+
+    COLON  shift, and go to state 204
+
+
+State 202
 
    14 matnames: matnames NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST BY . NUMBERCONST
 
-    NUMBERCONST  shift, and go to state 113
+    NUMBERCONST  shift, and go to state 205
 
 
-State 111
+State 203
 
-   29 otherwise: OTHERWISE THEN COLON body . done
+   59 otherwise: OTHERWISE THEN COLON body_inside . done
 
-    FULLSTOP  shift, and go to state 91
-    DONE      shift, and go to state 92
+    FULLSTOP  shift, and go to state 182
+    DONE      shift, and go to state 183
 
-    done  go to state 114
-
-
-State 112
-
-   28 otherwise: OTHERWISE cond THEN COLON . body done otherwise
-
-    CONTAINER  shift, and go to state 7
-    ID         shift, and go to state 8
-    TYPE       shift, and go to state 9
-    REPEAT     shift, and go to state 10
-    CALL       shift, and go to state 11
-    IF         shift, and go to state 12
-
-    $default  reduce using rule 3 (body)
-
-    body              go to state 115
-    bodytypes         go to state 14
-    declarations      go to state 15
-    declaration       go to state 16
-    variable          go to state 17
-    statement         go to state 18
-    assignment        go to state 19
-    if_statement      go to state 20
-    repeat_statement  go to state 21
-    function_call     go to state 22
+    done  go to state 206
 
 
-State 113
+State 204
+
+   58 otherwise: OTHERWISE cond THEN COLON . body_inside done otherwise
+
+    ID       shift, and go to state 8
+    REPEAT   shift, and go to state 10
+    CALL     shift, and go to state 11
+    ADD      shift, and go to state 12
+    DELETE   shift, and go to state 13
+    REMOVE   shift, and go to state 14
+    CHANGE   shift, and go to state 15
+    IF       shift, and go to state 16
+    DISPLAY  shift, and go to state 17
+    GET      shift, and go to state 18
+    LEAVE    shift, and go to state 19
+
+    $default  reduce using rule 94 (body_inside)
+
+    variable           go to state 24
+    print              go to state 143
+    get                go to state 144
+    leave              go to state 145
+    assignment         go to state 146
+    leftside_types     go to state 30
+    array_state        go to state 147
+    if_statement       go to state 148
+    repeat_statement   go to state 149
+    function_call      go to state 150
+    body_inside        go to state 207
+    bodytypes_inside   go to state 152
+    statement_inside   go to state 153
+    bodytypes_inside1  go to state 154
+
+
+State 205
 
    14 matnames: matnames NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST BY NUMBERCONST .
 
     $default  reduce using rule 14 (matnames)
 
 
-State 114
+State 206
 
-   29 otherwise: OTHERWISE THEN COLON body done .
+   59 otherwise: OTHERWISE THEN COLON body_inside done .
 
-    $default  reduce using rule 29 (otherwise)
-
-
-State 115
-
-   28 otherwise: OTHERWISE cond THEN COLON body . done otherwise
-
-    FULLSTOP  shift, and go to state 91
-    DONE      shift, and go to state 92
-
-    done  go to state 116
+    $default  reduce using rule 59 (otherwise)
 
 
-State 116
+State 207
 
-   28 otherwise: OTHERWISE cond THEN COLON body done . otherwise
+   58 otherwise: OTHERWISE cond THEN COLON body_inside . done otherwise
 
-    OTHERWISE  shift, and go to state 100
+    FULLSTOP  shift, and go to state 182
+    DONE      shift, and go to state 183
 
-    otherwise  go to state 117
+    done  go to state 208
 
 
-State 117
+State 208
 
-   28 otherwise: OTHERWISE cond THEN COLON body done otherwise .
+   58 otherwise: OTHERWISE cond THEN COLON body_inside done . otherwise
 
-    $default  reduce using rule 28 (otherwise)
+    OTHERWISE  shift, and go to state 192
+
+    otherwise  go to state 209
+
+
+State 209
+
+   58 otherwise: OTHERWISE cond THEN COLON body_inside done otherwise .
+
+    $default  reduce using rule 58 (otherwise)

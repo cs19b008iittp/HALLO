@@ -57,6 +57,18 @@ TO                      "to"
 "if"                                                         {return IF;};
 "otherwise"                                                  {return OTHERWISE;};
 "then"                                                       {return THEN;};
+"add"                                                        {return ADD;};
+"remove"                                                     {return REMOVE;};
+"delete"                                                     {return DELETE;};
+"change"                                                     {return CHANGE;};
+"size"                                                       {return SIZE;};
+"rowsize"                                                    {return ROWSIZE;};
+"columnsize"                                                 {return COLUMNSIZE;};
+"of"                                                         {return OF;};
+"in"                                                         {return IN;};
+"display"                                                    {return DISPLAY;};
+"get"                                                        {return GET;};
+"leave"                                                      {return LEAVE;};
 "\n"                                                         { lineno += 1; };  
 {COMMENTS}                                               	 ;
 {DELIMITERS}                                          	         ;
@@ -64,8 +76,7 @@ TO                      "to"
 {ARITHMETIC}                                                 {return ARITHMETIC;};
 {ASSIGNMENT}                                                 {return (ASSIGNMENT);};
 {LOGICAL}                                                    {return LOGICAL;};
-{CONTROLSTATEMENT}|{FUNCTIONS}|{IOCOMMAND}|{CONTAINER}        {printf("Keywords :  %s\n",yytext);};
-{STRCONST}                                                	 {printf("String Constants : %s\n",yytext);};
+{STRCONST}                                                  {return STRCONST;};
 {SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);};
 {LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
 

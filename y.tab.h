@@ -56,35 +56,48 @@ extern int yydebug;
     FLOATCONST = 262,
     CONTAINER = 263,
     MATRIX = 264,
-    ARITHMETIC = 265,
-    RELATIONAL = 266,
-    LOGICAL = 267,
-    COMMA = 268,
-    FULLSTOP = 269,
-    ID = 270,
-    TYPE = 271,
-    COLON = 272,
-    BY = 273,
-    REPEAT = 274,
-    FROM = 275,
-    TO = 276,
-    DONE = 277,
-    NOTE = 278,
-    SEND = 279,
-    CALL = 280,
-    DIGIT = 281,
-    IF = 282,
-    OTHERWISE = 283,
-    THEN = 284,
-    AND = 285,
-    OR = 286,
-    LE = 287,
-    GE = 288,
-    EQ = 289,
-    NE = 290,
-    LT = 291,
-    GT = 292,
-    UMINUS = 293
+    STRCONST = 265,
+    ARITHMETIC = 266,
+    RELATIONAL = 267,
+    LOGICAL = 268,
+    COMMA = 269,
+    FULLSTOP = 270,
+    ID = 271,
+    TYPE = 272,
+    COLON = 273,
+    BY = 274,
+    REPEAT = 275,
+    FROM = 276,
+    TO = 277,
+    DONE = 278,
+    NOTE = 279,
+    SEND = 280,
+    CALL = 281,
+    ADD = 282,
+    DELETE = 283,
+    REMOVE = 284,
+    IN = 285,
+    OF = 286,
+    SIZE = 287,
+    CHANGE = 288,
+    ROWSIZE = 289,
+    COLUMNSIZE = 290,
+    DIGIT = 291,
+    IF = 292,
+    OTHERWISE = 293,
+    THEN = 294,
+    DISPLAY = 295,
+    GET = 296,
+    LEAVE = 297,
+    AND = 298,
+    OR = 299,
+    LE = 300,
+    GE = 301,
+    EQ = 302,
+    NE = 303,
+    LT = 304,
+    GT = 305,
+    UMINUS = 306
   };
 #endif
 /* Tokens.  */
@@ -95,35 +108,48 @@ extern int yydebug;
 #define FLOATCONST 262
 #define CONTAINER 263
 #define MATRIX 264
-#define ARITHMETIC 265
-#define RELATIONAL 266
-#define LOGICAL 267
-#define COMMA 268
-#define FULLSTOP 269
-#define ID 270
-#define TYPE 271
-#define COLON 272
-#define BY 273
-#define REPEAT 274
-#define FROM 275
-#define TO 276
-#define DONE 277
-#define NOTE 278
-#define SEND 279
-#define CALL 280
-#define DIGIT 281
-#define IF 282
-#define OTHERWISE 283
-#define THEN 284
-#define AND 285
-#define OR 286
-#define LE 287
-#define GE 288
-#define EQ 289
-#define NE 290
-#define LT 291
-#define GT 292
-#define UMINUS 293
+#define STRCONST 265
+#define ARITHMETIC 266
+#define RELATIONAL 267
+#define LOGICAL 268
+#define COMMA 269
+#define FULLSTOP 270
+#define ID 271
+#define TYPE 272
+#define COLON 273
+#define BY 274
+#define REPEAT 275
+#define FROM 276
+#define TO 277
+#define DONE 278
+#define NOTE 279
+#define SEND 280
+#define CALL 281
+#define ADD 282
+#define DELETE 283
+#define REMOVE 284
+#define IN 285
+#define OF 286
+#define SIZE 287
+#define CHANGE 288
+#define ROWSIZE 289
+#define COLUMNSIZE 290
+#define DIGIT 291
+#define IF 292
+#define OTHERWISE 293
+#define THEN 294
+#define DISPLAY 295
+#define GET 296
+#define LEAVE 297
+#define AND 298
+#define OR 299
+#define LE 300
+#define GE 301
+#define EQ 302
+#define NE 303
+#define LT 304
+#define GT 305
+#define UMINUS 306
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
