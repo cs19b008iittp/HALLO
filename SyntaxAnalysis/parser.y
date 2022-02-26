@@ -91,8 +91,6 @@ rightside_types             :       function_call | variable assign_var | consta
 
 assign_var                  :       assignment_types | ARITHMETIC varconst | assignment_types assignment_types |  ;
 
-// arr_var                     :       variable COMMA  arr_var | ;
-
 assign_const                :       ARITHMETIC varconst | ;
 
 assignment_types            :       varconst ARITHMETIC varconst | varconst ;
@@ -153,7 +151,7 @@ function_end                :       SEND ID FULLSTOP | SEND FULLSTOP ;
 
 //body inside for functions
 
-body_inside_function        :       bodytypes_inside_function body_inside_function | ;
+body_inside_function        :       body_inside_function bodytypes_inside_function | ;
 
 bodytypes_inside_function   :       statement_inside_function ;
  
@@ -163,13 +161,10 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 
 //body inside for if and for loops
 
-body_inside                 :       bodytypes_inside body_inside | bodytypes_inside1;
-
-bodytypes_inside            :       statement_inside ;
+body_inside                 :       body_inside statement_inside | ;
  
-statement_inside            :       declarations | if_statement | repeat_statement |  assignment FULLSTOP | function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP | done ;
+statement_inside            :       declarations | if_statement | repeat_statement |  assignment FULLSTOP | function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
 
-bodytypes_inside1           :       assignment | function_call | array_state | print | get | leave;
 
 
 %%

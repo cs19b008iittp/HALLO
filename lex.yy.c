@@ -908,17 +908,17 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 40 "./LexicalAnalysis/lex.l"
-{return TYPE;};
+{printf("datatype: %s\n",yytext);return TYPE;};
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 41 "./LexicalAnalysis/lex.l"
-{return CONTAINER;};
+{printf("container: %s\n",yytext);return CONTAINER;};
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 42 "./LexicalAnalysis/lex.l"
-{return MATRIX;};
+{printf("matrix: %s\n",yytext);return MATRIX;};
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -948,17 +948,17 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 48 "./LexicalAnalysis/lex.l"
-{return DONE;};
+{printf("done: %s\n",yytext);return DONE;};
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 49 "./LexicalAnalysis/lex.l"
-{return CALL;};
+{printf("call: %s\n",yytext);return CALL;};
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 50 "./LexicalAnalysis/lex.l"
-{return REPEAT;};
+{printf("repeat: %s\n",yytext);return REPEAT;};
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
@@ -973,7 +973,7 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 #line 53 "./LexicalAnalysis/lex.l"
-{return NUMBERCONST;};
+{printf("number: %s\n",yytext); return NUMBERCONST;};
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
@@ -998,12 +998,12 @@ YY_RULE_SETUP
 case 19:
 YY_RULE_SETUP
 #line 58 "./LexicalAnalysis/lex.l"
-{return IF;};
+{printf("if: %s\n",yytext);return IF;};
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 59 "./LexicalAnalysis/lex.l"
-{return OTHERWISE;};
+{printf("otherwise: %s\n",yytext);return OTHERWISE;};
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -1058,7 +1058,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 70 "./LexicalAnalysis/lex.l"
-{return DISPLAY;};
+{printf("display: %s\n",yytext);return DISPLAY;};
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
@@ -1068,7 +1068,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 72 "./LexicalAnalysis/lex.l"
-{return LEAVE;};
+{printf("leave: %s\n",yytext); return LEAVE;};
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
@@ -1101,7 +1101,7 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 78 "./LexicalAnalysis/lex.l"
-{return (ASSIGNMENT);};
+{printf("assignment: %s\n",yytext); return (ASSIGNMENT);};
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
@@ -1116,12 +1116,12 @@ YY_RULE_SETUP
 case 42:
 YY_RULE_SETUP
 #line 81 "./LexicalAnalysis/lex.l"
-{printf("Special Characters : %s\n",yytext);};
+{printf("Special Characters: %s\n",yytext);};
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 82 "./LexicalAnalysis/lex.l"
-{printf("Identifier : %s\n",yytext); return ID;};
+{printf("Identifier: %s\n",yytext); return ID;};
 	YY_BREAK
 case 44:
 YY_RULE_SETUP

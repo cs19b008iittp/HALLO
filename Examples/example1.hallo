@@ -1,17 +1,18 @@
 start
-nums arr is 64,34,25,12,22,11,90,69.
-arr is call bubbleSort arr.
+   nums arr is 64,34,25,12,22,11,90,69.
+   arr is call bubbleSort arr.
 end.
 
 note bubbleSort arr:
    num size is size of arr.
    num i,j.
    repeat i from 0 to size - 1 inc by 1:
-	repeat j from 0 to size - i -1 inc by 1:
-                     if arr j greater than nums j+1:
-                               num temp is arr j,
-                               arr j is arr j+1,
-                               arr j+1 is temp.
+      repeat j from 0 to size - i -1 inc by 1:
+         if arr j greater than nums j+1:
+            num temp is arr j.
+            arr j is arr j+1.
+            arr j+1 is temp.
             done.
-     done.
+         done.
+      done.
 send arr.

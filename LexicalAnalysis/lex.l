@@ -43,7 +43,7 @@ TO                      "to"
 {START}                                               	    {return START;};
 {END}                                              	       {return END;};
 {COMMA}                                            	       {return COMMA;};
-{COLON}                                                      {printf("colon: %s\n",yytext);return COLON;};
+{COLON}                                                      {return COLON;};
 {FULLSTOP}                                                   {return FULLSTOP;};
 {DONE}                                                       {printf("done: %s\n",yytext);return DONE;};
 "call"                                                       {printf("call: %s\n",yytext);return CALL;};
