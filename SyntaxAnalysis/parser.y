@@ -87,9 +87,7 @@ rightside_types             :       function_call | variable assign_var | consta
 
 assign_var                  :       assignment_types | ARITHMETIC varconst | assignment_types assignment_types |  ;
 
-
-
-//arr_var                   :       variable COMMA  arr_var | ;
+// arr_var                     :       variable COMMA  arr_var | ;
 
 assign_const                :       ARITHMETIC varconst | ;
 
@@ -109,7 +107,7 @@ array_state                 :       REMOVE FROM variable | ADD varconst TO varia
 
 if_statement                :       IF  cond  THEN COLON body_inside done otherwise;
 
-otherwise                   :       OTHERWISE cond THEN COLON body_inside done otherwise | OTHERWISE THEN COLON body_inside done;
+otherwise                   :       OTHERWISE cond THEN COLON body_inside done otherwise | OTHERWISE COLON body_inside done | ;
 
 cond                        :       varconst RELATIONAL varconst LOGICAL cond | varconst RELATIONAL varconst ; 
 
@@ -155,17 +153,17 @@ body_inside_function        :       bodytypes_inside_function body_inside_functi
 
 bodytypes_inside_function   :       statement_inside_function ;
  
-statement_inside_function   :       if_statement | repeat_statement |  assignment COMMA | function_call COMMA | array_state COMMA | print COMMA | get COMMA | leave COMMA  ;
+statement_inside_function   :       if_statement | repeat_statement |  assignment FULLSTOP | declarations | function_call FULLSTOP | array_state FULLSTOP | print FULLSTOP | get FULLSTOP | leave FULLSTOP | done ;
 
 
 
 //body inside for if and for loops
 
-body_inside                 :       bodytypes_inside body_inside | bodytypes_inside1 | ;
+body_inside                 :       bodytypes_inside body_inside | bodytypes_inside1;
 
 bodytypes_inside            :       statement_inside ;
  
-statement_inside            :       if_statement | repeat_statement |  assignment COMMA | function_call COMMA | array_state COMMA| print COMMA | get COMMA | leave COMMA ;
+statement_inside            :       declarations | if_statement | repeat_statement |  assignment FULLSTOP | function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP | done ;
 
 bodytypes_inside1           :       assignment | function_call | array_state | print | get | leave;
 

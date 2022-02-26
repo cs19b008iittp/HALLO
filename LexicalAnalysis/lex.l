@@ -37,25 +37,25 @@ TO                      "to"
 %option noyywrap
 %%
 
-{DATATYPE}                                                   {return TYPE;};
-{CONTAINER}                                                  {return CONTAINER;};
-"matrix"                                                     {return MATRIX;};
+{DATATYPE}                                                   {printf("datatype: %s\n",yytext);return TYPE;};
+{CONTAINER}                                                  {printf("container: %s\n",yytext);return CONTAINER;};
+"matrix"                                                     {printf("matrix: %s\n",yytext);return MATRIX;};
 {START}                                               	    {return START;};
 {END}                                              	       {return END;};
 {COMMA}                                            	       {return COMMA;};
-{COLON}                                                      {return COLON;};
+{COLON}                                                      {printf("colon: %s\n",yytext);return COLON;};
 {FULLSTOP}                                                   {return FULLSTOP;};
-{DONE}                                                       {return DONE;};
-"call"                                                       {return CALL;};
-{REPEAT}                                                     {return REPEAT;};
+{DONE}                                                       {printf("done: %s\n",yytext);return DONE;};
+"call"                                                       {printf("call: %s\n",yytext);return CALL;};
+{REPEAT}                                                     {printf("repeat: %s\n",yytext);return REPEAT;};
 {FROM}                                                       {return FROM;};
 {TO}                                                         {return TO;};
-{NUMBERCONST}                                                {return NUMBERCONST;};
+{NUMBERCONST}                                                {printf("number: %s\n",yytext); return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
-"if"                                                         {return IF;};
-"otherwise"                                                  {return OTHERWISE;};
+"if"                                                         {printf("if: %s\n",yytext);return IF;};
+"otherwise"                                                  {printf("otherwise: %s\n",yytext);return OTHERWISE;};
 "then"                                                       {return THEN;};
 "add"                                                        {return ADD;};
 "remove"                                                     {return REMOVE;};
@@ -66,19 +66,19 @@ TO                      "to"
 "columnsize"                                                 {return COLUMNSIZE;};
 "of"                                                         {return OF;};
 "in"                                                         {return IN;};
-"display"                                                    {return DISPLAY;};
+"display"                                                    {printf("display: %s\n",yytext);return DISPLAY;};
 "get"                                                        {return GET;};
-"leave"                                                      {return LEAVE;};
+"leave"                                                      {printf("leave: %s\n",yytext); return LEAVE;};
 "\n"                                                         { lineno += 1; };  
 {COMMENTS}                                               	 ;
 {DELIMITERS}                                          	    ;
 {RELATIONAL}                                                 {return RELATIONAL;};
 {ARITHMETIC}                                                 {return ARITHMETIC;};
-{ASSIGNMENT}                                                 {return (ASSIGNMENT);};
+{ASSIGNMENT}                                                 {printf("assignment: %s\n",yytext); return (ASSIGNMENT);};
 {LOGICAL}                                                    {return LOGICAL;};
 {STRCONST}                                                   {return STRCONST;};
-{SPECIALCHARS}                                            	 {printf("Special Characters : %s\n",yytext);};
-{LETTER_}*                                                 	 {printf("Identifier : %s\n",yytext); return ID;};
+{SPECIALCHARS}                                            	 {printf("Special Characters: %s\n",yytext);};
+{LETTER_}*                                                 	 {printf("Identifier: %s\n",yytext); return ID;};
 
 
 
