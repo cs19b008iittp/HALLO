@@ -52,6 +52,7 @@ TO                      "to"
 {TO}                                                         {return TO;};
 {NUMBERCONST}                                                {return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
+"by"                                                         {return BY;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
 "if"                                                         {return IF;};
