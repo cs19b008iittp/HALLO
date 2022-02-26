@@ -52,6 +52,7 @@ TO                      "to"
 {TO}                                                         {return TO;};
 {NUMBERCONST}                                                {printf("number: %s\n",yytext); return NUMBERCONST;};
 {FLOATCONST}                                                 {return FLOATCONST;};
+"by"                                                         {return BY;};
 "note"                                                       {return NOTE;};
 "send"                                                       {return SEND;};
 "if"                                                         {printf("if: %s\n",yytext);return IF;};

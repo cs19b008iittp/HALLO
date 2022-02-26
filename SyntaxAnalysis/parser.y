@@ -45,15 +45,19 @@ bodytypes                   :       declarations | statement ;
 
 declarations                :       declaration FULLSTOP;
 
-declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames ;
+declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames | CONTAINER variable ASSIGNMENT contentries | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
 
 names                       :       names COMMA variable | names COMMA init | variable | init;
 
-matnames                    :       matnames NUMBERCONST BY NUMBERCONST COMMA variable NUMBERCONST BY NUMBERCONST | variable NUMBERCONST BY NUMBERCONST;
+matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST | variable NUMBERCONST BY NUMBERCONST;
 
-contnames                   :       names COMMA varconst | varconst;
+contnames                   :       contnames COMMA variable | variable ;
 
 init                        :       variable ASSIGNMENT constant;
+
+contentries                 :       contentries COMMA constant | constant;
+
+matentries                  :       matentries COMMA constant | constant;
 
 constant                    :       NUMBERCONST | FLOATCONST;
 
