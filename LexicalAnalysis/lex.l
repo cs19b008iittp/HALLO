@@ -14,7 +14,7 @@ NUMBERCONST             {DIGIT}*
 FLOATCONST              {DIGIT}*+"."+{DIGIT}{DIGIT}*
 STRCONST                "\"".*"\""              
 SPECIALCHARS            "["|"]"|"("|")"|"{"|"}"|","|"#"|"*"|"~"|"."
-COMMENTS                "ignore".*|"skip"(.|\n)*"skip"
+COMMENTS                "ignore".*|"skip"(.|\n)*"skip."
 DELIMITERS              "."|[ \n\t]|","
 DATATYPE                "num"|"string"|"com"|"flag"|"data"  
 CONTROLSTATEMENT        "if"|"otherwise"|"repeat"|"leave"|"done"
@@ -72,8 +72,8 @@ TO                      "to"
 "get"                                                        {return GET;};
 "leave"                                                      {printf("leave: %s\n",yytext); return LEAVE;};
 "\n"                                                         { lineno += 1; };  
-{COMMENTS}                                                   ;
-{DELIMITERS}                                          	     ;
+{COMMENTS}                                                   {printf("Comments: %s\n",yytext);};;
+{DELIMITERS}                                          	    ;
 {RELATIONAL}                                                 {return RELATIONAL;};
 {ARITHMETIC}                                                 {return ARITHMETIC;};
 {ASSIGNMENT}                                                 {printf("assignment: %s\n",yytext); return (ASSIGNMENT);};

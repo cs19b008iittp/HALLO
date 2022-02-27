@@ -21,7 +21,7 @@
 
 %token DIGIT IF OTHERWISE THEN 
 
-%token DISPLAY GET LEAVE
+%token DISPLAY GET LEAVE COMMENTS
 
 %right '='
 %left AND OR
@@ -37,7 +37,7 @@ program                     :       functions_optional START body END FULLSTOP f
 
 body                        :       bodytypes body | ;
  
-bodytypes                   :       declarations | statement ;
+bodytypes                   :       declarations | statement;
 
 
 
@@ -75,7 +75,7 @@ statement                   :       if_statement | repeat_statement | assignment
 
 print                       :       DISPLAY constants;
 
-constants		    :       constants COMMA variable | variable ;
+constants		            :       constants COMMA variable | variable ;
 
 get                         :       GET variable ;
 
