@@ -53,7 +53,7 @@ matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBE
 
 contnames                   :       contnames COMMA variable | variable ;
 
-init                        :       variable ASSIGNMENT constant | variable ASSIGNMENT STRCONST ;
+init                        :       variable ASSIGNMENT constant COMMA init| variable ASSIGNMENT STRCONST COMMA init | variable ASSIGNMENT constant | variabe ASSIGNMENT STRCONST;
 
 contentries                 :       contentries COMMA constant | constant;
 
