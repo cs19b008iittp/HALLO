@@ -4,7 +4,8 @@ start
 end.
 
 note bubbleSort arr:
-   num size is size of arr.
+   num size_arr.
+   size_arr is size of arr.
    num i,j.
    repeat i from 0 to size - 1 inc by 1:
       repeat j from 0 to size - i -1 inc by 1:

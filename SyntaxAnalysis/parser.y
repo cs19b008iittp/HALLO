@@ -53,7 +53,7 @@ matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBE
 
 contnames                   :       contnames COMMA variable | variable ;
 
-init                        :       variable ASSIGNMENT constant;
+init                        :       variable ASSIGNMENT constant | variable ASSIGNMENT STRCONST ;
 
 contentries                 :       contentries COMMA constant | constant;
 
@@ -73,7 +73,9 @@ statement                   :       if_statement | repeat_statement | assignment
 
 //print,scan and leave
 
-print                       :       DISPLAY variable ;
+print                       :       DISPLAY constants;
+
+constants		    :       constants COMMA variable | variable ;
 
 get                         :       GET variable ;
 
@@ -95,9 +97,9 @@ assign_const                :       ARITHMETIC varconst | ;
 
 assignment_types            :       varconst ARITHMETIC varconst | varconst ;
 
+  
 
-
-//array statements
+//array statements 
 
 size                        :       SIZE OF variable | ROWSIZE OF variable | COLUMNSIZE OF variable;
 
@@ -133,15 +135,13 @@ done                        :       DONE FULLSTOP | FULLSTOP ;
 
 //function_call
 
-function_call               :       CALL variable param FULLSTOP;
-
-
+function_call               :       CALL variable param | CALL variable;
 
 //functions
 
 functions_optional          :       functions_optional function_call_outside | ;
 
-function_call_outside       :       NOTE ID param COLON body_inside_function function_end;
+function_call_outside       :       NOTE ID param COLON body_inside_function function_end | NOTE ID COLON body_inside_function function_end;
 
 param                       :       param COMMA ID | ID ;
 
@@ -189,5 +189,4 @@ int main(int argc, char* argv[]) {
     }
     yyparse();
     return 0;
-} 
-
+}
