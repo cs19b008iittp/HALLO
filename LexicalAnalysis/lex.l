@@ -54,6 +54,7 @@ TO                      "to"
 {FLOATCONST}                                                 {return FLOATCONST;};
 "by"                                                         {return BY;};
 "note"                                                       {return NOTE;};
+"update"                                                     {return UPDATE;};
 "send"                                                       {return SEND;};
 "if"                                                         {printf("if: %s\n",yytext);return IF;};
 "otherwise"                                                  {printf("otherwise: %s\n",yytext);return OTHERWISE;};

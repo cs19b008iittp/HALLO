@@ -13,7 +13,7 @@
 
 %token COMMA FULLSTOP ID TYPE COLON BY
 
-%token REPEAT FROM TO DONE
+%token REPEAT FROM TO DONE UPDATE
 
 %token NOTE SEND CALL
 
@@ -91,11 +91,11 @@ leftside_types              :       variable assignment_types | variable | varia
 
 rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST ;
 
-assign_var                  :       assignment_types | ARITHMETIC varconst | assignment_types assignment_types |  ;
+assign_var                  :       assignment_types | ARITHMETIC assignment_types | assignment_types assignment_types |  ;
 
-assign_const                :       ARITHMETIC varconst | ;
+assign_const                :       ARITHMETIC assignment_types | ;
 
-assignment_types            :       varconst ARITHMETIC varconst | varconst ;
+assignment_types            :       assignment_types ARITHMETIC varconst | varconst ;
 
   
 
@@ -103,7 +103,7 @@ assignment_types            :       varconst ARITHMETIC varconst | varconst ;
 
 size                        :       SIZE OF variable | ROWSIZE OF variable | COLUMNSIZE OF variable;
 
-array_state                 :       REMOVE FROM variable | ADD varconst TO variable | DELETE variable varconst | CHANGE varconst TO varconst IN variable ;
+array_state                 :       REMOVE FROM variable | ADD rightside_types TO variable | DELETE variable rightside_types | CHANGE rightside_types TO rightside_types IN variable ;
 
 
 
@@ -113,7 +113,7 @@ if_statement                :       IF  cond  THEN COLON body_inside done otherw
 
 otherwise                   :       OTHERWISE cond THEN COLON body_inside done otherwise | OTHERWISE COLON body_inside done | ;
 
-cond                        :       varconst RELATIONAL varconst LOGICAL cond | varconst RELATIONAL varconst ; 
+cond                        :       rightside_types RELATIONAL rightside_types LOGICAL cond | rightside_types RELATIONAL rightside_types ; 
 
 varconst                    :       variable | constant ;
 
@@ -123,11 +123,11 @@ varconst                    :       variable | constant ;
 
 repeat_statement            :       REPEAT variable initialization termination incrementation COLON body_inside done ;
 
-initialization              :       FROM varconst |  ;
+initialization              :       FROM rightside_types |  ;
   
-termination                 :       TO varconst |  ;
+termination                 :       TO rightside_types |  ;
 
-incrementation              :       ARITHMETIC varconst | ;
+incrementation              :       UPDATE ARITHMETIC rightside_types | ;
 
 done                        :       DONE FULLSTOP | FULLSTOP ;
 
