@@ -1,11 +1,3 @@
-start
-   ignore Separate Line
-   nums arr is 64,34,25,12,22,11,90,69.
-   arr is call bubbleSort arr.
-end.
-
-ignore outside
-
 note bubbleSort arr:
    ignore Hello 
    num size_arr.
@@ -22,4 +14,13 @@ note bubbleSort arr:
             done.
          done.
       done.
-send arr.
+   send arr.
+
+ignore outside
+
+start
+   ignore Separate Line
+   nums arr is 64,34,25,12,22,11,90,69.
+   arr is call bubbleSort arr.
+   num l is size of arr.
+end.

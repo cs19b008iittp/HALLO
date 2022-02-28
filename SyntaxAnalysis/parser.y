@@ -45,25 +45,41 @@ bodytypes                   :       declarations | statement;
 
 declarations                :       declaration FULLSTOP;
 
-declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames | CONTAINER variable ASSIGNMENT contentries | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
+declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames ;
 
 names                       :       names COMMA variable | names COMMA init | variable | init;
 
-matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST | variable NUMBERCONST BY NUMBERCONST;
+matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST initmat | variable NUMBERCONST BY NUMBERCONST initmat;
 
-contnames                   :       contnames COMMA variable | variable ;
+contnames                   :       contnames COMMA variable initcont| variable initcont;
 
-init                        :       variable ASSIGNMENT constant | variabe ASSIGNMENT STRCONST;
+init                        :       variable ASSIGNMENT constant | variable ASSIGNMENT STRCONST | variable ASSIGNMENT function_call | variable ASSIGNMENT size ;
 
-contentries                 :       contentries COMMA constant | constant;
+initcont                    :       ASSIGNMENT contentries | ASSIGNMENT function_call | ASSIGNMENT size | ;
 
-matentries                  :       matentries COMMA constant | constant;
+initmat                     :       ASSIGNMENT matentries | ASSIGNMENT function_call | ASSIGNMENT size | ;
 
-constant                    :       NUMBERCONST | FLOATCONST;
+contentries                 :       contentries COMMA constant | constant ;
+
+matentries                  :       matentries COMMA constant | constant ;
+
+constant                    :       NUMBERCONST | FLOATCONST ;
 
 variable                    :       ID ;
 
+//assignment statement
 
+assignment                  :       leftside_types ASSIGNMENT rightside_types ;
+
+leftside_types              :       variable assignment_types | variable | variable assignment_types assignment_types;
+
+rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST ;
+
+assign_var                  :       assignment_types | ARITHMETIC assignment_types | assignment_types assignment_types |  ;
+
+assign_const                :       ARITHMETIC assignment_types | ;
+
+assignment_types            :       assignment_types ARITHMETIC varconst | varconst ;
 
 //statements
 
@@ -80,23 +96,6 @@ constants		            :       constants COMMA variable | variable ;
 get                         :       GET variable ;
 
 leave                       :       LEAVE ;
-
-
-
-//assignment statement
-
-assignment                  :       leftside_types ASSIGNMENT rightside_types ;
-
-leftside_types              :       variable assignment_types | variable | variable assignment_types  assignment_types;
-
-rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST ;
-
-assign_var                  :       assignment_types | ARITHMETIC assignment_types | assignment_types assignment_types |  ;
-
-assign_const                :       ARITHMETIC assignment_types | ;
-
-assignment_types            :       assignment_types ARITHMETIC varconst | varconst ;
-
   
 
 //array statements 
