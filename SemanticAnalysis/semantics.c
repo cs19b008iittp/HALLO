@@ -19,10 +19,9 @@ int hashCode(int key) {
    return key % maxSize;
 }
 
-struct DataItem *searchUsingIdentifier(char* identifier,int key) {
+struct DataItem *searchUsingIdentifier(char* identifier) {
    //get the hash 
-   int hashIndex = hashCode(key);  
-	
+   int hashIndex = 0;
    //move in array until an empty 
    while(symbolTable[hashIndex] != NULL) {
 	
@@ -65,6 +64,12 @@ void insert(char* identifier,char* type,int scope,int key) {
 struct DataItem* delete(struct DataItem* item) {
    int key = item->key;
 
+    emptyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
+    emptyItem->scope = -1;  
+    emptyItem->key = -1; 
+    emptyItem->identifier = "";
+    emptyItem->type = "";
+    
    //get the hash 
    int hashIndex = hashCode(key);
 
@@ -97,21 +102,85 @@ void display() {
       if(symbolTable[i] != NULL)
          printf(" (%d,%s,%s,%d)",symbolTable[i]->key,symbolTable[i]->type,symbolTable[i]->identifier,symbolTable[i]->scope);
       else
-         printf(" ~~ ");
+         break;
    }
 	
    printf("\n");
 }
 
-void set_type(char *name, int data_type, int key){ // set the type of an entry (declaration)
-	/* lookup entry */
-	struct DataItem *l = searchUsingIdentifier(name, key);
-	
-	/* set as type */
-	l->type = data_type;	
-}
-
-int get_type(char *name, int key){ // get the type of an entry
-	struct DataItem *l = searchUsingIdentifier(name, key);
-   return l->type;
+bool checkCorrectAssignment(char* type,char* value)
+{
+      if(strcmp(type,"num")==0)
+      {
+         int dots=0;
+          for(int i=0;value[i]!='\0';i++)
+          {
+             if(value[i] == '.')
+               dots++;
+             else if(value[i]>='0' && value[i]<='9')
+             {
+                continue;
+             }
+             else
+               return false;
+          }
+          if(dots>1)
+             return false;
+          return true;
+      }
+      else if(strcmp(type,"string")==0)
+      {
+         if(value[0]=='"' && value[strlen(value)-1]=='"')
+         {
+            return true;
+         }
+         return false;
+      }
+      else if(strcmp(type,"flag")==0)
+      {
+         if(value=="true" || value=="false")
+         {
+            return true;
+         }
+         return false;
+      }
+      else if(strcmp(type,"com")==0)
+      {
+         int dots = 0;
+         for(int i=0;i<strlen(value);i++)
+          {
+             if(value[i] == ';')
+               break;
+             else if(value[i]>='0' && value[i]<='9')
+             {
+                continue;
+             }
+             else if(value[i] == '.')
+                dots++;
+             else
+               return false;
+          }
+          if(dots<=1)
+          {
+             int dots = 0;
+            for(int i=0;i<strlen(value);i++)
+            {
+               if(value[i] == ';')
+                  break;
+               else if(value[i]>='0' && value[i]<='9')
+               {
+                  continue;
+               }
+               else if(value[i] == '.')
+                  dots++;
+               else
+                  return false;
+          }
+          if(dots>1)
+            return false;
+          return true;
+          }
+      }
+      
+      return false;
 }

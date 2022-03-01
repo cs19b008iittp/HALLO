@@ -1,18 +1,34 @@
 %{
     #include<stdio.h>
     #include<ctype.h>
+    #include <string.h>
     int yylex(void);
     void yyerror(char *); 
-    #include "semantics.c"
-
+    #include "SemanticAnalysis/semantics.c"
+    #include "SemanticAnalysis/type.c"
+    int key = 0;
+    int key_type=0;
+    char* type="";
+    char* container="";
+    char* matrix="";
 %}
 
+%union 
+{
+        char *string;
+        int number;
+}
 
-%token START END ASSIGNMENT NUMBERCONST FLOATCONST CONTAINER MATRIX STRCONST
+%token START END ASSIGNMENT 
 
-%token ARITHMETIC RELATIONAL LOGICAL
+%token <string>NUMBERCONST <string>FLOATCONST CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI
 
-%token COMMA FULLSTOP ID TYPE COLON BY
+%token ARITHMETIC RELATIONAL LOGICAL 
+
+%token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
+
+%type <string> names init variable types_init
+%type <string> constant varconst complex
 
 %token REPEAT FROM TO DONE UPDATE
 
@@ -43,58 +59,106 @@ bodytypes                   :       declarations | statement;
   
 
 //declarations 
-
+ 
 declarations                :       declaration FULLSTOP;
-
+       
 declaration                 :       TYPE names 
-                                    {
+                                    { 
                                         //we have to set the "type" for all entries in names using set_type function
                                         //for loop for all entries in the hash table for names
-                                            //set the type for each entry.
+                                        //set the type for each entry.
+                                        type = $1; 
+                                        //display_Type();
+                                        for(int i=0;i<=key_type-1;i++)
+                                        {     
+                                            if(searchUsingIdentifier(Type[i]->ident) == NULL)
+                                           {
+                                               if(Type[i]->value == "")
+                                               {
+                                                   insert(Type[i]->ident,type,1,key);
+                                                    key++;
+                                               }
+                                               else if(type=="data")
+                                               {
+                                                   bool check=checkCorrectAssignment("num",Type[i]->value)|checkCorrectAssignment("string",Type[i]->value)|checkCorrectAssignment("com",Type[i]->value)|checkCorrectAssignment("flag",Type[i]->value);
+                                               }
+                                               else if(checkCorrectAssignment(type,Type[i]->value))
+                                               {
+                                                    insert(Type[i]->ident,type,1,key);
+                                                    key++;
+                                               }
+                                            }
+                                        }
+                                        deleteAll(key_type);
+                                        key_type = 0;
                                     }
-                                    | CONTAINER contnames | TYPE MATRIX matnames | CONTAINER variable ASSIGNMENT contentries | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
+
+                                    | CONTAINER contnames 
+                                    
+                                    | TYPE MATRIX matnames 
+                                    
+                                    | CONTAINER variable ASSIGNMENT contentries 
+                                    
+                                    | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
 
 names                       :       names COMMA variable 
                                     {
-                                        add_to_names($3);
+                                        insertType($3,"",key_type);
+                                        key_type++;
                                     }
+
                                     | names COMMA init 
-                                    {
-                                        add_to_names($3);
-                                    }
+
                                     | variable 
                                     {
-                                        add_to_names($1);
+                                        insertType($1,"",key_type);
+                                        key_type++;
                                     }
+
                                     | init
+
+                                    ; 
+
+matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST 
+        
+                                    | variable NUMBERCONST BY NUMBERCONST;
+
+contnames                   :       contnames COMMA variable 
+            
+                                    | variable ;
+
+init                        :       variable ASSIGNMENT types_init 
                                     {
-                                        add_to_names($1);
+                                        insertType($1,$3,key_type);
+                                        key_type++;
                                     }
                                     ;
 
-matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST | variable NUMBERCONST BY NUMBERCONST;
+types_init                  :       varconst {$$=$1;}| STRCONST {$$=$1;}| FLAG {$$=$1;}| complex {$$=$1;};
 
-contnames                   :       contnames COMMA variable | variable ;
+contentries                 :       contentries COMMA types_init 
 
-init                        :       variable ASSIGNMENT constant 
+                                    | types_init ;
+
+matentries                  :       matentries COMMA types_init 
+
+                                    | types_init ;
+
+constant                    :       NUMBERCONST {$$ = $1;}
+
+                                   | FLOATCONST {$$ = $1;}
+                                   ;
+
+complex                     :       varconst SEMI varconst  
                                     {
-                                        //do have to store assignment in symbol table?
-                                        $$ = $1
-                                    }
-                                    | variable ASSIGNMENT STRCONST
-                                    {
-                                        //do we have to store the STRCONST value anywhere?
-                                        $$ = $1
+                                        strcat($$,$1);
+                                        strcat($$,";");
+                                        strcat($$,$3);
                                     }
                                     ;
 
-contentries                 :       contentries COMMA constant | constant ;
+variable                    :       ID  {$$ = $1;};
 
-matentries                  :       matentries COMMA constant | constant ;
-
-constant                    :       NUMBERCONST | FLOATCONST ;
-
-variable                    :       ID {$$ = $1};
 
 
 //assignment statement
@@ -103,7 +167,7 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types ;
 
 leftside_types              :       variable assignment_types | variable | variable assignment_types  assignment_types;
 
-rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST ;
+rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST | FLAG | complex;
 
 assign_var                  :       assignment_types | ARITHMETIC assignment_types | assignment_types assignment_types |  ;
 
@@ -112,9 +176,11 @@ assign_const                :       ARITHMETIC assignment_types | ;
 assignment_types            :       assignment_types ARITHMETIC varconst | varconst ;
 
 
+
 //statements
 
 statement                   :       if_statement | repeat_statement | assignment FULLSTOP | function_call FULLSTOP | array_state FULLSTOP | print FULLSTOP | get FULLSTOP | leave FULLSTOP;
+
 
 
 
@@ -131,11 +197,13 @@ inputs                      :       inputs COMMA variable | variable ;
 leave                       :       LEAVE ;
   
 
+
 //array statements 
 
 size                        :       SIZE OF variable | ROWSIZE OF variable | COLUMNSIZE OF variable;
 
 array_state                 :       REMOVE FROM variable | ADD rightside_types TO variable | DELETE variable rightside_types | CHANGE rightside_types TO rightside_types IN variable ;
+
 
 
 
@@ -147,7 +215,10 @@ otherwise                   :       OTHERWISE cond THEN COLON body_inside done o
 
 cond                        :       rightside_types RELATIONAL rightside_types LOGICAL cond | rightside_types RELATIONAL rightside_types ; 
 
-varconst                    :       variable | constant ;
+varconst                    :       variable {$$ = $1;};
+
+                                    | constant {$$ = $1;};
+
 
 
 
@@ -165,9 +236,11 @@ done                        :       DONE FULLSTOP | FULLSTOP ;
 
 
 
+
 //function_call
 
 function_call               :       CALL variable param | CALL variable;
+
 
 
 //functions
@@ -182,6 +255,7 @@ function_end                :       SEND ID FULLSTOP | SEND FULLSTOP ;
 
 
 
+
 //body inside for functions
 
 body_inside_function        :       body_inside_function bodytypes_inside_function | ;
@@ -189,6 +263,7 @@ body_inside_function        :       body_inside_function bodytypes_inside_functi
 bodytypes_inside_function   :       statement_inside_function ;
  
 statement_inside_function   :       if_statement | repeat_statement |  assignment FULLSTOP | declarations | function_call FULLSTOP | array_state FULLSTOP | print FULLSTOP | get FULLSTOP | leave FULLSTOP | done ;
+
 
 
 
@@ -209,7 +284,7 @@ void yyerror(char *s) {
 }
 
 
-void add_to_names(DataItem name){
+void add_to_names(char* name){
 	insert(name,"",-1,-1);
 }
 
@@ -217,11 +292,6 @@ void add_to_names(DataItem name){
 
 int main(int argc, char* argv[]) {
     extern FILE *yyin;
-    emptyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
-    emptyItem->scope = -1;  
-    emptyItem->key = -1; 
-    emptyItem->identifier = "";
-    emptyItem->type = "";
 
    //for insert order is identifier,type,scope,key
    //insert("hello","num",1,1);
@@ -240,5 +310,6 @@ int main(int argc, char* argv[]) {
         printf("Enter the code: \n");
     }
     yyparse();
+    display();
     return 0;
 }
