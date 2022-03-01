@@ -24,7 +24,7 @@
 %token DISPLAY GET LEAVE COMMENTS
 
 %right '='
-%left AND OR
+%left AND OR 
 %left LE GE EQ NE
 %left  LT GT
 %left '+''-'
@@ -45,19 +45,15 @@ bodytypes                   :       declarations | statement;
 
 declarations                :       declaration FULLSTOP;
 
-declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames ;
+declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames | CONTAINER variable ASSIGNMENT contentries | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
 
 names                       :       names COMMA variable | names COMMA init | variable | init;
 
-matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST initmat | variable NUMBERCONST BY NUMBERCONST initmat;
+matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST | variable NUMBERCONST BY NUMBERCONST;
 
-contnames                   :       contnames COMMA variable initcont| variable initcont;
+contnames                   :       contnames COMMA variable | variable ;
 
-init                        :       variable ASSIGNMENT constant | variable ASSIGNMENT STRCONST | variable ASSIGNMENT function_call | variable ASSIGNMENT size ;
-
-initcont                    :       ASSIGNMENT contentries | ASSIGNMENT function_call | ASSIGNMENT size | ;
-
-initmat                     :       ASSIGNMENT matentries | ASSIGNMENT function_call | ASSIGNMENT size | ;
+init                        :       variable ASSIGNMENT constant | variable ASSIGNMENT STRCONST;
 
 contentries                 :       contentries COMMA constant | constant ;
 
@@ -71,7 +67,7 @@ variable                    :       ID ;
 
 assignment                  :       leftside_types ASSIGNMENT rightside_types ;
 
-leftside_types              :       variable assignment_types | variable | variable assignment_types assignment_types;
+leftside_types              :       variable assignment_types | variable | variable assignment_types  assignment_types;
 
 rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST ;
 

@@ -22,5 +22,4 @@ start
    ignore Separate Line
    nums arr is 64,34,25,12,22,11,90,69.
    arr is call bubbleSort arr.
-   num l is size of arr.
 end.
