@@ -46,15 +46,47 @@ bodytypes                   :       declarations | statement;
 
 declarations                :       declaration FULLSTOP;
 
-declaration                 :       TYPE names | CONTAINER contnames | TYPE MATRIX matnames | CONTAINER variable ASSIGNMENT contentries | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
+declaration                 :       TYPE names 
+                                    {
+                                        //we have to set the "type" for all entries in names using set_type function
+                                        //for loop for all entries in the hash table for names
+                                            //set the type for each entry.
+                                    }
+                                    | CONTAINER contnames | TYPE MATRIX matnames | CONTAINER variable ASSIGNMENT contentries | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
 
-names                       :       names COMMA variable | names COMMA init | variable | init;
+names                       :       names COMMA variable 
+                                    {
+                                        add_to_names($3);
+                                    }
+                                    | names COMMA init 
+                                    {
+                                        add_to_names($3);
+                                    }
+                                    | variable 
+                                    {
+                                        add_to_names($1);
+                                    }
+                                    | init
+                                    {
+                                        add_to_names($1);
+                                    }
+                                    ;
 
 matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST | variable NUMBERCONST BY NUMBERCONST;
 
 contnames                   :       contnames COMMA variable | variable ;
 
-init                        :       variable ASSIGNMENT constant | variable ASSIGNMENT STRCONST;
+init                        :       variable ASSIGNMENT constant 
+                                    {
+                                        //do have to store assignment in symbol table?
+                                        $$ = $1
+                                    }
+                                    | variable ASSIGNMENT STRCONST
+                                    {
+                                        //do we have to store the STRCONST value anywhere?
+                                        $$ = $1
+                                    }
+                                    ;
 
 contentries                 :       contentries COMMA constant | constant ;
 
@@ -62,7 +94,7 @@ matentries                  :       matentries COMMA constant | constant ;
 
 constant                    :       NUMBERCONST | FLOATCONST ;
 
-variable                    :       ID ;
+variable                    :       ID {$$ = $1};
 
 
 //assignment statement
@@ -175,6 +207,13 @@ statement_inside            :       declarations | if_statement | repeat_stateme
 void yyerror(char *s) {
  fprintf(stderr, "%s\n", s);
 }
+
+
+void add_to_names(DataItem name){
+	insert(name,"",-1,-1);
+}
+
+
 
 int main(int argc, char* argv[]) {
     extern FILE *yyin;

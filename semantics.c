@@ -102,3 +102,16 @@ void display() {
 	
    printf("\n");
 }
+
+void set_type(char *name, int data_type, int key){ // set the type of an entry (declaration)
+	/* lookup entry */
+	struct DataItem *l = searchUsingIdentifier(name, key);
+	
+	/* set as type */
+	l->type = data_type;	
+}
+
+int get_type(char *name, int key){ // get the type of an entry
+	struct DataItem *l = searchUsingIdentifier(name, key);
+   return l->type;
+}
