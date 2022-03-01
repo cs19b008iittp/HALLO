@@ -3,6 +3,7 @@
     #include<ctype.h>
     int yylex(void);
     void yyerror(char *); 
+    #include "semantics.c"
 
 %}
 
@@ -39,7 +40,7 @@ body                        :       bodytypes body | ;
  
 bodytypes                   :       declarations | statement;
 
-
+  
 
 //declarations 
 
@@ -177,6 +178,18 @@ void yyerror(char *s) {
 
 int main(int argc, char* argv[]) {
     extern FILE *yyin;
+    emptyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
+    emptyItem->scope = -1;  
+    emptyItem->key = -1; 
+    emptyItem->identifier = "";
+    emptyItem->type = "";
+
+   //for insert order is identifier,type,scope,key
+   //insert("hello","num",1,1);
+   //insert("hi","string",1,2);
+
+   //display();
+
     if(argc > 1)
     {
         FILE *fp = fopen(argv[1], "r");
