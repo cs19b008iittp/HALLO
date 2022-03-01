@@ -63,6 +63,7 @@ constant                    :       NUMBERCONST | FLOATCONST ;
 
 variable                    :       ID ;
 
+
 //assignment statement
 
 assignment                  :       leftside_types ASSIGNMENT rightside_types ;
@@ -77,6 +78,7 @@ assign_const                :       ARITHMETIC assignment_types | ;
 
 assignment_types            :       assignment_types ARITHMETIC varconst | varconst ;
 
+
 //statements
 
 statement                   :       if_statement | repeat_statement | assignment FULLSTOP | function_call FULLSTOP | array_state FULLSTOP | print FULLSTOP | get FULLSTOP | leave FULLSTOP;
@@ -87,9 +89,11 @@ statement                   :       if_statement | repeat_statement | assignment
 
 print                       :       DISPLAY constants;
 
-constants		            :       constants COMMA variable | variable ;
+constants		            :       constants COMMA variable | constants COMMA STRCONST | constants COMMA constant | variable | STRCONST | constant;
 
-get                         :       GET variable ;
+get                         :       GET inputs ;
+
+inputs                      :       inputs COMMA variable | variable ;
 
 leave                       :       LEAVE ;
   
@@ -131,6 +135,7 @@ done                        :       DONE FULLSTOP | FULLSTOP ;
 //function_call
 
 function_call               :       CALL variable param | CALL variable;
+
 
 //functions
 

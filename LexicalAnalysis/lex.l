@@ -78,7 +78,7 @@ TO                      "to"
 {ARITHMETIC}                                                 {return ARITHMETIC;};
 {ASSIGNMENT}                                                 {printf("assignment: %s\n",yytext); return (ASSIGNMENT);};
 {LOGICAL}                                                    {return LOGICAL;};
-{STRCONST}                                                   {return STRCONST;};
+{STRCONST}                                                   {printf("string: %s\n",yytext);return STRCONST;};
 {SPECIALCHARS}                                            	 {printf("Special Characters: %s\n",yytext);};
 {LETTER_}*                                                 	 {printf("Identifier: %s\n",yytext); return ID;};
 

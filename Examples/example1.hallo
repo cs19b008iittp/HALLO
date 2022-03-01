@@ -20,6 +20,9 @@ ignore outside
 
 start
    ignore Separate Line
+   get b, c.
+   string a is "Sowmya".
    nums arr is 64,34,25,12,22,11,90,69.
    arr is call bubbleSort arr.
+   display "Sowmya is a good Girl",a,b,c,123.
 end.
