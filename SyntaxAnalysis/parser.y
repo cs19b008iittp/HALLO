@@ -9,8 +9,16 @@
     int key = 0;
     int key_type=0;
     char* type="";
-    char* container="";
+
+    //for containers in declarations
+    char* containertype="";
+    char* cEntries[50] = {};
+    int cIterator = 0;
+
+
+    //for matices in declarations
     char* matrix="";
+
 %}
 
 %union 
@@ -21,13 +29,13 @@
 
 %token START END ASSIGNMENT 
 
-%token <string>NUMBERCONST <string>FLOATCONST CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI
+%token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI
 
 %token ARITHMETIC RELATIONAL LOGICAL 
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
-%type <string> names init variable types_init
+%type <string> names init variable types_init contentries
 %type <string> constant varconst complex
 
 %token REPEAT FROM TO DONE UPDATE
@@ -93,13 +101,69 @@ declaration                 :       TYPE names
                                         key_type = 0;
                                     }
 
-                                    | CONTAINER contnames 
-                                    
-                                    | TYPE MATRIX matnames 
+                                    | CONTAINER contnames
+                                    {
+                                        containertype = $1;
+                                        //containerDatatype[strlen(containertype)-1] = '\0';
+                                        for(int i=0;i<=key_type-1;i++)
+                                        {     
+                                            if(searchUsingIdentifier(Type[i]->ident) == NULL)
+                                           {
+                                                insert(Type[i]->ident,containertype,1,key);
+                                                key++;
+                                           }
+                                        }
+                                        deleteAll(key_type);
+                                        key_type = 0;
+                                    }
                                     
                                     | CONTAINER variable ASSIGNMENT contentries 
+                                    {
+                                        // multiple initializations for container in a single line is not possible.
+                                        containertype = $1;
+                                        char *containerDatatype = containertype;
+                                        bool flag = true;
+                                        containerDatatype[strlen(containertype)-1] = '\0';
+                                        if(searchUsingIdentifier($2) == NULL)
+                                        {
+                                            if(containerDatatype=="data")
+                                            {
+                                                //check for "data" datatype
+                                            }
+                                            else{
+                                                for(int i=0;i<=cIterator-1;i++){
+                                                    if(!checkCorrectAssignment(containerDatatype,cEntries[i])){
+                                                        flag = false;
+                                                    }
+                                                }
+                                                if(flag == true){
+                                                    insert($2,containertype,1,key);
+                                                    key++;
+                                                }
+                                                else{
+                                                    //print appropriate error
+                                                    printf("the datatype of the container is not matching the values initialized!");
+                                                }
+
+                                            }
+                                        }
+                                        else{
+                                            //print appropriate error
+                                            printf("%s is already declared!",$2);
+                                        }
+
+                                    }
+
+
+
+                                    | TYPE MATRIX matnames 
+                                    {
+                                        
+                                    }
                                     
                                     | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
+
+
 
 names                       :       names COMMA variable 
                                     {
@@ -124,8 +188,17 @@ matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBE
                                     | variable NUMBERCONST BY NUMBERCONST;
 
 contnames                   :       contnames COMMA variable 
+                                    {
+                                        insertType($3,"",key_type);
+                                        key_type++;
+                                    }
             
-                                    | variable ;
+                                    | variable 
+                                    {
+                                        insertType($1,"",key_type);
+                                        key_type++;
+                                    }
+                                    ;
 
 init                        :       variable ASSIGNMENT types_init 
                                     {
@@ -137,8 +210,17 @@ init                        :       variable ASSIGNMENT types_init
 types_init                  :       varconst {$$=$1;}| STRCONST {$$=$1;}| FLAG {$$=$1;}| complex {$$=$1;};
 
 contentries                 :       contentries COMMA types_init 
+                                    {
+                                        cEntries[cIterator] = $3;
+                                        cIterator++;
+                                    }
 
-                                    | types_init ;
+                                    | types_init 
+                                    {
+                                        cEntries[cIterator] = $1;
+                                        cIterator++;
+                                    }
+                                    ;
 
 matentries                  :       matentries COMMA types_init 
 
@@ -282,12 +364,6 @@ statement_inside            :       declarations | if_statement | repeat_stateme
 void yyerror(char *s) {
  fprintf(stderr, "%s\n", s);
 }
-
-
-void add_to_names(char* name){
-	insert(name,"",-1,-1);
-}
-
 
 
 int main(int argc, char* argv[]) {
