@@ -2,8 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-struct DataItem {
+void display() ;
+struct DataItem
+{
    char* identifier;
    char* type;
    int scope; 
@@ -26,10 +27,10 @@ struct DataItem *searchUsingIdentifier(char* identifier) {
    int hashIndex = 0;
    //move in array until an empty 
    while(symbolTable[hashIndex] != NULL) {
-	
-      if(symbolTable[hashIndex]->identifier == identifier)
-         return symbolTable[hashIndex]; 
-			
+      if (strcmp(symbolTable[hashIndex]->identifier,identifier)==0)
+      {
+         return symbolTable[hashIndex];
+      }
       //go to next cell
       ++hashIndex;
 		

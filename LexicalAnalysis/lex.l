@@ -41,8 +41,8 @@ SEMI                    ";"
 
 {FLAG}                                                       {yylval.string=strdup(yytext);return FLAG;};
 {DATATYPE}                                                   { yylval.string=strdup(yytext);return TYPE;};
-{CONTAINER}                                                  {return CONTAINER;};
-"matrix"                                                     {return MATRIX;};
+{CONTAINER}                                                  { yylval.string=strdup(yytext);return CONTAINER;};
+"matrix"                                                     { yylval.string=strdup(yytext);return MATRIX;};
 {START}                                               	    {return START;};
 {END}                                              	       {return END;};
 {COMMA}                                            	       {return COMMA;};

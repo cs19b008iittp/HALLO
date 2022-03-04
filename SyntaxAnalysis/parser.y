@@ -83,9 +83,9 @@ declaration                 :       TYPE names
                                         for(int i=0;i<=key_type-1;i++)
                                         {     
                                             if(searchUsingIdentifier(Type[i]->ident) == NULL)
-                                           {
+                                           {       
                                                if(Type[i]->value == "")
-                                               {
+                                               {  
                                                    insert(Type[i]->ident,type,1,key,"","");
                                                     key++;
                                                }
@@ -121,7 +121,7 @@ declaration                 :       TYPE names
                                     }
                                     
                                     | CONTAINER variable ASSIGNMENT contentries 
-                                    {
+                                       {
                                         // multiple initializations for container in a single line is not possible.
                                         containertype = $1;
                                         char *containerDatatype = containertype;
@@ -132,6 +132,20 @@ declaration                 :       TYPE names
                                             if(containerDatatype=="data")
                                             {
                                                 //check for "data" datatype
+                                                for(int i=0;i<=cIterator-1;i++){
+                                                 bool check=checkCorrectAssignment("num",cEntries[i])|checkCorrectAssignment("string",cEntries[i])|checkCorrectAssignment("com",cEntries[i])|checkCorrectAssignment("flag",cEntries[i]);
+                                                    if(!check){
+                                                        flag = false;
+                                                    }
+                                                }
+                                                if(flag == true){
+                                                    insert($2,containertype,1,key,"","");
+                                                    key++;
+                                                }
+                                                else{
+                                                    //print appropriate error
+                                                    printf("the datatype of the container is not matching the values initialized!");
+                                                }
                                             }
                                             else{
                                                 for(int i=0;i<=cIterator-1;i++){
@@ -157,7 +171,6 @@ declaration                 :       TYPE names
 
 
                                     }
-
 
 
                                     | TYPE MATRIX matnames 
@@ -243,12 +256,13 @@ matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBE
 
                                     }
         
-                                    | variable NUMBERCONST BY NUMBERCONST;
+                                    | variable NUMBERCONST BY NUMBERCONST
                                     {
                                         insertType($1,"",key_type,$2,$4);
+                                        
                                         key_type++;
                                     }
-
+                                    ;
 contnames                   :       contnames COMMA variable 
                                     {
                                         insertType($3,"",key_type,"","");
