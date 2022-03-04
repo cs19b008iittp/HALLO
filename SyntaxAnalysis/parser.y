@@ -17,7 +17,10 @@
 
 
     //for matices in declarations
-    char* matrix="";
+    char* mEntries[50] = {};
+    int mIterator = 0;
+
+
 
 %}
 
@@ -83,7 +86,7 @@ declaration                 :       TYPE names
                                            {
                                                if(Type[i]->value == "")
                                                {
-                                                   insert(Type[i]->ident,type,1,key);
+                                                   insert(Type[i]->ident,type,1,key,"","");
                                                     key++;
                                                }
                                                else if(type=="data")
@@ -92,7 +95,7 @@ declaration                 :       TYPE names
                                                }
                                                else if(checkCorrectAssignment(type,Type[i]->value))
                                                {
-                                                    insert(Type[i]->ident,type,1,key);
+                                                    insert(Type[i]->ident,type,1,key,"","");
                                                     key++;
                                                }
                                             }
@@ -109,7 +112,7 @@ declaration                 :       TYPE names
                                         {     
                                             if(searchUsingIdentifier(Type[i]->ident) == NULL)
                                            {
-                                                insert(Type[i]->ident,containertype,1,key);
+                                                insert(Type[i]->ident,containertype,1,key,"","");
                                                 key++;
                                            }
                                         }
@@ -137,7 +140,7 @@ declaration                 :       TYPE names
                                                     }
                                                 }
                                                 if(flag == true){
-                                                    insert($2,containertype,1,key);
+                                                    insert($2,containertype,1,key,"","");
                                                     key++;
                                                 }
                                                 else{
@@ -152,22 +155,72 @@ declaration                 :       TYPE names
                                             printf("%s is already declared!",$2);
                                         }
 
+
                                     }
 
 
 
                                     | TYPE MATRIX matnames 
                                     {
-                                        
+                                        type = $1;
+                                        for(int i=0;i<=key_type-1;i++)
+                                        {     
+                                            if(searchUsingIdentifier(Type[i]->ident) == NULL)
+                                           {
+                                                insert(Type[i]->ident,type,1,key,Type[i]->matrowsize,Type[i]->matcolsize);
+                                                key++;
+                                           }
+                                        }
+                                        deleteAll(key_type);
+                                        key_type = 0;
                                     }
                                     
-                                    | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries;
+                                    | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries
+                                    {
+                                        if(mIterator != atoi($4)*atoi($6)){
+                                            //print appropriate error
+                                            printf("check the number of entries for the matrix %s", $3);
+                                        }
+
+                                        type = $1;
+                                        char *mdatatype = type;
+                                        bool flag = true;
+                                        mdatatype[strlen(type)-1] = '\0';
+                                        if(searchUsingIdentifier($2) == NULL)
+                                        {
+                                            if(mdatatype=="data")
+                                            {
+                                                //check for "data" datatype
+                                            }
+                                            else{
+                                                for(int i=0;i<=mIterator-1;i++){
+                                                    if(!checkCorrectAssignment(mdatatype,mEntries[i])){
+                                                        flag = false;
+                                                    }
+                                                }
+                                                if(flag == true){
+                                                    insert($3,type,1,key,$4,$6);
+                                                    key++;
+                                                }
+                                                else{
+                                                    //print appropriate error
+                                                    printf("the datatype of the container is not matching the values initialized!");
+                                                }
+
+                                            }
+                                        }
+                                        else{
+                                            //print appropriate error
+                                            printf("%s is already declared!",$3);
+                                        }
+                                    }
+                                    ;
 
 
 
 names                       :       names COMMA variable 
                                     {
-                                        insertType($3,"",key_type);
+                                        insertType($3,"",key_type,"","");
                                         key_type++;
                                     }
 
@@ -175,7 +228,7 @@ names                       :       names COMMA variable
 
                                     | variable 
                                     {
-                                        insertType($1,"",key_type);
+                                        insertType($1,"",key_type,"","");
                                         key_type++;
                                     }
 
@@ -184,25 +237,34 @@ names                       :       names COMMA variable
                                     ; 
 
 matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBERCONST 
+                                    {
+                                        insertType($3,"",key_type,$4,$6);
+                                        key_type++;
+
+                                    }
         
                                     | variable NUMBERCONST BY NUMBERCONST;
+                                    {
+                                        insertType($1,"",key_type,$2,$4);
+                                        key_type++;
+                                    }
 
 contnames                   :       contnames COMMA variable 
                                     {
-                                        insertType($3,"",key_type);
+                                        insertType($3,"",key_type,"","");
                                         key_type++;
                                     }
             
                                     | variable 
                                     {
-                                        insertType($1,"",key_type);
+                                        insertType($1,"",key_type,"","");
                                         key_type++;
                                     }
                                     ;
 
 init                        :       variable ASSIGNMENT types_init 
                                     {
-                                        insertType($1,$3,key_type);
+                                        insertType($1,$3,key_type,"","");
                                         key_type++;
                                     }
                                     ;
@@ -223,8 +285,17 @@ contentries                 :       contentries COMMA types_init
                                     ;
 
 matentries                  :       matentries COMMA types_init 
+                                    {
+                                        mEntries[cIterator] = $3;
+                                        mIterator++;
+                                    }
 
-                                    | types_init ;
+                                    | types_init 
+                                    {
+                                        mEntries[cIterator] = $1;
+                                        mIterator++;
+                                    }
+                                    ;
 
 constant                    :       NUMBERCONST {$$ = $1;}
 

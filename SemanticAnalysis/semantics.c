@@ -8,6 +8,8 @@ struct DataItem {
    char* type;
    int scope; 
    int key;
+   char* matrowsize;
+   char* matcolsize;
 };
 
 int maxSize = 1000;
@@ -38,13 +40,15 @@ struct DataItem *searchUsingIdentifier(char* identifier) {
    return NULL;        
 }
 
-void insert(char* identifier,char* type,int scope,int key) {
+void insert(char* identifier,char* type,int scope, int key,char* mrowsize, char*mcolsize) {
 
    struct DataItem *item = (struct DataItem*) malloc(sizeof(struct DataItem));
    item->identifier = identifier;  
    item->type = type;
    item->scope = scope;
    item->key = key;
+   item->matrowsize = mrowsize;
+   item->matcolsize = mcolsize;
 
    //get the hash 
    int hashIndex = hashCode(key);
@@ -69,6 +73,8 @@ struct DataItem* delete(struct DataItem* item) {
     emptyItem->key = -1; 
     emptyItem->identifier = "";
     emptyItem->type = "";
+    emptyItem->matrowsize="";
+    emptyItem->matcolsize="";
     
    //get the hash 
    int hashIndex = hashCode(key);

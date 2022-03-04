@@ -7,6 +7,8 @@ struct type {
    char* ident;
    char* value;
    int key_type;
+   char* matrowsize;
+   char* matcolsize;
 };
 
 int Size = 100;
@@ -18,12 +20,14 @@ int hashCodeType(int key) {
    return key % Size;
 }
 
-void insertType(char* identifier,char* value,int key) {
+void insertType(char* identifier,char* value,int key,char* mrowsize, char*mcolsize) {
 
    struct type *type_item = (struct type*) malloc(sizeof(struct type));
    type_item->ident = identifier;
    type_item->value = value;
    type_item->key_type = key;
+   type_item->matrowsize = mrowsize;
+   type_item->matcolsize = mcolsize;
 
    //get the hash 
    int hashIndex = hashCodeType(key);
@@ -46,6 +50,8 @@ struct type* deleteAll(int key_type) {
     type_emptyItem->value = "";  
     type_emptyItem->key_type = -1; 
     type_emptyItem->ident = "";
+    type_emptyItem->matrowsize = "";
+    type_emptyItem->matcolsize = "";
     
    //get the hash 
    int hashIndex = 0;
