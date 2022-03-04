@@ -355,11 +355,42 @@ statement                   :       if_statement | repeat_statement | assignment
 
 print                       :       DISPLAY constants;
 
-constants		            :       constants COMMA variable | constants COMMA STRCONST | constants COMMA constant | variable | STRCONST | constant;
+constants		            :       constants COMMA variable 
+                                    {
+                                        if(searchUsingIdentifier($3) == NULL)
+                                            printf("Identifier is not declared: %s\n", $3);
+                                        else
+                                            printf("Identifier is declared: %s\n", $3);
+                                    }
+                                    | constants COMMA STRCONST 
+                                    | constants COMMA constant 
+                                    | variable 
+                                    {
+                                        if(searchUsingIdentifier($1) == NULL)
+                                            printf("Identifier is not declared: %s\n", $1);
+                                        else
+                                            printf("Identifier is declared: %s\n", $1);
+                                    }
+                                    | STRCONST 
+                                    | constant;
 
 get                         :       GET inputs ;
 
-inputs                      :       inputs COMMA variable | variable ;
+inputs                      :       inputs COMMA variable
+                                    {
+                                        if(searchUsingIdentifier($3) == NULL)
+                                            printf("Identifier is not declared: %s\n", $3);
+                                        else
+                                            printf("Identifier is declared: %s\n", $3);
+                                    }
+                                    | variable
+                                    {
+                                        if(searchUsingIdentifier($1) == NULL)
+                                            printf("Identifier is not declared: %s\n", $1);
+                                        else
+                                            printf("Identifier is declared: %s\n", $1);
+                                    }
+                                    ;
 
 leave                       :       LEAVE ;
   
