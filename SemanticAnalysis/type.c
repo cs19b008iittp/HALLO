@@ -64,7 +64,7 @@ struct type* deleteAll(int key_type) {
 void display_Type() {
    int i = 0;
 	
-   for(i = 0; i<maxSize; i++) {
+   for(i = 0; i<Size; i++) {
 	
       if(Type[i] != NULL)
          printf(" (%s,%s,%d)",Type[i]->ident,Type[i]->value,Type[i]->key_type);
