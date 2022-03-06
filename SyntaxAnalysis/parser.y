@@ -27,6 +27,14 @@
     char* param[8];
     int param_no = 0;
     bool in_main = false;
+    char* cond[100] = {};
+    int condition = 0;
+
+    
+
+
+
+
 %}
 
 %union 
@@ -85,6 +93,7 @@ declaration                 :       TYPE names
                                         //set the type for each entry.
                                         type = $1; 
                                         //display_Type();
+                                        
                                         for(int i=0;i<=key_type-1;i++)
                                         {     
                                             if(searchUsingIdentifier(Type[i]->ident) == NULL)
@@ -104,6 +113,10 @@ declaration                 :       TYPE names
                                                     key++;
                                                }
                                             }
+                                            else
+                                            {
+                                                printf("Redeclaration of variable ");
+                                            }
                                         }
                                         deleteAll(key_type);
                                         key_type = 0;
@@ -120,6 +133,10 @@ declaration                 :       TYPE names
                                                 insert(Type[i]->ident,containertype,1,key,"","");
                                                 key++;
                                            }
+                                           else
+                                            {
+                                                printf("Redeclaration of variable");
+                                            }
                                         }
                                         deleteAll(key_type);
                                         key_type = 0;
@@ -188,6 +205,10 @@ declaration                 :       TYPE names
                                                 insert(Type[i]->ident,type,1,key,Type[i]->matrowsize,Type[i]->matcolsize);
                                                 key++;
                                            }
+                                           else
+                                            {
+                                                printf("Redeclaration of variable %s",Type[i]->ident);
+                                            }
                                         }
                                         deleteAll(key_type);
                                         key_type = 0;
@@ -337,15 +358,54 @@ variable                    :       ID  {$$ = $1;};
 
 assignment                  :       leftside_types ASSIGNMENT rightside_types ;
 
-leftside_types              :       variable assignment_types | variable | variable assignment_types  assignment_types;
+leftside_types              :       variable assignment_types 
 
-rightside_types             :       function_call | variable assign_var | constant assign_const | size | STRCONST | FLAG | complex;
+                                     | variable {
+                                        cond[condition] = $1;
+                                        condition++; 
+                                        }
+                                        ;
 
-assign_var                  :       assignment_types | ARITHMETIC assignment_types | assignment_types assignment_types |  ;
+                                     |variable assignment_types  assignment_types;
+
+rightside_types             :       function_call 
+                                     | variable assign_var 
+
+                                     | constant assign_const 
+
+                                     | size 
+
+                                    | STRCONST  {
+                                        cond[condition] = $1;
+                                        condition++; 
+                                        }
+                                        ;
+
+                                    | FLAG  {
+                                        cond[condition] = $1;
+                                        condition++; 
+                                        }
+                                        ;
+                                    | complex {
+                                        cond[condition] = $1;
+                                        condition++;
+                                         }
+                                         ;
+
+assign_var                  :       assignment_types | ARITHMETIC assignment_types  | assignment_types assignment_types |  ;
 
 assign_const                :       ARITHMETIC assignment_types | ;
 
-assignment_types            :       assignment_types ARITHMETIC varconst | varconst ;
+assignment_types            :       assignment_types ARITHMETIC varconst 
+                                       {
+                                        cond[condition] = $3;
+                                        condition++; } 
+                                        ;
+                                    | varconst  {
+                                        cond[condition] = $1;
+                                        condition++; 
+                                        }
+                                        ;
 
 
 
@@ -416,7 +476,28 @@ if_statement                :       IF  cond  THEN COLON body_inside done otherw
 
 otherwise                   :       OTHERWISE cond THEN COLON body_inside done otherwise | OTHERWISE COLON body_inside done | ;
 
-cond                        :       rightside_types RELATIONAL rightside_types LOGICAL cond | rightside_types RELATIONAL rightside_types ; 
+cond                        :       rightside_types RELATIONAL rightside_types LOGICAL cond
+                                         
+                                     | rightside_types RELATIONAL rightside_types
+                                               
+                                          {
+                                             
+                                             char* datatype= searchUsingIdentifier(cond[0])->identifier;
+                                       
+                                             for(int i=0;i<=condition;i++)
+                                           {
+                                              char* temp = searchUsingIdentifier(cond[i])->identifier; 
+                                             if(checkCorrectCondition(datatype,temp)==true)
+                                             {
+                                                
+                                             }
+                                             else
+                                             printf("invalid condition");
+                                           }
+
+                                          }
+                                          ;
+                                        
 
 varconst                    :       variable {$$ = $1;};
 
@@ -575,9 +656,10 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 
 //body inside for if and for loops
 
-body_inside                 :       body_inside statement_inside | ;
+body_inside                 :       body_inside statement_inside| ;
  
-statement_inside            :       declarations | if_statement | repeat_statement |  assignment FULLSTOP | function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
+statement_inside            :       declarations | if_statement | repeat_statement | 
+                                   assignment FULLSTOP;| function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
 
 
 
