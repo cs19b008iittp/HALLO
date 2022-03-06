@@ -1,4 +1,4 @@
-note bubbleSort arr:
+note bubbleSort arr, b, c:
    ignore Hello 
    num size_arr.
    size_arr is size of arr. ignore Inline

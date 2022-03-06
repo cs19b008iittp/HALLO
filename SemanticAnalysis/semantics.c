@@ -13,13 +13,71 @@ struct DataItem
    char* matcolsize;
 };
 
+struct Function
+{
+   char* name;
+   int key;
+   int no_of_params;
+   char* params;
+   bool dec;
+};
+
 int maxSize = 1000;
 struct DataItem* symbolTable[1000]; 
 struct DataItem* emptyItem;
 struct DataItem* item;
+struct Function* functions[1000];
 
 int hashCode(int key) {
    return key % maxSize;
+}
+
+void insertFunction(char* name, int key, int no_of_params, char* params, bool dec){
+   struct Function *func = (struct Function*) malloc(sizeof(struct Function));
+   func->name = name;  
+   func->no_of_params = no_of_params;
+   func->dec = dec;
+   func->params = params;
+
+   int hashIndex = hashCode(key);
+   while(functions[hashIndex] != NULL && functions[hashIndex]->key != -1) {
+      ++hashIndex;
+      hashIndex %= maxSize;
+   }
+   functions[hashIndex] = func;
+}
+
+struct Function *searchFunctions(char* name) {
+   int hashIndex = 0;
+   while(functions[hashIndex] != NULL) {
+      if (strcmp(functions[hashIndex]->name, name)==0)
+      {
+         return functions[hashIndex];
+      }
+      ++hashIndex;
+      hashIndex %= maxSize;
+   }
+   return NULL;
+}
+
+void displayFunctions() {
+   int i = 0, j = 0;
+	
+   for(i = 0; i<maxSize; i++) {
+	
+      if(functions[i] != NULL)
+      {
+         printf("%s, %d, %d: %s\n", functions[i]->name, functions[i]->key, functions[i]->no_of_params, functions[i]->params);
+         // for(j=0;j<functions[i]->no_of_params;j++)
+         // {
+         //    printf("\t%s\n", functions[i]->params[j]);
+         // }
+      }
+      else
+         break;
+   }
+	
+   printf("\n");
 }
 
 struct DataItem *searchUsingIdentifier(char* identifier) {
@@ -41,7 +99,7 @@ struct DataItem *searchUsingIdentifier(char* identifier) {
    return NULL;        
 }
 
-void insert(char* identifier,char* type,int scope, int key,char* mrowsize, char*mcolsize) {
+void insert(char* identifier, char* type, int scope, int key, char* mrowsize, char* mcolsize) {
 
    struct DataItem *item = (struct DataItem*) malloc(sizeof(struct DataItem));
    item->identifier = identifier;  

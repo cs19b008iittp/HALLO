@@ -2,6 +2,7 @@
     #include<stdio.h>
     #include<ctype.h>
     #include <string.h>
+    #include <stdbool.h>
     int yylex(void);
     void yyerror(char *); 
     #include "SemanticAnalysis/semantics.c"
@@ -20,7 +21,12 @@
     char* mEntries[50] = {};
     int mIterator = 0;
 
-
+    //for functions declarations
+    int function_no = 0;
+    char* parm;
+    char* param[8];
+    int param_no = 0;
+    bool above_main = true;
 
 %}
 
@@ -63,7 +69,7 @@
 %%
 program                     :       functions_optional START body END FULLSTOP functions_optional ;
 
-body                        :       bodytypes body | ;
+body                        :       bodytypes body {above_main = false;} | {above_main = false;} ;
  
 bodytypes                   :       declarations | statement;
 
@@ -437,21 +443,88 @@ done                        :       DONE FULLSTOP | FULLSTOP ;
 
 //function_call
 
-function_call               :       CALL variable param | CALL variable;
+function_call               :       CALL variable param 
+                                    | CALL variable
+                                    ;
 
 
 
 //functions
 
-functions_optional          :       functions_optional function_call_outside | ;
+functions_optional          :       functions_optional function_call_outside
+                                    | ;
 
-function_call_outside       :       NOTE ID param COLON body_inside_function function_end | NOTE ID COLON body_inside_function function_end;
+function_call_outside       :       NOTE ID param COLON body_inside_function function_end
+                                    {
+                                        if(searchFunctions($2) == NULL)
+                                            insertFunction($2, function_no, param_no, parm, above_main);
+                                        else
+                                            printf("Function name exists: %s", $2);
+                                        param_no = 0;
+                                    }
+                                    | NOTE ID COLON body_inside_function function_end
+                                    {
+                                        if(searchFunctions($2) == NULL)
+                                            insertFunction($2, function_no, 0, NULL, above_main);
+                                        else
+                                            printf("Function name exists: %s", $2);
+                                        param_no = 0;
+                                    }
+                                    ;
 
-param                       :       param COMMA ID | ID ;
+param                       :       param COMMA ID 
+                                    {
+                                        if (above_main == true)
+                                        {
+                                            strcat(parm, ",");
+                                            strcat(parm, $3);
+                                            param[param_no++] = $3;
+                                        }
+                                        else
+                                        {
+                                            struct DataItem *iden = searchUsingIdentifier($3);
+                                            if(iden == NULL)
+                                                printf("Identifier not defined: %s", $3);
+                                            else
+                                            {
+                                                strcat(parm, ",");
+                                                strcat(parm, $3);
+                                                param[param_no++] = $3;
+                                            }
+                                        }
+                                    }
+                                    | ID 
+                                    { 
+                                        if (above_main == true)
+                                        {
+                                            parm = $1;
+                                            param[param_no++] = $1;
+                                        }
+                                        else
+                                        {
+                                            struct DataItem *iden = searchUsingIdentifier($1);
+                                            if( iden == NULL)
+                                                printf("Identifier not defined: %s", $1);
+                                            else
+                                            {
+                                                parm = $1;
+                                                param[param_no++] = $1;
+                                            }
+                                        }
+                                    }
+                                    ;
 
-function_end                :       SEND ID FULLSTOP | SEND FULLSTOP ;
-
-
+function_end                :       SEND ID FULLSTOP
+                                    {
+                                        bool flag = false;
+                                        for(int i=0;i<param_no;i++)
+                                            if(strcmp(param[i], $2) == 0) flag = true;
+                                        if(searchUsingIdentifier($2) != NULL)
+                                            flag = true;
+                                        if(!flag) printf("Return ID not found: %s", $2);
+                                    }
+                                    | SEND FULLSTOP 
+                                    ;
 
 
 //body inside for functions
@@ -503,5 +576,6 @@ int main(int argc, char* argv[]) {
     }
     yyparse();
     display();
+    displayFunctions();
     return 0;
 }
