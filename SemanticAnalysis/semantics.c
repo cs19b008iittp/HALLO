@@ -67,11 +67,7 @@ void displayFunctions() {
 	
       if(functions[i] != NULL)
       {
-         printf("%s, %d, %d: %s\n", functions[i]->name, functions[i]->key, functions[i]->no_of_params, functions[i]->params);
-         // for(j=0;j<functions[i]->no_of_params;j++)
-         // {
-         //    printf("\t%s\n", functions[i]->params[j]);
-         // }
+         printf("%s, %d, %d, %d: %s\n", functions[i]->name, functions[i]->key, functions[i]->dec, functions[i]->no_of_params, functions[i]->params);
       }
       else
          break;

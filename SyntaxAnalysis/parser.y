@@ -23,11 +23,10 @@
 
     //for functions declarations
     int function_no = 0;
-    char* parm;
+    char* parm = "";
     char* param[8];
     int param_no = 0;
-    bool above_main = true;
-
+    bool in_main = false;
 %}
 
 %union 
@@ -69,7 +68,7 @@
 %%
 program                     :       functions_optional START body END FULLSTOP functions_optional ;
 
-body                        :       bodytypes body {above_main = false;} | {above_main = false;} ;
+body                        :       bodytypes body {in_main = true;} | {in_main = true;} ;
  
 bodytypes                   :       declarations | statement;
 
@@ -444,37 +443,73 @@ done                        :       DONE FULLSTOP | FULLSTOP ;
 //function_call
 
 function_call               :       CALL variable param 
+                                    {
+                                        struct Function *func = searchFunctions($2);
+                                        if(func == NULL)
+                                            insertFunction($2, function_no, param_no, parm, false);
+                                        else
+                                        {
+                                            if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
+                                                printf("Function parameter error: %s\n", func->name);
+                                        }
+                                        param_no = 0;
+                                    }
                                     | CALL variable
+                                    {
+                                        struct Function *func = searchFunctions($2);
+                                        if(func == NULL)
+                                            insertFunction($2, function_no, param_no, NULL, false);
+                                        else
+                                        {
+                                            if(func->no_of_params != param_no)
+                                                printf("Function parameter error: %s\n", func->name);
+                                        }
+                                        param_no = 0;
+                                    }
                                     ;
 
 
 
 //functions
 
-functions_optional          :       functions_optional function_call_outside
-                                    | ;
+functions_optional          :       functions_optional function_call_outside {in_main = false;} 
+                                    | {in_main = false;} ;
 
 function_call_outside       :       NOTE ID param COLON body_inside_function function_end
                                     {
-                                        if(searchFunctions($2) == NULL)
-                                            insertFunction($2, function_no, param_no, parm, above_main);
+                                        struct Function *func = searchFunctions($2);
+                                        if(func == NULL)
+                                            insertFunction($2, function_no, param_no, parm, true);
+                                        else if(func->dec == false)
+                                        {
+                                            if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
+                                                printf("Function parameter error: %s\n", func->name);
+                                            else
+                                                functions[func->key]->dec = true;
+                                        }
                                         else
-                                            printf("Function name exists: %s", $2);
+                                            printf("Function name exists: %s\n", $2);
                                         param_no = 0;
                                     }
                                     | NOTE ID COLON body_inside_function function_end
                                     {
-                                        if(searchFunctions($2) == NULL)
-                                            insertFunction($2, function_no, 0, NULL, above_main);
-                                        else
-                                            printf("Function name exists: %s", $2);
+                                        struct Function *func = searchFunctions($2);
+                                        if(func == NULL)
+                                            insertFunction($2, function_no, 0, NULL, true);
+                                        else if(func->dec == false)
+                                        {
+                                            if(func->no_of_params != param_no)
+                                                printf("Function parameter error: %s\n", func->name);
+                                            else
+                                                functions[func->key]->dec = true;
+                                        }
                                         param_no = 0;
                                     }
                                     ;
 
 param                       :       param COMMA ID 
                                     {
-                                        if (above_main == true)
+                                        if (in_main == false)
                                         {
                                             strcat(parm, ",");
                                             strcat(parm, $3);
@@ -484,7 +519,7 @@ param                       :       param COMMA ID
                                         {
                                             struct DataItem *iden = searchUsingIdentifier($3);
                                             if(iden == NULL)
-                                                printf("Identifier not defined: %s", $3);
+                                                printf("Identifier not defined: %s\n", $3);
                                             else
                                             {
                                                 strcat(parm, ",");
@@ -495,7 +530,7 @@ param                       :       param COMMA ID
                                     }
                                     | ID 
                                     { 
-                                        if (above_main == true)
+                                        if (in_main == false)
                                         {
                                             parm = $1;
                                             param[param_no++] = $1;
@@ -504,7 +539,7 @@ param                       :       param COMMA ID
                                         {
                                             struct DataItem *iden = searchUsingIdentifier($1);
                                             if( iden == NULL)
-                                                printf("Identifier not defined: %s", $1);
+                                                printf("Identifier not defined: %s\n", $1);
                                             else
                                             {
                                                 parm = $1;
@@ -521,7 +556,7 @@ function_end                :       SEND ID FULLSTOP
                                             if(strcmp(param[i], $2) == 0) flag = true;
                                         if(searchUsingIdentifier($2) != NULL)
                                             flag = true;
-                                        if(!flag) printf("Return ID not found: %s", $2);
+                                        if(!flag) printf("Return ID not found: %s\n", $2);
                                     }
                                     | SEND FULLSTOP 
                                     ;
