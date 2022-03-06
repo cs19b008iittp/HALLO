@@ -100,7 +100,6 @@ struct DataItem* delete(struct DataItem* item) {
 	
    return NULL;        
 }
-
 void display() {
    int i = 0;
 	
@@ -190,4 +189,13 @@ bool checkCorrectAssignment(char* type,char* value)
       }
       
       return false;
+}
+bool checkCorrectCondition(char*type1, char* type2){
+
+     if(strcmp(type1,type2)==0)
+     {
+        return true;
+     }
+     else 
+     false;
 }
