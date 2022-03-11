@@ -244,12 +244,31 @@ bool checkCorrectAssignment(char* type,char* value)
       
       return false;
 }
-bool checkCorrectCondition(char*type1, char* type2){
 
-     if(strcmp(type1,type2)==0)
-     {
-        return true;
-     }
-     else 
-     false;
+char* checkcond(char* cond[100],int condition,char* str)
+{
+      bool flag = true;
+      for(int j=0;j<=condition-1;j++)
+      {
+            if(cond[j][0]>='0' && cond[j][0]<='9')
+            {
+               continue;
+            }
+            else
+            {
+               struct DataItem* temptype = searchUsingIdentifier(cond[j]);
+               if(temptype->type=="num")
+               {
+                     continue;
+               }
+               else
+               {
+                     flag = false;
+                     return "wrong";
+               }
+            }
+      }
+      if(flag)
+            return str;
+      return "";
 }

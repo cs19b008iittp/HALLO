@@ -30,11 +30,6 @@
     char* cond[100] = {};
     int condition = 0;
 
-    
-
-
-
-
 %}
 
 %union 
@@ -51,8 +46,8 @@
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
-%type <string> names init variable types_init contentries
-%type <string> constant varconst complex
+%type <string> names init variable types_init contentries leftside_types assign_var
+%type <string> constant varconst complex size rightside_types  assign_const
 
 %token REPEAT FROM TO DONE UPDATE
 
@@ -146,9 +141,10 @@ declaration                 :       TYPE names
                                        {
                                         // multiple initializations for container in a single line is not possible.
                                         containertype = $1;
-                                        char *containerDatatype = containertype;
+                                        char *containerDatatype = (char*)malloc(10);
+                                        strcpy(containerDatatype,$1);
                                         bool flag = true;
-                                        containerDatatype[strlen(containertype)-1] = '\0';
+                                        containerDatatype[strlen(containerDatatype)-1] = '\0';
                                         if(searchUsingIdentifier($2) == NULL)
                                         {
                                             if(containerDatatype=="data")
@@ -160,8 +156,10 @@ declaration                 :       TYPE names
                                                         flag = false;
                                                     }
                                                 }
-                                                if(flag == true){
-                                                    insert($2,containertype,1,key,"","");
+                                                if(flag == true)
+                                                {
+                                                    printf("%s",$1);
+                                                    insert($2,$1,1,key,"","");
                                                     key++;
                                                 }
                                                 else{
@@ -176,7 +174,8 @@ declaration                 :       TYPE names
                                                     }
                                                 }
                                                 if(flag == true){
-                                                    insert($2,containertype,1,key,"","");
+                                                    printf("%s",$1);
+                                                    insert($2,$1,1,key,"","");
                                                     key++;
                                                 }
                                                 else{
@@ -356,57 +355,237 @@ variable                    :       ID  {$$ = $1;};
 
 //assignment statement
 
-assignment                  :       leftside_types ASSIGNMENT rightside_types ;
+assignment                  :       leftside_types ASSIGNMENT rightside_types
+                                    {
+                                        if(strcmp($1,$3)!=0)
+                                        {
+                                            printf("error in arithmetic statement\n");
+                                        }
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0; 
+                                    }
+                                    ;
 
 leftside_types              :       variable assignment_types 
+                                    {
+                                        struct DataItem* temp = searchUsingIdentifier($1);
+                                        if(temp == NULL)
+                                        {
+                                            printf("container is not declared: %s\n", $1);
+                                            $$ = "wrong";
+                                        }
+                                        else
+                                        {
+                                            char* str = temp->type;
+                                            if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                            {
+                                                $$=checkcond(cond,condition,str);
+                                            }
+                                            else
+                                            {
+                                                $$ = "wrong";
+                                            }
+                                        }
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0;
+                                        //printf("%s\n",$$);
+                                    } 
 
-                                     | variable {
+                                    | variable 
+                                    {
+                                        struct DataItem* temp = searchUsingIdentifier($1);
+                                        $$ = temp->type;
+                                    }
+
+                                    | variable assignment_types  assignment_types
+                                    {
+                                        struct DataItem* temp = searchUsingIdentifier($1);
+                                        if(temp == NULL)
+                                        {
+                                            printf("container is not declared: %s\n", $1);
+                                            $$ = "wrong";
+                                        }
+                                        else
+                                        {
+                                            char* str = temp->type;
+                                            if(strcmp(str,"num")==0||strcmp(str,"string")==0||strcmp(str,"com")==0||strcmp(str,"data")==0||strcmp(str,"flag")==0)
+                                            {
+                                                $$=checkcond(cond,condition,str);
+                                            }
+                                            else
+                                            {
+                                                $$ = "wrong";
+                                            }
+                                        }
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0;
+                                        //printf("%s\n",$$);
+                                    }
+                                    ;
+
+rightside_types             :       function_call
+                                    {
+                                        $$ = "function";
+                                    }
+                                     
+                                    | variable assign_var 
+                                    {
+                                        if($2 == "wrong")
+                                        {
+                                            $1 = "wrong";
+                                        }
+                                        else if($2 == "nothing")
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($1);
+                                            if(temp == NULL)
+                                            {
+                                                printf("identifier is not declared: %s\n", $1);
+                                                $$ = "wrong";
+                                            }
+                                            else
+                                            {
+                                                $$ = temp->type;
+                                            }
+                                        }
+                                        else if($2 == "arith")
+                                        {
+                                            cond[0]=$1;
+                                            $$ = checkcond(cond,1,"num");
+                                        }
+                                        else
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($1);
+                                            if(temp == NULL)
+                                            {
+                                                printf("container is not declared: %s\n", $1);
+                                                $$ = "wrong";
+                                            }
+                                            else
+                                            {
+                                                char* str = temp->type;
+                                                if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                                {
+                                                    if(strcmp($2,"container")==0)
+                                                    {
+                                                        str[strlen(str)-1]='\0';
+                                                        $$ = str;
+                                                    }
+                                                    else
+                                                      $$ = "wrong";
+                                                }
+                                                else if(strcmp(str,"num")==0||strcmp(str,"string")==0||strcmp(str,"com")==0||strcmp(str,"data")==0||strcmp(str,"flag")==0)
+                                                {
+                                                    if(strcmp($2,"matrix")==0)
+                                                    {
+                                                        str[strlen(str)-1]='\0';
+                                                        $$ = str;
+                                                    }
+                                                    else
+                                                      $$ = "wrong";
+                                                }
+                                                else
+                                                {
+                                                    $$ = "wrong";
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    | constant assign_const 
+                                    {
+                                       if(strcmp($2,"arith")==0)
+                                          $$ = "num";
+                                       else if(strcmp($2,"nothing")==0)
+                                          $$ = "num";
+                                        else
+                                           $$ = "wrong";
+                                    }
+
+                                    | size 
+                                    {
+                                        $$ = $1;
+                                    }
+
+                                    | STRCONST  
+                                    {
                                         cond[condition] = $1;
                                         condition++; 
-                                        }
-                                        ;
+                                    }
 
-                                     |variable assignment_types  assignment_types;
-
-rightside_types             :       function_call 
-                                     | variable assign_var 
-
-                                     | constant assign_const 
-
-                                     | size 
-
-                                    | STRCONST  {
+                                    | FLAG  
+                                    {
                                         cond[condition] = $1;
                                         condition++; 
-                                        }
-                                        ;
-
-                                    | FLAG  {
-                                        cond[condition] = $1;
-                                        condition++; 
-                                        }
-                                        ;
-                                    | complex {
+                                    }
+                                    
+                                    | complex
+                                    {
                                         cond[condition] = $1;
                                         condition++;
-                                         }
-                                         ;
+                                    }
+                                    ;
 
-assign_var                  :       assignment_types | ARITHMETIC assignment_types  | assignment_types assignment_types |  ;
+assign_var                  :       assignment_types 
+                                    {
+                                        char* str;
+                                        strcpy(str,"container");
+                                        $$ = checkcond(cond,condition,str);
+                                    }
 
-assign_const                :       ARITHMETIC assignment_types | ;
+                                    | ARITHMETIC assignment_types  
+                                    {
+                                        char* str;
+                                        strcpy(str,"arith");
+                                        $$ = checkcond(cond,condition,str);
+
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0;
+                                    }
+                                    
+                                    | assignment_types assignment_types 
+                                    {
+                                        char* str;
+                                        strcpy(str,"matrix");
+                                        $$ = checkcond(cond,condition,str);
+
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0;
+                                    }
+                                    
+                                    |  
+                                    {
+                                        $$ = "nothing";
+                                    }
+                                    ;
+
+assign_const                :       ARITHMETIC assignment_types 
+                                    {
+                                        char* str;
+                                        strcpy(str,"arith");
+                                        $$ = checkcond(cond,condition,str);
+
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0;
+                                    }
+                                    | 
+                                    {
+                                        $$ = "nothing";
+                                    }
+                                    ;
 
 assignment_types            :       assignment_types ARITHMETIC varconst 
-                                       {
+                                    {
                                         cond[condition] = $3;
-                                        condition++; } 
-                                        ;
-                                    | varconst  {
+                                        condition++; 
+
+                                    } 
+                                        
+                                    | varconst  
+                                    {
                                         cond[condition] = $1;
                                         condition++; 
-                                        }
-                                        ;
-
+                                    }
+                                    ;
 
 
 //statements
@@ -427,8 +606,11 @@ constants		            :       constants COMMA variable
                                         else
                                             printf("Identifier is declared: %s\n", $3);
                                     }
+
                                     | constants COMMA STRCONST 
+
                                     | constants COMMA constant 
+
                                     | variable 
                                     {
                                         if(searchUsingIdentifier($1) == NULL)
@@ -436,7 +618,9 @@ constants		            :       constants COMMA variable
                                         else
                                             printf("Identifier is declared: %s\n", $1);
                                     }
+
                                     | STRCONST 
+
                                     | constant;
 
 get                         :       GET inputs ;
@@ -463,7 +647,66 @@ leave                       :       LEAVE ;
 
 //array statements 
 
-size                        :       SIZE OF variable | ROWSIZE OF variable | COLUMNSIZE OF variable;
+size                        :       SIZE OF variable 
+                                    {
+                                        if(searchUsingIdentifier($3) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($3);
+                                            char* str = temp->type;
+                                            if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                            {
+                                                $$ = "num";
+                                            }
+                                            else
+                                               $$ = "wrong";
+                                        }
+                                        else
+                                        {
+                                            $$ = "wrong";
+                                            printf("container not found.\n");
+                                        }
+                                    }
+                                    
+                                    | ROWSIZE OF variable 
+                                    {
+                                        if(searchUsingIdentifier($3) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($3);
+                                            char* str = temp->type;
+                                            if(strcmp(str,"num")==0||strcmp(str,"string")==0||strcmp(str,"com")==0||strcmp(str,"data")==0||strcmp(str,"flag")==0)
+                                            {
+                                                $$ = "num";
+                                            }
+                                            else
+                                               $$ = "wrong";
+                                        }
+                                        else
+                                        {
+                                            $$ = "wrong";
+                                            printf("matrix not found.\n");
+                                        }
+                                    }
+                                    
+                                    | COLUMNSIZE OF variable
+                                    {
+                                        if(searchUsingIdentifier($3) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($3);
+                                            char* str = temp->type;
+                                            if(strcmp(str,"num")==0||strcmp(str,"string")==0||strcmp(str,"com")==0||strcmp(str,"data")==0||strcmp(str,"flag")==0)
+                                            {
+                                                $$ = "num";
+                                            }
+                                            else
+                                               $$ = "wrong";
+                                        }
+                                        else
+                                        {
+                                            $$ = "wrong";
+                                            printf("matrix not found.\n");
+                                        }
+                                    }
+                                    ;
 
 array_state                 :       REMOVE FROM variable | ADD rightside_types TO variable | DELETE variable rightside_types | CHANGE rightside_types TO rightside_types IN variable ;
 
@@ -477,26 +720,43 @@ if_statement                :       IF  cond  THEN COLON body_inside done otherw
 otherwise                   :       OTHERWISE cond THEN COLON body_inside done otherwise | OTHERWISE COLON body_inside done | ;
 
 cond                        :       rightside_types RELATIONAL rightside_types LOGICAL cond
+                                    {
+                                            char* datatype= searchUsingIdentifier(cond[0])->type;
+                                            for(int i=0;i<=condition;i++)
+                                            {
+                                                char* temp = searchUsingIdentifier(cond[i])->identifier; 
+                                                bool valid = true;
+                                                if(strcmp(datatype,temp)==0)
+                                                {
+                                                    valid = false;
+                                                }
+                                                if(valid == false)
+                                                printf("invalid condition");
+                                            }
+                                            for(int j=0;j<=99;j++)cond[j]="";
+                                            condition = 0;
+                                    }
                                          
-                                     | rightside_types RELATIONAL rightside_types
-                                               
-                                          {
-                                             
-                                             char* datatype= searchUsingIdentifier(cond[0])->identifier;
-                                       
-                                             for(int i=0;i<=condition;i++)
-                                           {
-                                              char* temp = searchUsingIdentifier(cond[i])->identifier; 
-                                             if(checkCorrectCondition(datatype,temp)==true)
-                                             {
-                                                
-                                             }
-                                             else
-                                             printf("invalid condition");
-                                           }
-
-                                          }
-                                          ;
+                                    | rightside_types RELATIONAL rightside_types         
+                                    {
+                                        
+                                        printf("%i",condition);
+                                            char* datatype= searchUsingIdentifier(cond[0])->type;
+                                            for(int i=0;i<=condition;i++)
+                                            {
+                                                char* temp = searchUsingIdentifier(cond[i])->identifier; 
+                                                bool valid = true;
+                                                if(strcmp(datatype,temp)==0)
+                                                {
+                                                    valid = false;
+                                                }
+                                                if(valid == false)
+                                                printf("invalid condition");
+                                            }
+                                            for(int j=0;j<=99;j++)cond[j]="";
+                                            condition = 0;
+                                    }
+                                    ;
                                         
 
 varconst                    :       variable {$$ = $1;};
@@ -535,6 +795,7 @@ function_call               :       CALL variable param
                                         }
                                         param_no = 0;
                                     }
+                                    
                                     | CALL variable
                                     {
                                         struct Function *func = searchFunctions($2);
