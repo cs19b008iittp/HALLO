@@ -27,6 +27,8 @@
     char* param[8];
     int param_no = 0;
     bool in_main = false;
+
+
     char* cond[100] = {};
     int condition = 0;
 
@@ -359,7 +361,7 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                     {
                                         if(strcmp($1,$3)!=0)
                                         {
-                                            printf("error in arithmetic statement\n");
+                                            printf("%s, %s, error in arithmetic statement\n",$1,$3);
                                         }
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0; 
@@ -527,25 +529,24 @@ rightside_types             :       function_call
 
 assign_var                  :       assignment_types 
                                     {
-                                        char* str;
-                                        strcpy(str,"container");
+                                        char* str = "container";
+                                        // strcpy(str,"container");
                                         $$ = checkcond(cond,condition,str);
                                     }
 
                                     | ARITHMETIC assignment_types  
                                     {
-                                        char* str;
-                                        strcpy(str,"arith");
+                                        char* str = "arith";
                                         $$ = checkcond(cond,condition,str);
 
-                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        for(int j=0;j<=99;j++) cond[j]="";
                                         condition = 0;
                                     }
                                     
                                     | assignment_types assignment_types 
                                     {
-                                        char* str;
-                                        strcpy(str,"matrix");
+                                        char* str = "matrix";
+                                        // strcpy(str,"matrix");
                                         $$ = checkcond(cond,condition,str);
 
                                         for(int j=0;j<=99;j++)cond[j]="";
@@ -560,8 +561,8 @@ assign_var                  :       assignment_types
 
 assign_const                :       ARITHMETIC assignment_types 
                                     {
-                                        char* str;
-                                        strcpy(str,"arith");
+                                        char* str = "arith";
+                                        // strcpy(str,"arith");
                                         $$ = checkcond(cond,condition,str);
 
                                         for(int j=0;j<=99;j++)cond[j]="";
@@ -741,20 +742,28 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                     {
                                         
                                         printf("%i",condition);
-                                            char* datatype= searchUsingIdentifier(cond[0])->type;
+                                        struct DataItem* data = searchUsingIdentifier(cond[0]);
+                                        if(data != NULL)
+                                        {
+                                            char* datatype = data->type;
                                             for(int i=0;i<=condition;i++)
                                             {
-                                                char* temp = searchUsingIdentifier(cond[i])->identifier; 
-                                                bool valid = true;
-                                                if(strcmp(datatype,temp)==0)
+                                                struct DataItem* temp = searchUsingIdentifier(cond[i]);
+                                                if(temp != NULL)
                                                 {
-                                                    valid = false;
+                                                    char* tempiden = temp->identifier;
+                                                    bool valid = true;
+                                                    if(strcmp(datatype,tempiden)==0)
+                                                    {
+                                                        valid = false;
+                                                    }
+                                                    if(valid == false)
+                                                        printf("invalid condition");
                                                 }
-                                                if(valid == false)
-                                                printf("invalid condition");
                                             }
-                                            for(int j=0;j<=99;j++)cond[j]="";
-                                            condition = 0;
+                                        }
+                                        for(int j=0;j<=99;j++)cond[j]="";
+                                        condition = 0;
                                     }
                                     ;
                                         
