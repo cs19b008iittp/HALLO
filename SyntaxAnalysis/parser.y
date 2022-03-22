@@ -47,7 +47,7 @@
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
-%type <string> names init variable types_init contentries leftside_types assign_var function_end
+%type <string> names init variable types_init contentries leftside_types assign_var function_end array_state
 %type <string> constant varconst complex size rightside_types  assign_const data function_call
 
 %token REPEAT FROM TO DONE UPDATE
@@ -111,7 +111,7 @@ declaration                 :       TYPE names
                                             }
                                             else
                                             {
-                                                printf("Redeclaration of variable ");
+                                                printf("Redeclaration of variable %s\n",Type[i]->ident);
                                             }
                                         }
                                         deleteAll(key_type);
@@ -610,8 +610,8 @@ constants		            :       constants COMMA variable
                                     {
                                         if(searchUsingIdentifier($3) == NULL)
                                             printf("Identifier is not declared: %s\n", $3);
-                                        else
-                                            printf("Identifier is declared: %s\n", $3);
+                                        //else
+                                        //    printf("Identifier is declared: %s\n", $3);
                                     }
 
                                     | constants COMMA STRCONST 
@@ -622,8 +622,8 @@ constants		            :       constants COMMA variable
                                     {
                                         if(searchUsingIdentifier($1) == NULL)
                                             printf("Identifier is not declared: %s\n", $1);
-                                        else
-                                            printf("Identifier is declared: %s\n", $1);
+                                        //else
+                                        //    printf("Identifier is declared: %s\n", $1);
                                     }
 
                                     | STRCONST 
@@ -636,15 +636,15 @@ inputs                      :       inputs COMMA variable
                                     {
                                         if(searchUsingIdentifier($3) == NULL)
                                             printf("Identifier is not declared: %s\n", $3);
-                                        else
-                                            printf("Identifier is declared: %s\n", $3);
+                                        //else
+                                        //    printf("Identifier is declared: %s\n", $3);
                                     }
                                     | variable
                                     {
                                         if(searchUsingIdentifier($1) == NULL)
                                             printf("Identifier is not declared: %s\n", $1);
-                                        else
-                                            printf("Identifier is declared: %s\n", $1);
+                                        //else
+                                        //    printf("Identifier is declared: %s\n", $1);
                                     }
                                     ;
 
@@ -715,7 +715,119 @@ size                        :       SIZE OF variable
                                     }
                                     ;
 
-array_state                 :       REMOVE FROM variable | ADD rightside_types TO variable | DELETE variable rightside_types | CHANGE rightside_types TO rightside_types IN variable ;
+array_state                 :       REMOVE FROM variable 
+                                    {
+                                           if(searchUsingIdentifier($3) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($3);
+                                            char* str = temp->type;
+                                            if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                            {
+                                                $$ = "num";
+                                            }
+                                            else
+                                               printf("Remove from not valid for this variable %s\n",$3);
+                                        }
+                                        else
+                                        {
+                                            printf("array not found.\n");
+                                        }
+                                    }
+
+                                    | ADD rightside_types TO variable 
+                                    {
+                                           if(searchUsingIdentifier($4) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($4);
+                                            char* str ;
+                                            strcpy(str,temp->type);
+                                            if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                            {
+                                                if(strcmp($2,"wrong")==0)
+                                                {
+                                                    printf("%s %s, not matching for adding an element to array",$2,str);
+                                                }
+                                                else
+                                                {
+                                                    str[strlen(str)-1]='\0';
+                                                    if(strcmp(str,$2)!=0)
+                                                    {
+                                                        printf("%s %s, not matching for adding an element to array",$2,str);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                               printf("Add to not valid for this variable %s\n",$4);
+                                        }
+                                        else
+                                        {
+                                            printf("array not found.\n");
+                                        }
+                                    }
+                                    
+                                    | DELETE variable rightside_types 
+                                    {
+                                           if(searchUsingIdentifier($2) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($2);
+                                            char* str ;
+                                            strcpy(str,temp->type);
+                                            if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                            {
+                                                if(strcmp($3,"wrong")==0)
+                                                {
+                                                    printf("%s %s, not matching for deleting an element to array",$3,str);
+                                                }
+                                                else
+                                                {
+                                                    str[strlen(str)-1]='\0';
+                                                    if(strcmp(str,$3)!=0)
+                                                    {
+                                                        printf("%s %s, not matching for deleting an element to array",$3,str);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                               printf("delete not valid for this variable %s\n",$2);
+                                        }
+                                        else
+                                        {
+                                            printf("array not found.\n");
+                                        }
+                                    }
+                                    
+                                    | CHANGE rightside_types TO rightside_types IN variable 
+                                    {
+                                           if(searchUsingIdentifier($6) != NULL)
+                                        {
+                                            struct DataItem* temp = searchUsingIdentifier($6);
+                                            char* str ;
+                                            strcpy(str,temp->type);
+                                            if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
+                                            {
+                                                if(strcmp($2,"wrong")==0 || strcmp($4,"wrong")==0)
+                                                {
+                                                    printf("%s or %s %s, not matching for adding an element to array",$2,$4,str);
+                                                }
+                                                else
+                                                {
+                                                    str[strlen(str)-1]='\0';
+                                                    if(strcmp(str,$2)!=0 || strcmp(str,$4)!=0)
+                                                    {
+                                                        printf("%s or %s %s, not matching for changing an element to array",$2,$4,str);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                               printf("Change not valid for this variable %s\n",$6);
+                                        }
+                                        else
+                                        {
+                                            printf("array not found.\n");
+                                        }
+                                    }
+                                    
+                                    ;
 
 
 
@@ -847,6 +959,9 @@ function_call_outside       :       NOTE ID param_note COLON body_inside_functio
                                         else
                                             printf("Function name exists: %s\n", $2);
                                         param_no = 0;
+
+                                        deleteAllSymbol();
+                                        key=0;
                                     }
                                     | NOTE ID COLON body_inside_function function_end
                                     {
@@ -861,6 +976,8 @@ function_call_outside       :       NOTE ID param_note COLON body_inside_functio
                                                 functions[func->key]->dec = true;
                                         }
                                         param_no = 0;
+                                        deleteAllSymbol();
+                                        key = 0;
                                     }
                                     ;
 
