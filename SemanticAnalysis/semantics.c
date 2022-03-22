@@ -20,6 +20,7 @@ struct Function
    int no_of_params;
    char* params;
    bool dec;
+   char* return_type;
 };
 
 int maxSize = 1000;
@@ -32,13 +33,13 @@ int hashCode(int key) {
    return key % maxSize;
 }
 
-void insertFunction(char* name, int key, int no_of_params, char* params, bool dec){
+void insertFunction(char* name, int key, int no_of_params, char* params, bool dec ,char* return_type){
    struct Function *func = (struct Function*) malloc(sizeof(struct Function));
    func->name = name;  
    func->no_of_params = no_of_params;
    func->dec = dec;
    func->params = params;
-
+   func->return_type = return_type;
    int hashIndex = hashCode(key);
    while(functions[hashIndex] != NULL && functions[hashIndex]->key != -1) {
       ++hashIndex;
@@ -67,7 +68,7 @@ void displayFunctions() {
 	
       if(functions[i] != NULL)
       {
-         printf("%s, %d, %d, %d: %s\n", functions[i]->name, functions[i]->key, functions[i]->dec, functions[i]->no_of_params, functions[i]->params);
+         printf("%s, %d, %d, %d %s : %s\n", functions[i]->name, functions[i]->key, functions[i]->dec, functions[i]->no_of_params, functions[i]->params, functions[i]->return_type);
       }
       else
          break;
@@ -77,6 +78,7 @@ void displayFunctions() {
 }
 
 struct DataItem *searchUsingIdentifier(char* identifier) {
+
    //get the hash 
    int hashIndex = 0;
    //move in array until an empty 
@@ -257,18 +259,27 @@ char* checkcond(char* cond[100],int condition,char* str)
             else
             {
                struct DataItem* temptype = searchUsingIdentifier(cond[j]);
-               if(temptype->type=="num")
+               if(temptype==NULL)
                {
-                     continue;
+                  return "wrong";
                }
                else
                {
-                     flag = false;
-                     return "wrong";
+                  if(strcmp(temptype->type,"num")==0)
+                  {
+                        continue;
+                  }
+                  else
+                  {
+                        flag = false;
+                        return "wrong";
+                  }
                }
             }
       }
       if(flag)
-            return str;
+      {
+         return str;
+      }
       return "";
 }

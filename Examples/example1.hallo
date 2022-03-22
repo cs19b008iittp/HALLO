@@ -1,8 +1,9 @@
-note bubbleSort arr:
+note bubbleSort nums arr:
    ignore Hello 
    num size_arr.
    size_arr is size of arr. ignore Inline
    num i,j.
+   nums number.
    repeat i from 0 to size_arr - 1 update inc by 1:
       repeat j from 0 to size_arr - i -1 update inc by 1: ignore After colon
          if arr j greater than number j+1 then:
@@ -16,10 +17,14 @@ note bubbleSort arr:
       done.
    send arr.
 
+note yes num a:
+send.
+
 ignore outside
 
 start
    ignore Separate Line
+   num b,c.
    get b, c.
    string a is "Sowmya".
    get a.

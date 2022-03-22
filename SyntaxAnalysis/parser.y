@@ -28,7 +28,6 @@
     int param_no = 0;
     bool in_main = false;
 
-
     char* cond[100] = {};
     int condition = 0;
 
@@ -48,8 +47,8 @@
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
-%type <string> names init variable types_init contentries leftside_types assign_var
-%type <string> constant varconst complex size rightside_types  assign_const
+%type <string> names init variable types_init contentries leftside_types assign_var function_end
+%type <string> constant varconst complex size rightside_types  assign_const data function_call
 
 %token REPEAT FROM TO DONE UPDATE
 
@@ -160,7 +159,6 @@ declaration                 :       TYPE names
                                                 }
                                                 if(flag == true)
                                                 {
-                                                    printf("%s",$1);
                                                     insert($2,$1,1,key,"","");
                                                     key++;
                                                 }
@@ -176,7 +174,6 @@ declaration                 :       TYPE names
                                                     }
                                                 }
                                                 if(flag == true){
-                                                    printf("%s",$1);
                                                     insert($2,$1,1,key,"","");
                                                     key++;
                                                 }
@@ -225,7 +222,6 @@ declaration                 :       TYPE names
                                         type = $1;
                                         char *mdatatype = type;
                                         bool flag = true;
-                                        mdatatype[strlen(type)-1] = '\0';
                                         if(searchUsingIdentifier($2) == NULL)
                                         {
                                             if(mdatatype=="data")
@@ -378,9 +374,11 @@ leftside_types              :       variable assignment_types
                                         }
                                         else
                                         {
-                                            char* str = temp->type;
+                                            char* str = (char*)malloc(10);
+                                            strcpy(str,temp->type);
                                             if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
                                             {
+                                                str[strlen(str)-1]='\0';
                                                 $$=checkcond(cond,condition,str);
                                             }
                                             else
@@ -396,7 +394,13 @@ leftside_types              :       variable assignment_types
                                     | variable 
                                     {
                                         struct DataItem* temp = searchUsingIdentifier($1);
-                                        $$ = temp->type;
+                                        if(temp==NULL)
+                                        {
+                                            printf("Identifier not declared : %s\n",$1);
+                                            $$="wrong";
+                                        }
+                                        else 
+                                          $$ = temp->type;
                                     }
 
                                     | variable assignment_types  assignment_types
@@ -427,16 +431,17 @@ leftside_types              :       variable assignment_types
 
 rightside_types             :       function_call
                                     {
-                                        $$ = "function";
-                                    }
+                                        struct Function* temp = searchFunctions($1);
+                                        $$ = temp->return_type;
+                                    } 
                                      
                                     | variable assign_var 
                                     {
-                                        if($2 == "wrong")
+                                        if(strcmp($2,"wrong")==0)
                                         {
-                                            $1 = "wrong";
+                                            $$ = "wrong";
                                         }
-                                        else if($2 == "nothing")
+                                        else if(strcmp($2,"nothing")==0) 
                                         {
                                             struct DataItem* temp = searchUsingIdentifier($1);
                                             if(temp == NULL)
@@ -446,10 +451,10 @@ rightside_types             :       function_call
                                             }
                                             else
                                             {
-                                                $$ = temp->type;
+                                                $$ = temp->type;  
                                             }
                                         }
-                                        else if($2 == "arith")
+                                        else if(strcmp($2,"arith")==0)
                                         {
                                             cond[0]=$1;
                                             $$ = checkcond(cond,1,"num");
@@ -464,7 +469,8 @@ rightside_types             :       function_call
                                             }
                                             else
                                             {
-                                                char* str = temp->type;
+                                                char* str = (char*)malloc(10);
+                                                strcpy(str,temp->type);
                                                 if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
                                                 {
                                                     if(strcmp($2,"container")==0)
@@ -527,8 +533,8 @@ rightside_types             :       function_call
                                     }
                                     ;
 
-assign_var                  :       assignment_types 
-                                    {
+assign_var                  :       assignment_types  
+                                    { 
                                         char* str = "container";
                                         // strcpy(str,"container");
                                         $$ = checkcond(cond,condition,str);
@@ -740,8 +746,6 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                          
                                     | rightside_types RELATIONAL rightside_types         
                                     {
-                                        
-                                        printf("%i",condition);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
@@ -796,26 +800,28 @@ function_call               :       CALL variable param
                                     {
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL)
-                                            insertFunction($2, function_no, param_no, parm, false);
+                                            insertFunction($2, function_no++, param_no, parm, false,"");
                                         else
                                         {
                                             if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
                                                 printf("Function parameter error: %s\n", func->name);
                                         }
                                         param_no = 0;
+                                        $$ = $2;
                                     }
                                     
                                     | CALL variable
                                     {
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL)
-                                            insertFunction($2, function_no, param_no, NULL, false);
+                                            insertFunction($2, function_no++, param_no, NULL, false,"");
                                         else
                                         {
                                             if(func->no_of_params != param_no)
                                                 printf("Function parameter error: %s\n", func->name);
                                         }
                                         param_no = 0;
+                                        $$ = $2;
                                     }
                                     ;
 
@@ -826,11 +832,11 @@ function_call               :       CALL variable param
 functions_optional          :       functions_optional function_call_outside {in_main = false;} 
                                     | {in_main = false;} ;
 
-function_call_outside       :       NOTE ID param COLON body_inside_function function_end
+function_call_outside       :       NOTE ID param_note COLON body_inside_function function_end
                                     {
                                         struct Function *func = searchFunctions($2);
-                                        if(func == NULL)
-                                            insertFunction($2, function_no, param_no, parm, true);
+                                        if(func == NULL) 
+                                            insertFunction($2, function_no++, param_no, parm, true,$6);
                                         else if(func->dec == false)
                                         {
                                             if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
@@ -846,7 +852,7 @@ function_call_outside       :       NOTE ID param COLON body_inside_function fun
                                     {
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL)
-                                            insertFunction($2, function_no, 0, NULL, true);
+                                            insertFunction($2, function_no++, 0, NULL, true,$5);
                                         else if(func->dec == false)
                                         {
                                             if(func->no_of_params != param_no)
@@ -900,6 +906,38 @@ param                       :       param COMMA ID
                                     }
                                     ;
 
+param_note                       :   param_note COMMA data ID 
+                                    {
+                                        strcat(parm, ",");
+                                        strcat(parm, $4);
+                                        param[param_no++] = $4;
+                                        insert($4,$3,2,key,"","");
+                                        key++;
+                                    }
+                                    | data ID 
+                                    { 
+                                        parm = $2;
+                                        param[param_no++] = $2;
+                                        insert($2,$1,2,key,"","");
+                                        key++;
+                                    }
+                                    ;
+
+data                                : TYPE
+                                    {
+                                        $$ = $1;
+                                    }
+                                    | CONTAINER
+                                    {
+                                        $$ = $1;
+                                    }
+                                    | TYPE MATRIX
+                                    {
+                                        $$ = $1;
+                                    }
+                                    ;
+
+
 function_end                :       SEND ID FULLSTOP
                                     {
                                         bool flag = false;
@@ -908,8 +946,15 @@ function_end                :       SEND ID FULLSTOP
                                         if(searchUsingIdentifier($2) != NULL)
                                             flag = true;
                                         if(!flag) printf("Return ID not found: %s\n", $2);
+                                        else
+                                        {
+                                            $$ = searchUsingIdentifier($2)->type;
+                                        }
                                     }
                                     | SEND FULLSTOP 
+                                    {
+                                         $$ = "null";
+                                    }
                                     ;
 
 
