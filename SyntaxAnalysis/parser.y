@@ -48,7 +48,8 @@
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
 %type <string> names init variable types_init contentries leftside_types assign_var function_end array_state
-%type <string> constant varconst complex size rightside_types  assign_const data function_call
+%type <string> constant varconst complex size rightside_types  assign_const data function_call  
+%type <string> initialization termination incrementation
 
 %token REPEAT FROM TO DONE UPDATE
 
@@ -517,19 +518,22 @@ rightside_types             :       function_call
                                     | STRCONST  
                                     {
                                         cond[condition] = $1;
-                                        condition++; 
+                                        condition++;
+                                        $$ = "string";
                                     }
 
                                     | FLAG  
                                     {
                                         cond[condition] = $1;
                                         condition++; 
+                                        $$ = "flag";
                                     }
                                     
                                     | complex
                                     {
                                         cond[condition] = $1;
                                         condition++;
+                                        $$ = "complex";
                                     }
                                     ;
 
@@ -893,13 +897,52 @@ varconst                    :       variable {$$ = $1;};
 
 //repeat
 
-repeat_statement            :       REPEAT variable initialization termination incrementation COLON body_inside done ;
+repeat_statement            :       REPEAT variable initialization termination incrementation COLON body_inside done 
+                                    {
+                                        struct DataItem *var = searchUsingIdentifier($2);
+                                        if(var == NULL)
+                                            printf("%s: Variable not declared\n", $2);
+                                        else
+                                        {
+                                            if(strcmp(var->type, $3)!=0)
+                                                printf("%s, %s, %s, Wrong initialization\n", var->identifier, var->type, $3);
+                                            if(strcmp(var->type, $4)!=0)
+                                                printf("%s, %s, %s, Wrong Termination\n", var->identifier, var->type, $4);
+                                            if(strcmp(var->type, $5)!=0)
+                                                printf("%s, %s, %s, Wrong Incrementation\n", var->identifier, var->type, $5);
+                                        }
+                                    }
+                                    ;
 
-initialization              :       FROM rightside_types |  ;
+initialization              :       FROM rightside_types
+                                    {
+                                        $$ = $2;
+                                    } 
+                                    |  
+                                    {
+                                        $$ = "NULL";
+                                    }
+                                    ;
   
-termination                 :       TO rightside_types |  ;
+termination                 :       TO rightside_types 
+                                    {
+                                        $$ = $2;
+                                    }
+                                    |  
+                                    {
+                                        $$ = "NULL";
+                                    }
+                                    ;
 
-incrementation              :       UPDATE ARITHMETIC rightside_types | ;
+incrementation              :       UPDATE ARITHMETIC rightside_types
+                                    {
+                                        $$ = $3;
+                                    } 
+                                    | 
+                                    {
+                                        $$ = "NULL";
+                                    }
+                                    ; 
 
 done                        :       DONE FULLSTOP | FULLSTOP ;
 

@@ -8,7 +8,7 @@ note bubbleSort nums arr:
       repeat j from 0 to size_arr - i -1 update inc by 1: ignore After colon
          if arr j greater than number j+1 then:
             ignore Inside loop
-            num temp .
+            num temp.
             temp is arr j.
             arr j is arr j+1.
             arr j+1 is temp.
@@ -24,7 +24,7 @@ ignore outside
 
 start
    ignore Separate Line
-   num b,c.
+   num b, c.
    get b, c.
    string a is "Sowmya".
    get a.
