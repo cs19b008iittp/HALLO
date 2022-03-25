@@ -1,4 +1,4 @@
-note bubbleSort nums arr:
+note bubbleSort nums arr,num b:
    ignore Hello 
    num size_arr.
    size_arr is size of arr. ignore Inline
@@ -17,7 +17,7 @@ note bubbleSort nums arr:
       done.
    send arr.
 
-note yes num a:
+note temporary num a:
 send.
 
 ignore outside
@@ -25,6 +25,7 @@ ignore outside
 start
    ignore Separate Line
    num b, c.
+   num d is 10.
    get b, c.
    string a is "Sowmya".
    get a.

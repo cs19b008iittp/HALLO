@@ -38,6 +38,7 @@ void insertFunction(char *name, int key, int no_of_params, char *params, bool de
 {
    struct Function *func = (struct Function *)malloc(sizeof(struct Function));
    func->name = name;
+   func->key = key;
    func->no_of_params = no_of_params;
    func->dec = dec;
    func->params = params;
@@ -69,13 +70,13 @@ struct Function *searchFunctions(char *name)
 void displayFunctions()
 {
    int i = 0, j = 0;
-
+   printf("NAME\t\tKEY\tRETURN TYPE\tPARAM NO.\tPARAMETERS\n");
    for (i = 0; i < maxSize; i++)
    {
 
       if (functions[i] != NULL)
       {
-         printf("%s, %d, %d, %d %s : %s\n", functions[i]->name, functions[i]->key, functions[i]->dec, functions[i]->no_of_params, functions[i]->params, functions[i]->return_type);
+         printf("%s\t%d\t%s\t\t%d\t\t%s\n", functions[i]->name, functions[i]->key, functions[i]->return_type, functions[i]->no_of_params, functions[i]->params);
       }
       else
          break;
@@ -108,7 +109,6 @@ struct DataItem *searchUsingIdentifier(char *identifier)
 
 void insert(char *identifier, char *type, int scope, int key, char *mrowsize, char *mcolsize)
 {
-
    struct DataItem *item = (struct DataItem *)malloc(sizeof(struct DataItem));
    item->identifier = identifier;
    item->type = type;
@@ -204,12 +204,14 @@ void deleteAllSymbol()
 void display()
 {
    int i = 0;
-
+   printf("KEY\tTYPE\t\tIDENT\t\tSCOPE\n");
    for (i = 0; i < maxSize; i++)
    {
-
       if (symbolTable[i] != NULL)
-         printf(" (%d,%s,%s,%d)", symbolTable[i]->key, symbolTable[i]->type, symbolTable[i]->identifier, symbolTable[i]->scope);
+      {
+         if (symbolTable[i]->key != -1)
+            printf("%d\t%s\t\t%s\t\t%d\n", symbolTable[i]->key, symbolTable[i]->type, symbolTable[i]->identifier, symbolTable[i]->scope);
+      }
       else
          break;
    }

@@ -1,12 +1,12 @@
 %{
-    #include<stdio.h>
-    #include<ctype.h>
+    #include <stdio.h>
+    #include <ctype.h>
     #include <string.h>
     #include <stdbool.h>
-    int yylex(void);
-    void yyerror(char *); 
     #include "SemanticAnalysis/semantics.c"
     #include "SemanticAnalysis/type.c"
+    int yylex(void);
+    void yyerror(char *); 
     int key = 0;
     int key_type=0;
     char* type="";
@@ -67,7 +67,6 @@
 %left  LT GT
 %left '+''-'
 %left '*''/'
-%right UMINUS
 %left '!'
 
 %%
@@ -75,13 +74,13 @@ program                     :       functions_optional START body END FULLSTOP f
 
 body                        :       bodytypes body {in_main = true;} | {in_main = true;} ;
  
-bodytypes                   :       declarations | statement;
+bodytypes                   :       declarations | statement ;
 
   
 
 //declarations 
  
-declarations                :       declaration FULLSTOP;
+declarations                :       declaration FULLSTOP ;
        
 declaration                 :       TYPE names 
                                     { 
@@ -112,7 +111,7 @@ declaration                 :       TYPE names
                                             }
                                             else
                                             {
-                                                printf("Redeclaration of variable %s\n",Type[i]->ident);
+                                                printf("Redeclaration of variable %s\n", Type[i]->ident);
                                             }
                                         }
                                         deleteAll(key_type);
@@ -132,7 +131,7 @@ declaration                 :       TYPE names
                                            }
                                            else
                                             {
-                                                printf("Redeclaration of variable");
+                                                printf("Redeclaration of variable %s\n", Type[i]->ident);
                                             }
                                         }
                                         deleteAll(key_type);
@@ -186,8 +185,7 @@ declaration                 :       TYPE names
                                             }
                                         }
                                         else{
-                                            //print appropriate error
-                                            printf("%s is already declared!",$2);
+                                            printf("Redeclaration of variable %s\n", $2);
                                         }
 
 
@@ -216,8 +214,7 @@ declaration                 :       TYPE names
                                     | TYPE MATRIX variable NUMBERCONST BY NUMBERCONST ASSIGNMENT matentries
                                     {
                                         if(mIterator != atoi($4)*atoi($6)){
-                                            //print appropriate error
-                                            printf("check the number of entries for the matrix %s", $3);
+                                            printf("Check the number of entries for the matrix %s", $3);
                                         }
 
                                         type = $1;
@@ -247,8 +244,7 @@ declaration                 :       TYPE names
                                             }
                                         }
                                         else{
-                                            //print appropriate error
-                                            printf("%s is already declared!",$3);
+                                            printf("Redeclaration of variable %s\n", $3);
                                         }
                                     }
                                     ;
@@ -279,11 +275,9 @@ matnames                    :       matnames COMMA variable NUMBERCONST BY NUMBE
                                         key_type++;
 
                                     }
-        
                                     | variable NUMBERCONST BY NUMBERCONST
                                     {
                                         insertType($1,"",key_type,$2,$4);
-                                        
                                         key_type++;
                                     }
                                     ;
@@ -304,10 +298,14 @@ init                        :       variable ASSIGNMENT types_init
                                     {
                                         insertType($1,$3,key_type,"","");
                                         key_type++;
+
+
+                                        //TAC
+                                        printf("%s = %s;\n",$1,$3);
                                     }
                                     ;
 
-types_init                  :       varconst {$$=$1;}| STRCONST {$$=$1;}| FLAG {$$=$1;}| complex {$$=$1;};
+types_init                  :       varconst {$$=$1;} | STRCONST {$$=$1;} | FLAG {$$=$1;} | complex {$$=$1;};
 
 contentries                 :       contentries COMMA types_init 
                                     {
@@ -358,7 +356,7 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                     {
                                         if(strcmp($1,$3)!=0)
                                         {
-                                            printf("%s, %s, error in arithmetic statement\n",$1,$3);
+                                            printf("%s, %s, error in arithmetic statement\n", $1, $3);
                                         }
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0; 
@@ -426,7 +424,6 @@ leftside_types              :       variable assignment_types
                                         }
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0;
-                                        //printf("%s\n",$$);
                                     }
                                     ;
 
@@ -1167,7 +1164,10 @@ int main(int argc, char* argv[]) {
         printf("Enter the code: \n");
     }
     yyparse();
+
+    printf("\n==============: SYMBOL TABLE :===============\n");
     display();
+    printf("\n==========================: FUNCTIONS :===========================\n");
     displayFunctions();
     return 0;
 }
