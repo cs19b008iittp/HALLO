@@ -17,7 +17,7 @@ note bubbleSort nums arr:
       done.
    send arr.
 
-note yes num a:
+note temporary num a:
 send.
 
 ignore outside
