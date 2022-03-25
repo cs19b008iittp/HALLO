@@ -1069,9 +1069,12 @@ param_note                       :   param_note COMMA data ID
                                     }
                                     | data ID 
                                     { 
+                                        char* p;
+                                        p = (char*)malloc(20);
+                                        strcpy(p,$2);
                                         parm = $2;
                                         param[param_no++] = $2;
-                                        insert($2,$1,2,key,"","");
+                                        insert(p,$1,2,key,"","");
                                         key++;
                                     }
                                     ;
