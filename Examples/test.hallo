@@ -1,0 +1,35 @@
+note bubbleSort nums arr:
+   ignore Hello 
+   num size_arr.
+   size_arr is size of arr. ignore Inline
+   num i,j.
+   nums number.
+   repeat i from 0 to size_arr - 1 update inc by 1:
+      repeat j from 0 to size_arr - i -1 update inc by 1: ignore After colon
+         if arr j greater than number j+1 then:
+            ignore Inside loop
+            num temp.
+            temp is arr j.
+            arr j is arr j+1.
+            arr j+1 is temp.
+            done.
+         done.
+      done.
+   send arr.
+
+note temporary num a:
+send.
+
+ignore outside
+
+start
+   ignore Separate Line
+   num b, c.
+   num d is 10.
+   get b, c.
+   string a is "Sowmya".
+   get a.
+   nums arr is 64,34,25,12,22,11,90,69.
+   arr is call bubbleSort arr.
+   display "Sowmya is a good Girl",a,b,c,123.
+end.

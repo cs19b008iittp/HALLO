@@ -31,6 +31,10 @@
     char* cond[100] = {};
     int condition = 0;
 
+    int line_number=1;
+
+    char* tac = "";
+
 %}
 
 %union 
@@ -74,7 +78,22 @@ program                     :       functions_optional START body END FULLSTOP f
 
 body                        :       bodytypes body {in_main = true;} | {in_main = true;} ;
  
-bodytypes                   :       declarations | statement ;
+bodytypes                   :       declarations 
+                                    {
+                                        //printf("declarations %d\n",line_number);
+                                         line_number++;
+                                    }
+                                    | statement 
+                                    {
+                                        //printf("statements %d\n",line_number);
+                                         line_number++;
+                                    }
+                                    |
+                                    error
+                                    {
+                                        printf("Error in line number %d\n",line_number++);
+                                    }
+                                    ;
 
   
 
@@ -225,6 +244,19 @@ declaration                 :       TYPE names
                                             if(mdatatype=="data")
                                             {
                                                 //check for "data" datatype
+                                                for(int i=0;i<=mIterator-1;i++){
+                                                    if(!checkCorrectAssignment(mdatatype,mEntries[i])){
+                                                        flag = false;
+                                                    }
+                                                }
+                                                if(flag == true){
+                                                    insert($3,type,1,key,$4,$6);
+                                                    key++;
+                                                }
+                                                else{
+                                                    //print appropriate error
+                                                    printf("the datatype of the container is not matching the values initialized!");
+                                                }
                                             }
                                             else{
                                                 for(int i=0;i<=mIterator-1;i++){
@@ -302,6 +334,9 @@ init                        :       variable ASSIGNMENT types_init
 
                                         //TAC
                                         printf("%s = %s;\n",$1,$3);
+                                        //strcat(tac,$1);
+                                        //strcat(tac," = ");
+                                       // strcat(tac,$3);
                                     }
                                     ;
 
@@ -1122,7 +1157,11 @@ function_end                :       SEND ID FULLSTOP
 
 body_inside_function        :       body_inside_function bodytypes_inside_function | ;
 
-bodytypes_inside_function   :       statement_inside_function ;
+bodytypes_inside_function   :       statement_inside_function 
+                                    {
+                                        //printf("statement inside fuction %d\n",line_number);
+                                        line_number++;
+                                    };
  
 statement_inside_function   :       if_statement | repeat_statement |  assignment FULLSTOP | declarations | function_call FULLSTOP | array_state FULLSTOP | print FULLSTOP | get FULLSTOP | leave FULLSTOP | done ;
 
@@ -1131,7 +1170,12 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 
 //body inside for if and for loops
 
-body_inside                 :       body_inside statement_inside| ;
+body_inside                 :       body_inside statement_inside
+                                    {
+                                        //printf("body inside if else %d\n",line_number);
+                                         line_number++;
+                                    }
+                                    | ;
  
 statement_inside            :       declarations | if_statement | repeat_statement | 
                                    assignment FULLSTOP;| function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
@@ -1154,8 +1198,9 @@ int main(int argc, char* argv[]) {
    //insert("hello","num",1,1);
    //insert("hi","string",1,2);
 
-   //display();
+   //display(); 
 
+     FILE *file = fopen("tac.txt", "w");
     if(argc > 1)
     {
         FILE *fp = fopen(argv[1], "r");
