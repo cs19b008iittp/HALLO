@@ -33,7 +33,8 @@
 
     int line_number=1;
 
-    char* tac = "";
+    char tac[10000] = "";
+    // strcpy(tac, "");
 
 %}
 
@@ -53,7 +54,7 @@
 
 %type <string> names init variable types_init contentries leftside_types assign_var function_end array_state
 %type <string> constant varconst complex size rightside_types  assign_const data function_call  
-%type <string> initialization termination incrementation
+%type <string> initialization termination incrementation constants inputs
 
 %token REPEAT FROM TO DONE UPDATE
 
@@ -640,47 +641,72 @@ statement                   :       if_statement | repeat_statement | assignment
 
 //print,scan and leave
 
-print                       :       DISPLAY constants;
+print                       :       DISPLAY constants
+                                    {
+                                        strcat(tac, "disp ");
+                                        strcat(tac, $2);
+                                        strcat(tac, "\n");
+                                    };
 
 constants		            :       constants COMMA variable 
                                     {
                                         if(searchUsingIdentifier($3) == NULL)
                                             printf("Identifier is not declared: %s\n", $3);
-                                        //else
-                                        //    printf("Identifier is declared: %s\n", $3);
+                                        char *temp = $1;
+                                        strcat(temp, ", ");
+                                        strcat(temp, $3);
+                                        $$ = temp;
                                     }
 
                                     | constants COMMA STRCONST 
+                                    {
+                                        char *temp = $1;
+                                        strcat(temp, ", ");
+                                        strcat(temp, $3);
+                                        $$ = temp;
+                                    }
 
                                     | constants COMMA constant 
+                                    {
+                                        char *temp = $1;
+                                        strcat(temp, ", ");
+                                        strcat(temp, $3);
+                                        $$ = temp;
+                                    }
 
                                     | variable 
                                     {
                                         if(searchUsingIdentifier($1) == NULL)
                                             printf("Identifier is not declared: %s\n", $1);
-                                        //else
-                                        //    printf("Identifier is declared: %s\n", $1);
+                                        $$ = $1;
                                     }
 
-                                    | STRCONST 
+                                    | STRCONST { $$ = $1;}
 
-                                    | constant;
+                                    | constant { $$ = $1;};
 
-get                         :       GET inputs ;
+get                         :       GET inputs 
+                                    {
+                                        strcat(tac, "get ");
+                                        strcat(tac, $2);
+                                        strcat(tac, "\n");
+                                    }
+                                    ;
 
 inputs                      :       inputs COMMA variable
                                     {
                                         if(searchUsingIdentifier($3) == NULL)
                                             printf("Identifier is not declared: %s\n", $3);
-                                        //else
-                                        //    printf("Identifier is declared: %s\n", $3);
+                                        char *temp = $1;
+                                        strcat(temp, ", ");
+                                        strcat(temp, $3);
+                                        $$ = temp;
                                     }
                                     | variable
                                     {
                                         if(searchUsingIdentifier($1) == NULL)
                                             printf("Identifier is not declared: %s\n", $1);
-                                        //else
-                                        //    printf("Identifier is declared: %s\n", $1);
+                                        $$ = $1;
                                     }
                                     ;
 
@@ -1217,5 +1243,7 @@ int main(int argc, char* argv[]) {
     display();
     printf("\n==========================: FUNCTIONS :===========================\n");
     displayFunctions();
+    printf("\n==========================: TAC :===========================\n");
+    printf("%s\n", tac);
     return 0;
 }
