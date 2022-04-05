@@ -29,6 +29,7 @@ start
    get b, c.
    string a is "Sowmya".
    get a.
+   b is c
    nums arr is 64,34,25,12,22,11,90,69.
    arr is call bubbleSort arr.
    display "Sowmya is a good Girl",a,b,c,123.

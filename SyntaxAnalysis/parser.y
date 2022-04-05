@@ -1,5 +1,6 @@
 %{
     #include <stdio.h>
+    #include <stdlib.h>
     #include <ctype.h>
     #include <string.h>
     #include <stdbool.h>
@@ -33,8 +34,11 @@
 
     int line_number=1;
 
-    char tac[10000] = "";
-    // strcpy(tac, "");
+    char tac[100000] = "";
+    int temp_number = 1;
+
+    char leftside[1000] = "";
+    char rightside[1000] = "";
 
 %}
 
@@ -54,7 +58,7 @@
 
 %type <string> names init variable types_init contentries leftside_types assign_var function_end array_state
 %type <string> constant varconst complex size rightside_types  assign_const data function_call  
-%type <string> initialization termination incrementation constants inputs
+%type <string> initialization termination incrementation constants inputs variable_name
 
 %token REPEAT FROM TO DONE UPDATE
 
@@ -334,10 +338,11 @@ init                        :       variable ASSIGNMENT types_init
 
 
                                         //TAC
-                                        printf("%s = %s;\n",$1,$3);
-                                        //strcat(tac,$1);
-                                        //strcat(tac," = ");
-                                       // strcat(tac,$3);
+                                        //printf("%s = %s;\n",$1,$3);
+                                        strcat(tac,$1);
+                                        strcat(tac," = ");
+                                        strcat(tac,$3);
+                                        strcat(tac,"\n");
                                     }
                                     ;
 
@@ -384,6 +389,7 @@ complex                     :       varconst SEMI varconst
 
 variable                    :       ID  {$$ = $1;};
 
+variable_name               :       ID  {$$ = $1; strcpy(leftside,$1);};
 
 
 //assignment statement
@@ -394,12 +400,20 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         {
                                             printf("%s, %s, error in arithmetic statement\n", $1, $3);
                                         }
+                                        strcat(tac,leftside);
+                                        strcat(tac," = ");
+                                        strcat(tac," T");
+                                        char string[20];
+                                        sprintf(string, "%d", temp_number);
+                                        temp_number++;
+                                        strcat(tac,string);
+                                        strcat(tac,"\n");
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0; 
                                     }
                                     ;
 
-leftside_types              :       variable assignment_types 
+leftside_types              :       variable_name assignment_types 
                                     {
                                         struct DataItem* temp = searchUsingIdentifier($1);
                                         if(temp == NULL)
@@ -426,7 +440,7 @@ leftside_types              :       variable assignment_types
                                         //printf("%s\n",$$);
                                     } 
 
-                                    | variable 
+                                    | variable_name
                                     {
                                         struct DataItem* temp = searchUsingIdentifier($1);
                                         if(temp==NULL)
@@ -438,7 +452,7 @@ leftside_types              :       variable assignment_types
                                           $$ = temp->type;
                                     }
 
-                                    | variable assignment_types  assignment_types
+                                    | variable_name assignment_types  assignment_types
                                     {
                                         struct DataItem* temp = searchUsingIdentifier($1);
                                         if(temp == NULL)
@@ -621,13 +635,30 @@ assignment_types            :       assignment_types ARITHMETIC varconst
                                     {
                                         cond[condition] = $3;
                                         condition++; 
-
+                                        strcat(tac,"T");
+                                        char string[20];
+                                        sprintf(string, "%d", temp_number+1);
+                                        strcat(tac,string);
+                                        strcat(tac," = ");
+                                        strcat(tac,"T");
+                                        sprintf(string, "%d", temp_number);
+                                        strcat(tac,string);
+                                        strcat(tac,"\n");
+                                        temp_number++;
                                     } 
                                         
                                     | varconst  
                                     {
                                         cond[condition] = $1;
                                         condition++; 
+                                        strcat(tac,"T");
+                                        char string[20];
+                                        sprintf(string, "%d", temp_number);
+                                        strcat(tac,string);
+                                        strcat(tac," = ");
+                                        strcat(tac,$1);
+                                        strcat(tac,"\n");
+                                        temp_number++;
                                     }
                                     ;
 
@@ -1185,7 +1216,6 @@ body_inside_function        :       body_inside_function bodytypes_inside_functi
 
 bodytypes_inside_function   :       statement_inside_function 
                                     {
-                                        //printf("statement inside fuction %d\n",line_number);
                                         line_number++;
                                     };
  
@@ -1198,7 +1228,6 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 
 body_inside                 :       body_inside statement_inside
                                     {
-                                        //printf("body inside if else %d\n",line_number);
                                          line_number++;
                                     }
                                     | ;
@@ -1245,5 +1274,6 @@ int main(int argc, char* argv[]) {
     displayFunctions();
     printf("\n==========================: TAC :===========================\n");
     printf("%s\n", tac);
+    fputs(tac,file);
     return 0;
 }
