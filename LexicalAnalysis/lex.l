@@ -77,7 +77,7 @@ line                    \n
 "get"                                                        {return GET;};
 "leave"                                                      {return LEAVE;};
 
-{line}                                                       {printf("%10d %s\n", ++lines, yytext);}
+{line}                                                       {++lines;}
 
 
 {COMMENTS}                                                   {/*printf("Comments: %s\n",yytext);*/};

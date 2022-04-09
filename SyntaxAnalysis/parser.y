@@ -938,7 +938,7 @@ array_state                 :       REMOVE FROM variable
 
 if_statement                :       IF  cond  THEN COLON 
                                     {
-                                        printf("\nprinting if colon line number: %d\n", lines);
+                                        //printf("\nprinting if colon line number: %d\n", lines);
                                         strcat(tac,"if ");
                                         strcat(tac,"cond ");
                                         strcat(tac,"goto L");
@@ -973,7 +973,7 @@ if_statement                :       IF  cond  THEN COLON
 
 otherwise                   :       OTHERWISE cond THEN COLON 
                                     {
-                                        printf("\nprinting otherwise line number1: %d\n", lines);
+                                        //printf("\nprinting otherwise line number1: %d\n", lines);
                                         strcat(tac,"L");
                                         sprintf(temp_label,"%d",else_labels[else_labels_iterator]);
                                         else_labels[else_labels_iterator] = 0;
@@ -1009,6 +1009,7 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                     done otherwise 
                                     | OTHERWISE COLON 
                                     {
+                                        //printf("\nprinting otherwise line number2: %d\n", lines);
                                         strcat(tac,"L");
                                         sprintf(temp_label,"%d",else_labels[else_labels_iterator]);
                                         else_labels[else_labels_iterator] = 0;
@@ -1023,7 +1024,7 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                     done 
                                     | 
                                     {
-                                        printf("\nprinting otherwise line number3: %d\n", lines);
+                                        //printf("\nprinting otherwise line number3: %d\n", lines);
                                     }
                                     ;
 
