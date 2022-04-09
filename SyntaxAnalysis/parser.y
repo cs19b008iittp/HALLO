@@ -12,6 +12,15 @@
     int key_type=0;
     char* type="";
 
+    //variables for TAC
+    extern int lines;
+    int if_label = 0;
+    // int else_label = 0;
+    int label = 1;
+    char temp_label[5] = "";
+    int else_labels[100] = {0};
+    int else_labels_iterator = -1;
+
     //for containers in declarations
     char* containertype="";
     char* cEntries[50] = {};
@@ -927,9 +936,96 @@ array_state                 :       REMOVE FROM variable
 
 //if statement 
 
-if_statement                :       IF  cond  THEN COLON body_inside done otherwise;
+if_statement                :       IF  cond  THEN COLON 
+                                    {
+                                        printf("\nprinting if colon line number: %d\n", lines);
+                                        strcat(tac,"if ");
+                                        strcat(tac,"cond ");
+                                        strcat(tac,"goto L");
+                                        if_label = label;
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                        label++;
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                        else_labels_iterator++;
+                                        else_labels[else_labels_iterator] = label;
+                                        label++;
+                                        
+                                    }
+                                    body_inside 
+                                    {
+                                        //storing in tac the body for if condition using if_label
+                                        strcat(tac, "L");
+                                        sprintf(temp_label,"%d",if_label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ": ");
+                                        strcat(tac, "a = c\n"); //fill in the statements
+                                    }
+                                    done otherwise
+                                    {
+                                        
+                                    }
+                                    ;
 
-otherwise                   :       OTHERWISE cond THEN COLON body_inside done otherwise | OTHERWISE COLON body_inside done | ;
+otherwise                   :       OTHERWISE cond THEN COLON 
+                                    {
+                                        printf("\nprinting otherwise line number1: %d\n", lines);
+                                        strcat(tac,"L");
+                                        sprintf(temp_label,"%d",else_labels[else_labels_iterator]);
+                                        else_labels[else_labels_iterator] = 0;
+                                        else_labels_iterator--;
+                                        strcat(tac,temp_label);
+                                        strcat(tac,": ");
+
+
+                                        strcat(tac,"if ");
+                                        strcat(tac,"cond ");
+                                        strcat(tac,"goto L");
+                                        if_label = label;
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                        label++;
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                        else_labels_iterator++;
+                                        else_labels[else_labels_iterator] = label;
+                                        label++;
+                                    } 
+                                    body_inside
+                                    {
+                                        strcat(tac, "L");
+                                        sprintf(temp_label,"%d",if_label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ": ");
+                                        strcat(tac, "a = c\n"); //fill in the statements
+                                    }
+                                    done otherwise 
+                                    | OTHERWISE COLON 
+                                    {
+                                        strcat(tac,"L");
+                                        sprintf(temp_label,"%d",else_labels[else_labels_iterator]);
+                                        else_labels[else_labels_iterator] = 0;
+                                        else_labels_iterator--;
+                                        strcat(tac,temp_label);
+                                        strcat(tac,": ");
+                                    }
+                                    body_inside
+                                    {
+                                        strcat(tac, "a = c\n"); //fill in the statements from body_inside
+                                    }
+                                    done 
+                                    | 
+                                    {
+                                        printf("\nprinting otherwise line number3: %d\n", lines);
+                                    }
+                                    ;
 
 cond                        :       rightside_types RELATIONAL rightside_types LOGICAL cond
                                     {
