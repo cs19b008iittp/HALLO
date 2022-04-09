@@ -11,6 +11,7 @@ quotient =  T6
 disp sum
 if cond goto L1
 goto L2
+d = 10
 a =  T7
 L1: a = c
 L2: if cond goto L3

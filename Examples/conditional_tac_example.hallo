@@ -12,7 +12,7 @@ start
         done.
     display sum.
     if sum = 0 then:
-        num a, b, c.
+        num d is 10.
         a is 10.
         done.
     otherwise sum = 10 then:
