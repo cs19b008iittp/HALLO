@@ -1,0 +1,36 @@
+let 0 be zero
+let dividedby be db
+let update inc by be ->+
+
+start
+    num i.
+    skip
+        shdbhscvhscvh
+        sjbdhvbdhvb
+        djvndjvn
+    skip
+    num sum is zero.
+    ignore num prod is 1.
+    num diff is zero.
+    nums SHIT.
+    num quotient is zero.
+
+    repeat i from 1 to 10 ->+ 1:
+        sum is sum plus i.
+        prod is prod into i.
+        quotient is quotient db i.	
+        done.
+    display sum.
+    if sum = zero then:
+        num a, b, c.
+        a is 10.
+        done.
+    otherwise sum = 10 then:
+        num a.
+        a is 20.
+        done.
+    otherwise:
+        a is 30.
+        done.
+end.
+ 

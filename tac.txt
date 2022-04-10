@@ -1,26 +1,29 @@
-sum = 0
-prod = 1
-diff = 0
-quotient = 0
-T1 = i
-sum =  T2
+size_arr =  T1
+T2 = 1
 T3 = i
-prod =  T4
-T5 = i
-quotient =  T6
-disp sum
+T5 = T4
+T5 = j
+T6 = j
+T8 = T7
 if cond goto L1
 goto L2
-d = 10
-a =  T7
+T8 = j
+temp =  T9
+T10 = j
+T11 = j
+T13 = T12
+arr =  T13
+T14 = j
+T16 = T15
+arr =  T16
 L1: a = c
-L2: if cond goto L3
-goto L4
-a =  T8
-L3: a = c
-L4: a =  T9
-a = c
-if cond goto L5
-goto L6
-b =  T10
-L5: a = c
+d = 10
+get b, c
+a = "Sowmya"
+get a
+T17 = c
+T19 = T18
+b =  T19
+arr =  T20
+disp "Sowmya is a good Girl"
+disp a, b, c, 123
