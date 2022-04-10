@@ -7,3 +7,6 @@ p
 parser
 parser.exe
 y.output
+processed_file.hallo
+tac
+tac.txt
