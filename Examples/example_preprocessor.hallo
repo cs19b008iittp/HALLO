@@ -1,3 +1,5 @@
+see bubbleSort
+
 let 0 be zero
 let dividedby be db
 let update inc by be ->+
@@ -9,6 +11,7 @@ start
         sjbdhvbdhvb
         djvndjvn
     skip
+    arr is call bubbleSort arr.
     num sum is zero.
     ignore num prod is 1.
     num diff is zero.

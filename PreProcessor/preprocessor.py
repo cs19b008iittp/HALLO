@@ -1,11 +1,9 @@
 def replaceMacros(line, macros):
     for micro in macros:
-        # re.sub(micro, macros[micro], line)
         line = line.replace(micro, macros[micro])
     return line
 
-# filename = input("Filepath: ")
-filename = "./Examples/example_preprocessor.hallo"
+filename = input("Filepath: ")
 
 input_file = open(filename, 'r')
 output_file = open("processed_file.hallo", 'w')
@@ -15,7 +13,14 @@ skip = False
 for line in input_file:
     words = line.replace("\n","").split(" ");
     words.append("\n")
-    if words[0] == "let":
+    if words[0] == "see":
+        import_file = open("./Library/" + words[1] + ".hallo", 'r');
+        code = ""
+        for line in import_file:
+            code += line.replace("\n", " ").replace("\t", " ")
+        output_file.write(code)
+        output_file.write("\n")
+    elif words[0] == "let":
         micro = ""
         macro = ""
         for i in range(1, len(words)):
@@ -37,7 +42,6 @@ for line in input_file:
     else:
         output_file.write(replaceMacros(line, macros))
 
-# print(macros)
 output_file.close()
 input_file.close()
 

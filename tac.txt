@@ -17,13 +17,24 @@ T14 = j
 T16 = T15
 arr =  T16
 L1: a = c
-d = 10
-get b, c
-a = "Sowmya"
-get a
-T17 = c
-T19 = T18
-b =  T19
-arr =  T20
-disp "Sowmya is a good Girl"
-disp a, b, c, 123
+arr =  T17
+sum = 0
+diff = 0
+quotient = 0
+T18 = i
+sum =  T19
+T20 = i
+prod =  T21
+T22 = i
+quotient =  T23
+disp sum
+if cond goto L3
+goto L4
+a =  T24
+L3: a = c
+L4: if cond goto L5
+goto L6
+a =  T25
+L5: a = c
+L6: a =  T26
+a = c
