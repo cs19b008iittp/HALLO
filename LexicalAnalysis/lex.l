@@ -78,8 +78,8 @@ SEMI                    ";"
 "\n"                                                         { lineno += 1; };  
 {COMMENTS}                                                   {/*printf("Comments: %s\n",yytext);*/};
 {DELIMITERS}                                          	    ;
-{RELATIONAL}                                                 {return RELATIONAL;};
-{ARITHMETIC}                                                 {return ARITHMETIC;};
+{RELATIONAL}                                                 { yylval.string=strdup(yytext);return RELATIONAL;};
+{ARITHMETIC}                                                 { yylval.string=strdup(yytext);return ARITHMETIC;};
 {ASSIGNMENT}                                                 {return (ASSIGNMENT);};
 {LOGICAL}                                                    {return LOGICAL;};
 {STRCONST}                                                   {yylval.string=strdup(yytext);return STRCONST;};

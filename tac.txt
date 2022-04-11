@@ -1,23 +1,10 @@
-size_arr =  T1
-T2 = 1
-T3 = i
-T5 = T4
-T5 = j
-T6 = j
-T8 = T7
-T8 = j
-temp =  T9
-T10 = j
-T11 = j
-T13 = T12
-arr =  T13
-T14 = j
-T16 = T15
-arr =  T16
-d = 10
-get b, c
-a = "Sowmya"
-get a
-b =  T17
-arr =  T18
-disp "Sowmya is a good Girl", a, b, c, 123
+T1 = id+3
+T2 = T1+5
+T3 = T2*2
+T4 = 4 * T3
+T5 = 10+id
+T6 = T5*4
+T7 = T6-5
+a[T4] =  T7
+T8 = 10
+id =  T8

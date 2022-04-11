@@ -32,6 +32,9 @@
     char* cond[100] = {};
     int condition = 0;
 
+    char* arith[100] = {};
+    int arith_count = 0;
+
     int line_number=1;
 
     char tac[100000] = "";
@@ -50,9 +53,9 @@
 
 %token START END ASSIGNMENT 
 
-%token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI
+%token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
-%token ARITHMETIC RELATIONAL LOGICAL 
+%token RELATIONAL LOGICAL 
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -61,7 +64,7 @@
 %type <string> initialization termination incrementation constants inputs variable_name
 
 %token REPEAT FROM TO DONE UPDATE
-
+ 
 %token NOTE SEND CALL
 
 %token ADD DELETE REMOVE IN OF SIZE CHANGE ROWSIZE COLUMNSIZE
@@ -404,12 +407,13 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         strcat(tac," = ");
                                         strcat(tac," T");
                                         char string[20];
-                                        sprintf(string, "%d", temp_number);
-                                        temp_number++;
+                                        sprintf(string, "%d", temp_number-1);
                                         strcat(tac,string);
                                         strcat(tac,"\n");
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0; 
+                                        for(int j=0;j<=99;j++)arith[j]="";
+                                        arith_count = 0; 
                                     }
                                     ;
 
@@ -429,15 +433,76 @@ leftside_types              :       variable_name assignment_types
                                             {
                                                 str[strlen(str)-1]='\0';
                                                 $$=checkcond(cond,condition,str);
+
+                                                //tac
+                                                if(strcmp($$,"wrong")!=0)
+                                                {
+                                                    if(condition == 1)
+                                                    {
+                                                        strcat(tac,"T");
+                                                        char string[20];
+                                                        sprintf(string, "%d", temp_number++);
+                                                        strcat(tac,string);
+                                                        strcat(tac," = ");
+                                                        strcat(tac,"4 * ");
+                                                        strcat(tac,cond[0]);
+                                                        strcat(tac,"\n");
+                                                    }
+                                                    else
+                                                    {
+                                                        strcat(tac,"T");
+                                                        char string[20];
+                                                        sprintf(string, "%d", temp_number++);
+                                                        strcat(tac,string);
+                                                        strcat(tac," = ");
+                                                        strcat(tac,cond[0]);
+                                                        strcat(tac,arith[0]);
+                                                        strcat(tac,cond[1]);
+                                                        strcat(tac,"\n");
+                                                        for(int j=0;j<=condition-3;j++)
+                                                        {
+                                                            strcat(tac,"T");
+                                                            char string[20];
+                                                            sprintf(string, "%d", temp_number++);
+                                                            strcat(tac,string);
+                                                            strcat(tac," = ");
+                                                            strcat(tac,"T");
+                                                            sprintf(string, "%d", temp_number-2);
+                                                            strcat(tac,string);
+                                                            strcat(tac,arith[j+1]);
+                                                            strcat(tac,cond[j+2]);
+                                                            strcat(tac,"\n");
+                                                        }
+                                                        strcat(tac,"T");
+                                                        sprintf(string, "%d", temp_number++);
+                                                        strcat(tac,string);
+                                                        strcat(tac," = ");
+                                                        strcat(tac,"4 * ");
+                                                        strcat(tac,"T"); 
+                                                        sprintf(string, "%d",temp_number-2);
+                                                        strcat(tac,string);
+                                                        strcat(tac,"\n");
+                                                    }
+                                                    strcat(leftside,"[");
+                                                    strcat(leftside,"T");
+                                                    char string[20];
+                                                    sprintf(string, "%d", temp_number-1);
+                                                    strcat(leftside,string);
+                                                    strcat(leftside,"]");
+                                                }
+
                                             }
                                             else
                                             {
                                                 $$ = "wrong";
                                             }
                                         }
+
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0;
-                                        //printf("%s\n",$$);
+                                        for(int j=0;j<=99;j++)arith[j]="";
+                                        arith_count = 0;
+
                                     } 
 
                                     | variable_name
@@ -449,7 +514,9 @@ leftside_types              :       variable_name assignment_types
                                             $$="wrong";
                                         }
                                         else 
+                                        {
                                           $$ = temp->type;
+                                        }
                                     }
 
                                     | variable_name assignment_types  assignment_types
@@ -550,11 +617,52 @@ rightside_types             :       function_call
                                     | constant assign_const 
                                     {
                                        if(strcmp($2,"arith")==0)
-                                          $$ = "num";
+                                        {
+                                            $$ = "num";
+
+                                            //tac
+                                            strcat(tac,"T");
+                                            char string[20];
+                                            sprintf(string, "%d", temp_number++);
+                                            strcat(tac,string);
+                                            strcat(tac," = ");
+                                            strcat(tac,$1);
+                                            strcat(tac,arith[arith_count-1]);
+                                            strcat(tac,cond[0]);
+                                            strcat(tac,"\n");
+                                            for(int j=0;j<=condition-2;j++)
+                                            {
+                                                strcat(tac,"T");
+                                                char string[20];
+                                                sprintf(string, "%d", temp_number++);
+                                                strcat(tac,string);
+                                                strcat(tac," = ");
+                                                strcat(tac,"T");
+                                                sprintf(string, "%d", temp_number-2);
+                                                strcat(tac,string);
+                                                strcat(tac,arith[j]);
+                                                strcat(tac,cond[j+1]);
+                                                strcat(tac,"\n");
+                                            }
+                                        }
                                        else if(strcmp($2,"nothing")==0)
-                                          $$ = "num";
+                                       {
+                                            $$ = "num";
+
+                                            //tac
+                                            strcat(tac,"T");
+                                            char string[20];
+                                            sprintf(string, "%d", temp_number++);
+                                            strcat(tac,string);
+                                            strcat(tac," = ");
+                                            strcat(tac,$1);
+                                            strcat(tac,"\n");
+                                       }
                                         else
                                            $$ = "wrong";
+                                        
+                                        for(int j=0;j<=99;j++) cond[j]="";
+                                        condition = 0;
                                     }
 
                                     | size 
@@ -567,6 +675,15 @@ rightside_types             :       function_call
                                         cond[condition] = $1;
                                         condition++;
                                         $$ = "string";
+
+                                        //TAC
+                                        strcat(tac,"T");
+                                        char string[20];
+                                        sprintf(string, "%d", temp_number++);
+                                        strcat(tac,string);
+                                        strcat(tac," = ");
+                                        strcat(tac,$1);
+                                        strcat(tac,"\n");
                                     }
 
                                     | FLAG  
@@ -574,6 +691,15 @@ rightside_types             :       function_call
                                         cond[condition] = $1;
                                         condition++; 
                                         $$ = "flag";
+
+                                        //TAC
+                                        strcat(tac,"T");
+                                        char string[20];
+                                        sprintf(string, "%d", temp_number++);
+                                        strcat(tac,string);
+                                        strcat(tac," = ");
+                                        strcat(tac,$1);
+                                        strcat(tac,"\n");
                                     }
                                     
                                     | complex
@@ -581,6 +707,15 @@ rightside_types             :       function_call
                                         cond[condition] = $1;
                                         condition++;
                                         $$ = "complex";
+
+                                        //TAC
+                                        strcat(tac,"T");
+                                        char string[20];
+                                        sprintf(string, "%d", temp_number++);
+                                        strcat(tac,string);
+                                        strcat(tac," = ");
+                                        strcat(tac,$1);
+                                        strcat(tac,"\n");
                                     }
                                     ;
 
@@ -622,8 +757,8 @@ assign_const                :       ARITHMETIC assignment_types
                                         // strcpy(str,"arith");
                                         $$ = checkcond(cond,condition,str);
 
-                                        for(int j=0;j<=99;j++)cond[j]="";
-                                        condition = 0;
+                                        arith[arith_count] = $1;
+                                        arith_count++;
                                     }
                                     | 
                                     {
@@ -635,30 +770,14 @@ assignment_types            :       assignment_types ARITHMETIC varconst
                                     {
                                         cond[condition] = $3;
                                         condition++; 
-                                        strcat(tac,"T");
-                                        char string[20];
-                                        sprintf(string, "%d", temp_number+1);
-                                        strcat(tac,string);
-                                        strcat(tac," = ");
-                                        strcat(tac,"T");
-                                        sprintf(string, "%d", temp_number);
-                                        strcat(tac,string);
-                                        strcat(tac,"\n");
-                                        temp_number++;
+                                        arith[arith_count] = $2;
+                                        arith_count++;
                                     } 
                                         
                                     | varconst  
                                     {
                                         cond[condition] = $1;
                                         condition++; 
-                                        strcat(tac,"T");
-                                        char string[20];
-                                        sprintf(string, "%d", temp_number);
-                                        strcat(tac,string);
-                                        strcat(tac," = ");
-                                        strcat(tac,$1);
-                                        strcat(tac,"\n");
-                                        temp_number++;
                                     }
                                     ;
 
