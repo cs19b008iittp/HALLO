@@ -64,7 +64,11 @@
 
 %token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
+<<<<<<< Updated upstream
 %token RELATIONAL LOGICAL 
+=======
+%token <string>ARITHMETIC <string>RELATIONAL <string>LOGICAL 
+>>>>>>> Stashed changes
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -1073,16 +1077,18 @@ if_statement                :       IF  cond  THEN COLON
                                         else_labels_iterator++;
                                         else_labels[else_labels_iterator] = label;
                                         label++;
+
+                                        strcat(tac, "L");
+                                        sprintf(temp_label,"%d",if_label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ": ");
                                         
                                     }
                                     body_inside 
                                     {
                                         //storing in tac the body for if condition using if_label
-                                        strcat(tac, "L");
-                                        sprintf(temp_label,"%d",if_label);
-                                        strcat(tac,temp_label);
-                                        strcat(tac, ": ");
-                                        strcat(tac, "a = c\n"); //fill in the statements
+                                        //strcat(tac, "a = c\n"); 
+                                        //fill in the statements
                                     }
                                     done otherwise
                                     {
@@ -1116,14 +1122,16 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                         else_labels_iterator++;
                                         else_labels[else_labels_iterator] = label;
                                         label++;
-                                    } 
-                                    body_inside
-                                    {
+
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
                                         strcat(tac, ": ");
-                                        strcat(tac, "a = c\n"); //fill in the statements
+                                    } 
+                                    body_inside
+                                    {
+                                        //strcat(tac, "a = c\n"); 
+                                        //fill in the statements
                                     }
                                     done otherwise 
                                     | OTHERWISE COLON 
@@ -1138,11 +1146,13 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                     }
                                     body_inside
                                     {
-                                        strcat(tac, "a = c\n"); //fill in the statements from body_inside
+                                        //strcat(tac, "a = c\n"); //fill in the statements from body_inside
                                     }
                                     done 
                                     | 
                                     {
+                                        else_labels[else_labels_iterator] = 0;
+                                        else_labels_iterator--;
                                         //printf("\nprinting otherwise line number3: %d\n", lines);
                                     }
                                     ;
@@ -1167,6 +1177,7 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                          
                                     | rightside_types RELATIONAL rightside_types         
                                     {
+                                        //strcat(tac,$2);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
@@ -1444,7 +1455,8 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 
 body_inside                 :       body_inside statement_inside
                                     {
-                                         line_number++;
+                                        line_number++;
+
                                     }
                                     | ;
  

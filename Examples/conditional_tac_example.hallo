@@ -13,6 +13,12 @@ start
     display sum.
     if sum = 0 then:
         num d is 10.
+        if d = 10 then:
+            d is 5.
+            done.
+        otherwise:
+            d is 7.
+            done.
         a is 10.
         done.
     otherwise sum = 10 then:
