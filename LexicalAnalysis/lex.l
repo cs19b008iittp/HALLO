@@ -3,7 +3,7 @@
    #include <stdlib.h>
    #include <string.h>
    #include "y.tab.h"
-   int lineno = 1; // initialize to 1 
+   int lines = 1; // initialize to 1 
 %}
 
 DIGIT                   [0-9]
@@ -35,6 +35,7 @@ FROM                    "from"
 TO                      "to"
 FLAG                    "true"|"false"
 SEMI                    ";"
+line                    \n
 
 %option noyywrap
 %%
@@ -75,7 +76,10 @@ SEMI                    ";"
 "display"                                                    {return DISPLAY;};
 "get"                                                        {return GET;};
 "leave"                                                      {return LEAVE;};
-"\n"                                                         { lineno += 1; };  
+
+{line}                                                       {++lines;}
+
+
 {COMMENTS}                                                   {/*printf("Comments: %s\n",yytext);*/};
 {DELIMITERS}                                          	    ;
 {RELATIONAL}                                                 { yylval.string=strdup(yytext);return RELATIONAL;};
@@ -89,4 +93,3 @@ SEMI                    ";"
 
 
 %%
-
