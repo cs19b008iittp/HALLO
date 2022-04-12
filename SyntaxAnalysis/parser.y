@@ -64,11 +64,7 @@
 
 %token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
-<<<<<<< Updated upstream
 %token RELATIONAL LOGICAL 
-=======
-%token <string>ARITHMETIC <string>RELATIONAL <string>LOGICAL 
->>>>>>> Stashed changes
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -559,6 +555,7 @@ leftside_types              :       variable_name assignment_types
 
 rightside_types             :       function_call
                                     {
+                                        //add TAC for rightside_types
                                         struct Function* temp = searchFunctions($1);
                                         $$ = temp->return_type;
                                     } 
@@ -1059,11 +1056,13 @@ array_state                 :       REMOVE FROM variable
 
 //if statement 
 
-if_statement                :       IF  cond  THEN COLON 
+if_statement                :       IF  
                                     {
                                         //printf("\nprinting if colon line number: %d\n", lines);
                                         strcat(tac,"if ");
-                                        strcat(tac,"cond ");
+                                    }
+                                    cond  THEN COLON 
+                                    {
                                         strcat(tac,"goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
@@ -1090,13 +1089,17 @@ if_statement                :       IF  cond  THEN COLON
                                         //strcat(tac, "a = c\n"); 
                                         //fill in the statements
                                     }
-                                    done otherwise
+                                    done
+                                    {
+                                        strcat(tac,"\n");
+                                    }
+                                    otherwise
                                     {
                                         
                                     }
                                     ;
 
-otherwise                   :       OTHERWISE cond THEN COLON 
+otherwise                   :       OTHERWISE
                                     {
                                         //printf("\nprinting otherwise line number1: %d\n", lines);
                                         strcat(tac,"L");
@@ -1108,6 +1111,9 @@ otherwise                   :       OTHERWISE cond THEN COLON
 
 
                                         strcat(tac,"if ");
+                                    }
+                                    cond THEN COLON 
+                                    {
                                         strcat(tac,"cond ");
                                         strcat(tac,"goto L");
                                         if_label = label;
@@ -1133,7 +1139,11 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                         //strcat(tac, "a = c\n"); 
                                         //fill in the statements
                                     }
-                                    done otherwise 
+                                    done
+                                    {
+                                        strcat(tac,"\n");
+                                    }
+                                    otherwise 
                                     | OTHERWISE COLON 
                                     {
                                         //printf("\nprinting otherwise line number2: %d\n", lines);
@@ -1148,7 +1158,10 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                     {
                                         //strcat(tac, "a = c\n"); //fill in the statements from body_inside
                                     }
-                                    done 
+                                    done
+                                    {
+                                        strcat(tac,"\n");
+                                    } 
                                     | 
                                     {
                                         else_labels[else_labels_iterator] = 0;

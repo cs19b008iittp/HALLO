@@ -15,11 +15,15 @@ start
         num d is 10.
         if d = 10 then:
             d is 5.
+            num c is 100.
+            d is c plus 5.
             done.
         otherwise:
             d is 7.
             done.
-        a is 10.
+        num a is 10.
+        a is d plus c.
+        c is 20.
         done.
     otherwise sum = 10 then:
         a is 20.
@@ -28,6 +32,6 @@ start
         a is 30.
         done.
     if a = 5 then:
-        b is 2.
+        num b is 2.
         done.
 end.

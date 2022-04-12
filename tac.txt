@@ -1,0 +1,45 @@
+sum = 0
+prod = 1
+diff = 0
+quotient = 0
+T1 = 1
+T2 = 10
+T3 = 1
+sum =  T3
+prod =  T3
+quotient =  T3
+disp sum
+if T4 = 0
+goto L1
+goto L2
+L1: d = 10
+if T5 = 10
+goto L3
+goto L4
+L3: T6 = 5
+d =  T6
+c = 100
+d =  T6
+
+L4: T7 = 7
+d =  T7
+
+a = 10
+a =  T7
+T8 = 20
+c =  T8
+
+L2: if T9 = 10
+cond goto L5
+goto L6
+L5: T10 = 20
+a =  T10
+
+L6: T11 = 30
+a =  T11
+
+if T12 = 5
+goto L7
+goto L8
+L7: b = 2
+
