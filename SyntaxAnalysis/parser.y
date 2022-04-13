@@ -14,6 +14,7 @@
 
     //variables for TAC
     extern int lines;
+    int n = 0;
     int if_label = 0;
     // int else_label = 0;
     int label = 1;
@@ -37,6 +38,7 @@
     char* param[8];
     int param_no = 0;
     bool in_main = false;
+    string temp_var;
 
     char* cond[100] = {};
     int condition = 0;
@@ -399,9 +401,9 @@ complex                     :       varconst SEMI varconst
                                     }
                                     ;
 
-variable                    :       ID  {$$ = $1;};
+                                  
+variable                    :       ID  {$$ = $1; strcat(tac,$1); };
 
-variable_name               :       ID  {$$ = $1; strcpy(leftside,$1);};
 
 
 //assignment statement
@@ -685,7 +687,7 @@ rightside_types             :       function_call
                                         cond[condition] = $1;
                                         condition++;
                                         $$ = "string";
-
+                                   
                                         //TAC
                                         strcat(tac,"T");
                                         char string[20];
@@ -1231,7 +1233,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         struct DataItem *var = searchUsingIdentifier($2);
                                         if(var == NULL)
                                             printf("%s: Variable not declared\n", $2);
-                                        else
+                                        else   
                                         {
                                             if(strcmp(var->type, $3)!=0)
                                                 printf("%s, %s, %s, Wrong initialization\n", var->identifier, var->type, $3);
@@ -1240,12 +1242,14 @@ repeat_statement            :       REPEAT variable initialization termination i
                                             if(strcmp(var->type, $5)!=0)
                                                 printf("%s, %s, %s, Wrong Incrementation\n", var->identifier, var->type, $5);
                                         }
+                                      
                                     }
                                     ;
 
 initialization              :       FROM rightside_types
                                     {
                                         $$ = $2;
+                                     
                                     } 
                                     |  
                                     {
@@ -1256,6 +1260,11 @@ initialization              :       FROM rightside_types
 termination                 :       TO rightside_types 
                                     {
                                         $$ = $2;
+                                        strcat(tac,"if");
+                                        strcat(tac,temp_var);
+                                        strcat(tac,"<=");
+                                        
+                                        
                                     }
                                     |  
                                     {
@@ -1266,6 +1275,7 @@ termination                 :       TO rightside_types
 incrementation              :       UPDATE ARITHMETIC rightside_types
                                     {
                                         $$ = $3;
+
                                     } 
                                     | 
                                     {
@@ -1469,11 +1479,16 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 body_inside                 :       body_inside statement_inside
                                     {
                                         line_number++;
+                                        strcat(tac," goto ");
+                                        strcat(tac," L");
+                                        strcat(tac, label);
+                                        strcat(tac, "\n");
+                                        label++;
 
                                     }
                                     | ;
  
-statement_inside            :       declarations | if_statement | repeat_statement | 
+statement_inside            :       declarations | if_statement | repeat_statement { strcat(tac,"goto"); strcat(tac,"L"); strcat(tac,label); strcat(tac,"\n"); } | 
                                    assignment FULLSTOP;| function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
 
 
