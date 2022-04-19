@@ -467,9 +467,11 @@ leftside_types              :       variable_name assignment_types
                                                         char string[20];
                                                         sprintf(string, "%d", temp_number++);
                                                         strcat(tac,string);
-                                                        strcat(tac," = ");
+                                                       
                                                         strcat(tac,cond[0]);
+                                                       
                                                         strcat(tac,arith[0]);
+                                                       
                                                         strcat(tac,cond[1]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=condition-3;j++)
@@ -482,7 +484,10 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[j+1]);
+                                                            strcat(tac," ");
+
                                                             strcat(tac,cond[j+2]);
                                                             strcat(tac,"\n");
                                                         }
@@ -576,7 +581,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[val_cond]);
+                                                    
                                                         strcat(tac,arith[val_arith++]);
+                                                       
                                                         strcat(tac,cond[++val_cond]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=diff-3;j++)
@@ -589,7 +596,9 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
+                                                           
                                                             strcat(tac,arith[val_arith++]);
+                                                    
                                                             strcat(tac,cond[++val_cond]);
                                                             strcat(tac,"\n");
                                                         }
@@ -713,7 +722,9 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
+                                              
                                                 strcat(tac,arith[arith_count-1]);
+                                                strcat(tac," ");
                                                 strcat(tac,cond[0]);
                                                 strcat(tac,"\n");
                                                 for(int j=0;j<=condition-3;j++)
@@ -726,7 +737,9 @@ rightside_types             :       function_call
                                                     strcat(tac,"T");
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
+                                                
                                                     strcat(tac,arith[j]);
+                                                    strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
                                                     strcat(tac,"\n");
                                                 }
@@ -771,7 +784,9 @@ rightside_types             :       function_call
                                                             strcat(tac,string);
                                                             strcat(tac," = ");
                                                             strcat(tac,cond[0]);
+                                                           
                                                             strcat(tac,arith[0]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[1]);
                                                             strcat(tac,"\n");
                                                             for(int j=0;j<=condition-3;j++)
@@ -784,7 +799,9 @@ rightside_types             :       function_call
                                                                 strcat(tac,"T");
                                                                 sprintf(string, "%d", temp_number-2);
                                                                 strcat(tac,string);
+                                                               
                                                                 strcat(tac,arith[j+1]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,cond[j+2]);
                                                                 strcat(tac,"\n");
                                                             }
@@ -845,7 +862,9 @@ rightside_types             :       function_call
                                                                 strcat(tac,string);
                                                                 strcat(tac," = ");
                                                                 strcat(tac,cond[val_cond]);
+                                                               
                                                                 strcat(tac,arith[val_arith++]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,cond[++val_cond]);
                                                                 strcat(tac,"\n");
                                                                 for(int j=0;j<=diff-3;j++)
@@ -858,7 +877,9 @@ rightside_types             :       function_call
                                                                     strcat(tac,"T");
                                                                     sprintf(string, "%d", temp_number-2);
                                                                     strcat(tac,string);
+                                                                    
                                                                     strcat(tac,arith[val_arith++]);
+                                                                    strcat(tac," ");
                                                                     strcat(tac,cond[++val_cond]);
                                                                     strcat(tac,"\n");
                                                                 }
@@ -957,7 +978,9 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
+                                              
                                                 strcat(tac,arith[arith_count-1]);
+                                                  strcat(tac," ");
                                                 strcat(tac,cond[0]);
                                                 strcat(tac,"\n");
                                                 for(int j=0;j<=condition-2;j++)
@@ -971,6 +994,7 @@ rightside_types             :       function_call
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
                                                     strcat(tac,arith[j]);
+                                                      strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
                                                     strcat(tac,"\n");
                                                 }
