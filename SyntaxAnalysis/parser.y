@@ -14,6 +14,7 @@
 
     //variables for TAC
     extern int lines;
+    int n = 0;
     int if_label = 0;
     // int else_label = 0;
     int label = 1;
@@ -37,6 +38,7 @@
     char* param[8];
     int param_no = 0;
     bool in_main = false;
+    string temp_var;
 
     char* cond[100] = {};
     int condition = 0;
@@ -402,9 +404,9 @@ complex                     :       varconst SEMI varconst
                                     }
                                     ;
 
-variable                    :       ID  {$$ = $1;};
+                                  
+variable                    :       ID  {$$ = $1; strcat(tac,$1); };
 
-variable_name               :       ID  {$$ = $1; strcpy(leftside,$1);};
 
 
 //assignment statement
@@ -655,6 +657,7 @@ leftside_types              :       variable_name assignment_types
 
 rightside_types             :       function_call
                                     {
+                                        //add TAC for rightside_types
                                         struct Function* temp = searchFunctions($1);
                                         $$ = temp->return_type;
                                     } 
@@ -1013,7 +1016,7 @@ rightside_types             :       function_call
                                         cond[condition] = $1;
                                         condition++;
                                         $$ = "string";
-
+                                   
                                         //TAC
                                         strcat(tac,"T");
                                         char string[20];
@@ -1392,11 +1395,13 @@ array_state                 :       REMOVE FROM variable
 
 //if statement 
 
-if_statement                :       IF  cond  THEN COLON 
+if_statement                :       IF  
                                     {
                                         //printf("\nprinting if colon line number: %d\n", lines);
                                         strcat(tac,"if ");
-                                        strcat(tac,"cond ");
+                                    }
+                                    cond  THEN COLON 
+                                    {
                                         strcat(tac,"goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
@@ -1410,24 +1415,30 @@ if_statement                :       IF  cond  THEN COLON
                                         else_labels_iterator++;
                                         else_labels[else_labels_iterator] = label;
                                         label++;
+
+                                        strcat(tac, "L");
+                                        sprintf(temp_label,"%d",if_label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ": ");
                                         
                                     }
                                     body_inside 
                                     {
                                         //storing in tac the body for if condition using if_label
-                                        strcat(tac, "L");
-                                        sprintf(temp_label,"%d",if_label);
-                                        strcat(tac,temp_label);
-                                        strcat(tac, ": ");
-                                        strcat(tac, "a = c\n"); //fill in the statements
+                                        //strcat(tac, "a = c\n"); 
+                                        //fill in the statements
                                     }
-                                    done otherwise
+                                    done
+                                    {
+                                        strcat(tac,"\n");
+                                    }
+                                    otherwise
                                     {
                                         
                                     }
                                     ;
 
-otherwise                   :       OTHERWISE cond THEN COLON 
+otherwise                   :       OTHERWISE
                                     {
                                         //printf("\nprinting otherwise line number1: %d\n", lines);
                                         strcat(tac,"L");
@@ -1439,6 +1450,9 @@ otherwise                   :       OTHERWISE cond THEN COLON
 
 
                                         strcat(tac,"if ");
+                                    }
+                                    cond THEN COLON 
+                                    {
                                         strcat(tac,"cond ");
                                         strcat(tac,"goto L");
                                         if_label = label;
@@ -1453,16 +1467,22 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                         else_labels_iterator++;
                                         else_labels[else_labels_iterator] = label;
                                         label++;
-                                    } 
-                                    body_inside
-                                    {
+
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
                                         strcat(tac, ": ");
-                                        strcat(tac, "a = c\n"); //fill in the statements
+                                    } 
+                                    body_inside
+                                    {
+                                        //strcat(tac, "a = c\n"); 
+                                        //fill in the statements
                                     }
-                                    done otherwise 
+                                    done
+                                    {
+                                        strcat(tac,"\n");
+                                    }
+                                    otherwise 
                                     | OTHERWISE COLON 
                                     {
                                         //printf("\nprinting otherwise line number2: %d\n", lines);
@@ -1475,11 +1495,16 @@ otherwise                   :       OTHERWISE cond THEN COLON
                                     }
                                     body_inside
                                     {
-                                        strcat(tac, "a = c\n"); //fill in the statements from body_inside
+                                        //strcat(tac, "a = c\n"); //fill in the statements from body_inside
                                     }
-                                    done 
+                                    done
+                                    {
+                                        strcat(tac,"\n");
+                                    } 
                                     | 
                                     {
+                                        else_labels[else_labels_iterator] = 0;
+                                        else_labels_iterator--;
                                         //printf("\nprinting otherwise line number3: %d\n", lines);
                                     }
                                     ;
@@ -1506,6 +1531,7 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                          
                                     | rightside_types RELATIONAL rightside_types         
                                     {
+                                        //strcat(tac,$2);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
@@ -1548,7 +1574,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         struct DataItem *var = searchUsingIdentifier($2);
                                         if(var == NULL)
                                             printf("%s: Variable not declared\n", $2);
-                                        else
+                                        else   
                                         {
                                             if(strcmp(var->type, $3)!=0)
                                                 printf("%s, %s, %s, Wrong initialization\n", var->identifier, var->type, $3);
@@ -1557,12 +1583,14 @@ repeat_statement            :       REPEAT variable initialization termination i
                                             if(strcmp(var->type, $5)!=0)
                                                 printf("%s, %s, %s, Wrong Incrementation\n", var->identifier, var->type, $5);
                                         }
+                                      
                                     }
                                     ;
 
 initialization              :       FROM rightside_types
                                     {
                                         $$ = $2;
+                                     
                                     } 
                                     |  
                                     {
@@ -1573,6 +1601,11 @@ initialization              :       FROM rightside_types
 termination                 :       TO rightside_types 
                                     {
                                         $$ = $2;
+                                        strcat(tac,"if");
+                                        strcat(tac,temp_var);
+                                        strcat(tac,"<=");
+                                        
+                                        
                                     }
                                     |  
                                     {
@@ -1583,6 +1616,7 @@ termination                 :       TO rightside_types
 incrementation              :       UPDATE ARITHMETIC rightside_types
                                     {
                                         $$ = $3;
+
                                     } 
                                     | 
                                     {
@@ -1785,11 +1819,17 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 
 body_inside                 :       body_inside statement_inside
                                     {
-                                         line_number++;
+                                        line_number++;
+                                        strcat(tac," goto ");
+                                        strcat(tac," L");
+                                        strcat(tac, label);
+                                        strcat(tac, "\n");
+                                        label++;
+
                                     }
                                     | ;
  
-statement_inside            :       declarations | if_statement | repeat_statement | 
+statement_inside            :       declarations | if_statement | repeat_statement { strcat(tac,"goto"); strcat(tac,"L"); strcat(tac,label); strcat(tac,"\n"); } | 
                                    assignment FULLSTOP;| function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
 
 
