@@ -56,6 +56,10 @@
     int assign[2];
     int assign_count = 0;
 
+    int right[100];
+    int right_count = 0;
+    char relat[100] = "";
+
 %}
 
 %union 
@@ -68,7 +72,7 @@
 
 %token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
-%token RELATIONAL LOGICAL 
+%token <string>RELATIONAL  LOGICAL 
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -427,6 +431,8 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         condition = 0; 
                                         for(int j=0;j<=99;j++)arith[j]="";
                                         arith_count = 0; 
+                                        for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
                                     }
                                     ;
 
@@ -469,7 +475,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[0]);
+                                                        strcat(tac," ");
                                                         strcat(tac,arith[0]);
+                                                        strcat(tac," ");
                                                         strcat(tac,cond[1]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=condition-3;j++)
@@ -482,7 +490,9 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[j+1]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[j+2]);
                                                             strcat(tac,"\n");
                                                         }
@@ -496,12 +506,12 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac,"\n");
                                                     }
-                                                    strcat(leftside,"(");
+                                                    strcat(leftside,"[");
                                                     strcat(leftside,"T");
                                                     char string[20];
                                                     sprintf(string, "%d", temp_number-1);
                                                     strcat(leftside,string);
-                                                    strcat(leftside,")");
+                                                    strcat(leftside,"]");
                                                 }
 
                                             }
@@ -576,7 +586,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[val_cond]);
+                                                        strcat(tac," ");
                                                         strcat(tac,arith[val_arith++]);
+                                                        strcat(tac," ");
                                                         strcat(tac,cond[++val_cond]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=diff-3;j++)
@@ -589,7 +601,9 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[val_arith++]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[++val_cond]);
                                                             strcat(tac,"\n");
                                                         }
@@ -632,11 +646,11 @@ leftside_types              :       variable_name assignment_types
                                                 strcat(tac,string);
                                                 strcat(tac,"\n");
 
-                                                strcat(leftside,"(");
+                                                strcat(leftside,"[");
                                                 strcat(leftside,"T");
                                                 sprintf(string, "%d", temp_number-1);
                                                 strcat(leftside,string);
-                                                strcat(leftside,")");
+                                                strcat(leftside,"]");
 
                                             }
                                             else
@@ -658,6 +672,8 @@ rightside_types             :       function_call
                                         //add TAC for rightside_types
                                         struct Function* temp = searchFunctions($1);
                                         $$ = temp->return_type;
+
+                                        right[right_count++] = temp_number-1;
                                     } 
                                      
                                     | variable assign_var 
@@ -775,7 +791,9 @@ rightside_types             :       function_call
                                                             strcat(tac,string);
                                                             strcat(tac," = ");
                                                             strcat(tac,cond[0]);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[0]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[1]);
                                                             strcat(tac,"\n");
                                                             for(int j=0;j<=condition-3;j++)
@@ -788,7 +806,9 @@ rightside_types             :       function_call
                                                                 strcat(tac,"T");
                                                                 sprintf(string, "%d", temp_number-2);
                                                                 strcat(tac,string);
+                                                                strcat(tac," ");
                                                                 strcat(tac,arith[j+1]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,cond[j+2]);
                                                                 strcat(tac,"\n");
                                                             }
@@ -808,10 +828,10 @@ rightside_types             :       function_call
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,$1);
-                                                        strcat(tac,"(T");
+                                                        strcat(tac,"[T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,")");   
+                                                        strcat(tac,"]");   
                                                         strcat(tac,"\n");  
                                                                           
                                                     }
@@ -849,7 +869,9 @@ rightside_types             :       function_call
                                                                 strcat(tac,string);
                                                                 strcat(tac," = ");
                                                                 strcat(tac,cond[val_cond]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,arith[val_arith++]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,cond[++val_cond]);
                                                                 strcat(tac,"\n");
                                                                 for(int j=0;j<=diff-3;j++)
@@ -862,7 +884,9 @@ rightside_types             :       function_call
                                                                     strcat(tac,"T");
                                                                     sprintf(string, "%d", temp_number-2);
                                                                     strcat(tac,string);
+                                                                    strcat(tac," ");
                                                                     strcat(tac,arith[val_arith++]);
+                                                                    strcat(tac," ");
                                                                     strcat(tac,cond[++val_cond]);
                                                                     strcat(tac,"\n");
                                                                 }
@@ -910,10 +934,10 @@ rightside_types             :       function_call
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,$1);
-                                                        strcat(tac,"(T");
+                                                        strcat(tac,"[T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,")");
+                                                        strcat(tac,"]");
                                                         strcat(tac,"\n");
                                                     }
                                                     else
@@ -933,6 +957,7 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | constant assign_const 
@@ -961,7 +986,9 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
+                                                strcat(tac," ");
                                                 strcat(tac,arith[arith_count-1]);
+                                                strcat(tac," ");
                                                 strcat(tac,cond[0]);
                                                 strcat(tac,"\n");
                                                 for(int j=0;j<=condition-2;j++)
@@ -974,7 +1001,9 @@ rightside_types             :       function_call
                                                     strcat(tac,"T");
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
+                                                    strcat(tac," ");
                                                     strcat(tac,arith[j]);
+                                                    strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
                                                     strcat(tac,"\n");
                                                 }
@@ -1004,11 +1033,13 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | size 
                                     {
                                         $$ = $1;
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | STRCONST  
@@ -1025,6 +1056,7 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | FLAG  
@@ -1041,7 +1073,9 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        right[right_count++] = temp_number-1;
                                     }
+
                                     
                                     | complex
                                     {
@@ -1057,6 +1091,7 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        right[right_count++] = temp_number-1;
                                     }
                                     ;
 
@@ -1071,7 +1106,12 @@ assign_var                  :       assignment_types
                                     {
                                         char* str = "arith";
                                         $$ = checkcond(cond,condition,str);
-                                         
+                                        
+                                        if(strcmp($1,"plus") == 0) strcpy($1,"+");
+                                        else if(strcmp($1,"minus") == 0) strcpy($1,"-");
+                                        else if(strcmp($1,"into") == 0) strcpy($1,"*");
+                                        else if(strcmp($1,"dividedby") == 0) strcpy($1,"/");
+                                        else if(strcmp($1,"remainder") == 0) strcpy($1,"%");
                                         arith[arith_count] = $1;
                                         arith_count++;
 
@@ -1420,11 +1460,19 @@ array_state                 :       REMOVE FROM variable
 if_statement                :       IF  
                                     {
                                         //printf("\nprinting if colon line number: %d\n", lines);
-                                        strcat(tac,"if ");
+                                        //strcat(tac,"if ");
                                     }
                                     cond  THEN COLON 
                                     {
-                                        strcat(tac,"goto L");
+                                        strcat(tac,"if T");
+                                        sprintf(temp_label,"%d",right[0]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac," ");
+                                        strcat(tac,relat);
+                                        strcat(tac," T");
+                                        sprintf(temp_label,"%d",right[1]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,"  goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
@@ -1442,6 +1490,9 @@ if_statement                :       IF
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
                                         strcat(tac, ": ");
+
+                                        for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
                                         
                                     }
                                     body_inside 
@@ -1553,6 +1604,7 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                     | rightside_types RELATIONAL rightside_types         
                                     {
                                         //strcat(tac,$2);
+                                        strcpy(relat,$2);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
