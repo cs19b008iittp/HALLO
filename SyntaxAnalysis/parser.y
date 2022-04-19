@@ -554,7 +554,7 @@ leftside_types              :       variable_name assignment_types
                                                 //TAC
                                                 int val_cond = 0;
                                                 int val_arith = 0;
-                                                int diff = assign[1]-2;
+                                                int diff = assign[1]-1;
                                                 for(int i=0;i<=1;i++)
                                                 {
                                                     if(diff <= 1)
@@ -579,7 +579,7 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,arith[val_arith++]);
                                                         strcat(tac,cond[++val_cond]);
                                                         strcat(tac,"\n");
-                                                        for(int j=0;j<=diff-2;j++)
+                                                        for(int j=0;j<=diff-3;j++)
                                                         {
                                                             strcat(tac,"T");
                                                             char string[20];
@@ -604,7 +604,7 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,"\n");
                                                         val_cond++;
                                                     }
-                                                    diff = condition-assign[1];
+                                                    diff = condition-assign[1]+1;
                                                     assign[i] = temp_number-1;
                                                 }
                                                 char string[20];
@@ -818,16 +818,15 @@ rightside_types             :       function_call
                                                 {
                                                     if(strcmp($2,"matrix")==0)
                                                     {
-                                                        str[strlen(str)-1]='\0';
                                                         $$ = str;
 
                                                         //TAC
                                                         int val_cond = 0;
                                                         int val_arith = 0;
-                                                        int diff = assign[1]-2;
+                                                        int diff = assign[1]-1;
                                                         for(int i=0;i<=1;i++)
                                                         {
-                                                            if(diff == 1)
+                                                            if(diff <= 1)
                                                             {
                                                                 strcat(tac,"T");
                                                                 char string[20];
@@ -849,7 +848,7 @@ rightside_types             :       function_call
                                                                 strcat(tac,arith[val_arith++]);
                                                                 strcat(tac,cond[++val_cond]);
                                                                 strcat(tac,"\n");
-                                                                for(int j=0;j<=diff-2;j++)
+                                                                for(int j=0;j<=diff-3;j++)
                                                                 {
                                                                     strcat(tac,"T");
                                                                     char string[20];
@@ -863,9 +862,18 @@ rightside_types             :       function_call
                                                                     strcat(tac,cond[++val_cond]);
                                                                     strcat(tac,"\n");
                                                                 }
+                                                                strcat(tac,"T");
+                                                                sprintf(string, "%d", temp_number++);
+                                                                strcat(tac,string);
+                                                                strcat(tac," = ");
+                                                                strcat(tac,"4 * ");
+                                                                strcat(tac,"T");
+                                                                sprintf(string, "%d", temp_number-2);
+                                                                strcat(tac,string);
+                                                                strcat(tac,"\n");
                                                                 val_cond++;
                                                             }
-                                                            diff = assign[1]-2;
+                                                            diff = condition-assign[1]+1;
                                                             assign[i] = temp_number-1;
                                                         }
                                                         char string[20];
@@ -897,22 +905,12 @@ rightside_types             :       function_call
                                                         sprintf(string, "%d", temp_number++);
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
-                                                        strcat(tac,"4 * ");
-                                                        strcat(tac,"T");
+                                                        strcat(tac,$1);
+                                                        strcat(tac,"[T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,"\n");
-
-                                                        strcat(tac,"T");
-                                                        sprintf(string, "%d", temp_number++);
-                                                        strcat(tac,string);
-                                                        strcat(tac," = ");
-                                                        strcat(tac,"[");
-                                                        strcat(tac,"T");
-                                                        sprintf(string, "%d", temp_number-1);
-                                                        strcat(tac,string);
                                                         strcat(tac,"]");
-
+                                                        strcat(tac,"\n");
                                                     }
                                                     else
                                                       $$ = "wrong";
@@ -1080,13 +1078,6 @@ assign_var                  :       assignment_types
                                         char* str = "matrix";
                                         // strcpy(str,"matrix");
                                         $$ = checkcond(cond,condition,str);
-
-                                        for(int j=0;j<=99;j++)cond[j]="";
-                                        condition = 0;
-                                        for(int j=0;j<=99;j++)arith[j]="";
-                                        arith_count = 0; 
-                                        for(int j=0;j<=1;j++)assign[j]=0;
-                                        assign_count = 0; 
                                     }
                                     
                                     |  
@@ -1222,9 +1213,20 @@ size                        :       SIZE OF variable
                                             if(strcmp(str,"nums")==0||strcmp(str,"strings")==0||strcmp(str,"coms")==0||strcmp(str,"datas")==0||strcmp(str,"flags")==0)
                                             {
                                                 $$ = "num";
+
+                                                //tac
+                                                strcat(tac,"T");
+                                                char string[20];
+                                                sprintf(string, "%d", temp_number++);
+                                                strcat(tac,string);
+                                                strcat(tac," = sizeof(");
+                                                strcat(tac,$3);
+                                                strcat(tac,")");
+                                                strcat(tac,"\n");
                                             }
                                             else
                                                $$ = "wrong";
+                                        
                                         }
                                         else
                                         {
@@ -1242,6 +1244,15 @@ size                        :       SIZE OF variable
                                             if(strcmp(str,"num")==0||strcmp(str,"string")==0||strcmp(str,"com")==0||strcmp(str,"data")==0||strcmp(str,"flag")==0)
                                             {
                                                 $$ = "num";
+
+                                                //tac
+                                                strcat(tac,"T");
+                                                char string[20];
+                                                sprintf(string, "%d", temp_number++);
+                                                strcat(tac,string);
+                                                strcat(tac," = ");
+                                                strcat(tac,temp->matrowsize);
+                                                strcat(tac,"\n");
                                             }
                                             else
                                                $$ = "wrong";
@@ -1262,6 +1273,15 @@ size                        :       SIZE OF variable
                                             if(strcmp(str,"num")==0||strcmp(str,"string")==0||strcmp(str,"com")==0||strcmp(str,"data")==0||strcmp(str,"flag")==0)
                                             {
                                                 $$ = "num";
+
+                                                //tac
+                                                strcat(tac,"T");
+                                                char string[20];
+                                                sprintf(string, "%d", temp_number++);
+                                                strcat(tac,string);
+                                                strcat(tac," = ");
+                                                strcat(tac,temp->matrowsize);
+                                                strcat(tac,"\n");
                                             }
                                             else
                                                $$ = "wrong";
