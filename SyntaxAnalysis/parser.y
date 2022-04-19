@@ -56,6 +56,10 @@
     int assign[2];
     int assign_count = 0;
 
+    int right[100];
+    int right_count = 0;
+    char relat[100] = "";
+
 %}
 
 %union 
@@ -68,7 +72,7 @@
 
 %token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
-%token RELATIONAL LOGICAL 
+%token <string>RELATIONAL  LOGICAL 
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -427,6 +431,8 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         condition = 0; 
                                         for(int j=0;j<=99;j++)arith[j]="";
                                         arith_count = 0; 
+                                        for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
                                     }
                                     ;
 
@@ -666,6 +672,8 @@ rightside_types             :       function_call
                                         //add TAC for rightside_types
                                         struct Function* temp = searchFunctions($1);
                                         $$ = temp->return_type;
+
+                                        right[right_count++] = temp_number-1;
                                     } 
                                      
                                     | variable assign_var 
@@ -949,6 +957,7 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | constant assign_const 
@@ -1024,11 +1033,13 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | size 
                                     {
                                         $$ = $1;
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | STRCONST  
@@ -1045,6 +1056,7 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | FLAG  
@@ -1061,7 +1073,9 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        right[right_count++] = temp_number-1;
                                     }
+
                                     
                                     | complex
                                     {
@@ -1077,6 +1091,7 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        right[right_count++] = temp_number-1;
                                     }
                                     ;
 
@@ -1449,11 +1464,15 @@ if_statement                :       IF
                                     }
                                     cond  THEN COLON 
                                     {
-                                        strcat(tac,"if ");
-
-
-                                        
-                                        strcat(tac,"goto L");
+                                        strcat(tac,"if T");
+                                        sprintf(temp_label,"%d",right[0]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac," ");
+                                        strcat(tac,relat);
+                                        strcat(tac," T");
+                                        sprintf(temp_label,"%d",right[1]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,"  goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
@@ -1471,6 +1490,9 @@ if_statement                :       IF
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
                                         strcat(tac, ": ");
+
+                                        for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
                                         
                                     }
                                     body_inside 
@@ -1582,6 +1604,7 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                     | rightside_types RELATIONAL rightside_types         
                                     {
                                         //strcat(tac,$2);
+                                        strcpy(relat,$2);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
