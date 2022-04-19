@@ -38,7 +38,7 @@
     char* param[8];
     int param_no = 0;
     bool in_main = false;
-    string temp_var;
+    char* temp_var = "";
 
     char* cond[100] = {};
     int condition = 0;
@@ -405,9 +405,9 @@ complex                     :       varconst SEMI varconst
                                     ;
 
                                   
-variable                    :       ID  {$$ = $1; strcat(tac,$1); };
+variable                    :       ID  {$$ = $1; };
 
-
+variable_name               :       ID  {$$ = $1; strcpy(leftside,$1);};
 
 //assignment statement
 
@@ -556,7 +556,6 @@ leftside_types              :       variable_name assignment_types
                                                 int val_cond = 0;
                                                 int val_arith = 0;
                                                 int diff = assign[1]-2;
-                                                printf("%d",assign[1]);
                                                 for(int i=0;i<=1;i++)
                                                 {
                                                     if(diff <= 1)
@@ -1822,14 +1821,16 @@ body_inside                 :       body_inside statement_inside
                                         line_number++;
                                         strcat(tac," goto ");
                                         strcat(tac," L");
-                                        strcat(tac, label);
+                                        char string[20];
+                                        sprintf(string, "%d", label);
+                                        strcat(tac, string);
                                         strcat(tac, "\n");
                                         label++;
 
                                     }
                                     | ;
  
-statement_inside            :       declarations | if_statement | repeat_statement { strcat(tac,"goto"); strcat(tac,"L"); strcat(tac,label); strcat(tac,"\n"); } | 
+statement_inside            :       declarations | if_statement | repeat_statement { strcat(tac,"goto"); strcat(tac,"L"); char string[20];sprintf(string, "%d", label);strcat(tac,string); strcat(tac,"\n"); } | 
                                    assignment FULLSTOP;| function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
 
 
