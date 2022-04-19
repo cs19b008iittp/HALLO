@@ -14,7 +14,6 @@
 
     //variables for TAC
     extern int lines;
-    int n = 0;
     int if_label = 0;
     // int else_label = 0;
     int label = 1;
@@ -1505,7 +1504,6 @@ otherwise                   :       OTHERWISE
                                     }
                                     cond THEN COLON 
                                     {
-                                        strcat(tac,"cond ");
                                         strcat(tac,"goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
@@ -1652,12 +1650,7 @@ initialization              :       FROM rightside_types
   
 termination                 :       TO rightside_types 
                                     {
-                                        $$ = $2;
-                                        strcat(tac,"if");
-                                        strcat(tac,temp_var);
-                                        strcat(tac,"<=");
-                                        
-                                        
+                                        $$ = $2; 
                                     }
                                     |  
                                     {
@@ -1872,18 +1865,10 @@ statement_inside_function   :       if_statement | repeat_statement |  assignmen
 body_inside                 :       body_inside statement_inside
                                     {
                                         line_number++;
-                                        strcat(tac," goto ");
-                                        strcat(tac," L");
-                                        char string[20];
-                                        sprintf(string, "%d", label);
-                                        strcat(tac, string);
-                                        strcat(tac, "\n");
-                                        label++;
-
                                     }
                                     | ;
  
-statement_inside            :       declarations | if_statement | repeat_statement { strcat(tac,"goto"); strcat(tac,"L"); char string[20];sprintf(string, "%d", label);strcat(tac,string); strcat(tac,"\n"); } | 
+statement_inside            :       declarations | if_statement | repeat_statement | 
                                    assignment FULLSTOP;| function_call FULLSTOP | array_state FULLSTOP| print FULLSTOP | get FULLSTOP | leave FULLSTOP ;
 
 
