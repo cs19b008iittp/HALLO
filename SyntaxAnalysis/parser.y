@@ -470,7 +470,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[0]);
+                                                        strcat(tac," ");
                                                         strcat(tac,arith[0]);
+                                                        strcat(tac," ");
                                                         strcat(tac,cond[1]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=condition-3;j++)
@@ -483,7 +485,9 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[j+1]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[j+2]);
                                                             strcat(tac,"\n");
                                                         }
@@ -577,7 +581,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[val_cond]);
+                                                        strcat(tac," ");
                                                         strcat(tac,arith[val_arith++]);
+                                                        strcat(tac," ");
                                                         strcat(tac,cond[++val_cond]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=diff-3;j++)
@@ -590,7 +596,9 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[val_arith++]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[++val_cond]);
                                                             strcat(tac,"\n");
                                                         }
@@ -714,7 +722,9 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
+                                                strcat(tac," ");
                                                 strcat(tac,arith[arith_count-1]);
+                                                strcat(tac," ");
                                                 strcat(tac,cond[0]);
                                                 strcat(tac,"\n");
                                                 for(int j=0;j<=condition-3;j++)
@@ -727,7 +737,9 @@ rightside_types             :       function_call
                                                     strcat(tac,"T");
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
+                                                    strcat(tac," ");
                                                     strcat(tac,arith[j]);
+                                                    strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
                                                     strcat(tac,"\n");
                                                 }
@@ -772,7 +784,9 @@ rightside_types             :       function_call
                                                             strcat(tac,string);
                                                             strcat(tac," = ");
                                                             strcat(tac,cond[0]);
+                                                            strcat(tac," ");
                                                             strcat(tac,arith[0]);
+                                                            strcat(tac," ");
                                                             strcat(tac,cond[1]);
                                                             strcat(tac,"\n");
                                                             for(int j=0;j<=condition-3;j++)
@@ -785,7 +799,9 @@ rightside_types             :       function_call
                                                                 strcat(tac,"T");
                                                                 sprintf(string, "%d", temp_number-2);
                                                                 strcat(tac,string);
+                                                                strcat(tac," ");
                                                                 strcat(tac,arith[j+1]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,cond[j+2]);
                                                                 strcat(tac,"\n");
                                                             }
@@ -846,7 +862,9 @@ rightside_types             :       function_call
                                                                 strcat(tac,string);
                                                                 strcat(tac," = ");
                                                                 strcat(tac,cond[val_cond]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,arith[val_arith++]);
+                                                                strcat(tac," ");
                                                                 strcat(tac,cond[++val_cond]);
                                                                 strcat(tac,"\n");
                                                                 for(int j=0;j<=diff-3;j++)
@@ -859,7 +877,9 @@ rightside_types             :       function_call
                                                                     strcat(tac,"T");
                                                                     sprintf(string, "%d", temp_number-2);
                                                                     strcat(tac,string);
+                                                                    strcat(tac," ");
                                                                     strcat(tac,arith[val_arith++]);
+                                                                    strcat(tac," ");
                                                                     strcat(tac,cond[++val_cond]);
                                                                     strcat(tac,"\n");
                                                                 }
@@ -958,7 +978,9 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
+                                                strcat(tac," ");
                                                 strcat(tac,arith[arith_count-1]);
+                                                strcat(tac," ");
                                                 strcat(tac,cond[0]);
                                                 strcat(tac,"\n");
                                                 for(int j=0;j<=condition-2;j++)
@@ -971,7 +993,9 @@ rightside_types             :       function_call
                                                     strcat(tac,"T");
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
+                                                    strcat(tac," ");
                                                     strcat(tac,arith[j]);
+                                                    strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
                                                     strcat(tac,"\n");
                                                 }
@@ -1068,7 +1092,12 @@ assign_var                  :       assignment_types
                                     {
                                         char* str = "arith";
                                         $$ = checkcond(cond,condition,str);
-                                         
+                                        
+                                        if(strcmp($1,"plus") == 0) strcpy($1,"+");
+                                        else if(strcmp($1,"minus") == 0) strcpy($1,"-");
+                                        else if(strcmp($1,"into") == 0) strcpy($1,"*");
+                                        else if(strcmp($1,"dividedby") == 0) strcpy($1,"/");
+                                        else if(strcmp($1,"remainder") == 0) strcpy($1,"%");
                                         arith[arith_count] = $1;
                                         arith_count++;
 
@@ -1417,10 +1446,14 @@ array_state                 :       REMOVE FROM variable
 if_statement                :       IF  
                                     {
                                         //printf("\nprinting if colon line number: %d\n", lines);
-                                        strcat(tac,"if ");
+                                        //strcat(tac,"if ");
                                     }
                                     cond  THEN COLON 
                                     {
+                                        strcat(tac,"if ");
+
+
+                                        
                                         strcat(tac,"goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
