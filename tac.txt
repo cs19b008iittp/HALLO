@@ -1,54 +1,28 @@
-sum = 0
-prod = 1
-diff = 0
-quotient = 0
-T1 = 1
-T2 = 10
-T3 = 1
-T4 = sumplusi
-sum =  T4
-T5 = prodintoi
-prod =  T5
-T6 = quotientdividedbyi
-quotient =  T6
-disp sum
-if T7 = sum
-T8 = 0
-goto L1
-goto L2
-L1: d = 10
-if T9 = d
-T10 = 10
-goto L3
-goto L4
-L3: T11 = 5
-d =  T11
-c = 100
-T12 = cplus5
-d =  T12
-
-L4: T13 = 7
-d =  T13
-
-a = 10
-T14 = dplusc
-a =  T14
-T15 = 20
-c =  T15
-
-L2: if T16 = sum
-T17 = 10
-goto L5
-goto L6
-L5: T18 = 20
-a =  T18
-
-L6: T19 = 30
-a =  T19
-
-if T20 = a
-T21 = 5
-goto L7
-goto L8
-L7: b = 2
-
+T1 = 4 * id
+T2 = 4 * 10
+T3 = a(T2)
+a(T1) = T3
+T4 = 10
+id = T4
+T5 = id + 5
+T6 = T5 - 3
+T7 = T6 * 3
+T8 = 4 * T7
+T9 = a(T8)
+id = T9
+T10 = 4 * 22
+T11 = 4 * 45
+T12 = 2 * T10
+T13 = T11 + T12
+T14 = 10
+b(T13) = T14
+T15 = 4 * 2
+T16 = 22 + 2
+T17 = 4 * T16
+T18 = 45 + id
+T19 = T18 - 1
+T20 = 4 * T19
+T21 = 2 * T17
+T22 = T20 + T21
+T23 = b(T22)
+a(T15) = T23
