@@ -40,3 +40,61 @@ goto bubbleSort : arr
 arr =  T24
 disp "Sowmya is a good Girl"
 disp a, b, c, 123
+sum = 0
+prod = 1
+diff = 0
+quotient = 0
+T1 = 1
+T2 = 10
+T3 = 1
+goto L1
+L1: if T1 <= T2 goto L2
+L2: T4 = sumplusi
+sum =  T4
+T5 = prodintoi
+prod =  T5
+T6 = quotientdividedbyi
+quotient =  T6
+increment
+goto L1
+
+disp sum
+if T7 = sum
+T8 = 0
+goto L3
+goto L4
+L3: d = 10
+if T9 = d
+T10 = 10
+goto L5
+goto L6
+L5: T11 = 5
+d =  T11
+c = 100
+T12 = cplus5
+d =  T12
+
+L6: T13 = 7
+d =  T13
+
+a = 10
+T14 = dplusc
+a =  T14
+T15 = 20
+c =  T15
+
+L4: if T16 = sum
+T17 = 10
+goto L7
+goto L8
+L7: T18 = 20
+a =  T18
+
+L8: T19 = 30
+a =  T19
+
+if T20 = a
+T21 = 5
+goto L9
+goto L10
+L9: b = 2

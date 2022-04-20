@@ -1,0 +1,79 @@
+lw $t2 -8(fp)
+mult $t3 4 $t2
+add $t0 $t3 $zero
+sw $t0 -12(fp)
+mult $t3 4 10
+add $t0 $t3 $zero
+sw $t0 -16(fp)
+li $t0 a[T2]
+['a[T1]', '=', '', 'T3']
+li $t0 10
+['id', '=', '', 'T4']
+lw $t1 -20(fp)
+add $t3 $t1 5
+add $t0 $t3 $zero
+sw $t0 -24(fp)
+lw $t1 -28(fp)
+sub $t3 $t1 3
+add $t0 $t3 $zero
+sw $t0 -32(fp)
+lw $t1 -36(fp)
+mult $t3 $t1 3
+add $t0 $t3 $zero
+sw $t0 -40(fp)
+lw $t2 -44(fp)
+mult $t3 4 $t2
+add $t0 $t3 $zero
+sw $t0 -48(fp)
+li $t0 a[T8]
+['id', '=', '', 'T9']
+mult $t3 4 22
+add $t0 $t3 $zero
+sw $t0 -52(fp)
+mult $t3 4 45
+add $t0 $t3 $zero
+sw $t0 -56(fp)
+lw $t2 -60(fp)
+mult $t3 2 $t2
+add $t0 $t3 $zero
+sw $t0 -64(fp)
+lw $t1 -68(fp)
+lw $t2 -72(fp)
+add $t3 $t1 $t2
+add $t0 $t3 $zero
+sw $t0 -76(fp)
+li $t0 10
+['b[T13]', '=', '', 'T14']
+mult $t3 4 2
+add $t0 $t3 $zero
+sw $t0 -80(fp)
+add $t3 22 2
+add $t0 $t3 $zero
+sw $t0 -84(fp)
+lw $t2 -88(fp)
+mult $t3 4 $t2
+add $t0 $t3 $zero
+sw $t0 -92(fp)
+lw $t2 -96(fp)
+add $t3 45 $t2
+add $t0 $t3 $zero
+sw $t0 -100(fp)
+lw $t1 -104(fp)
+sub $t3 $t1 1
+add $t0 $t3 $zero
+sw $t0 -108(fp)
+lw $t2 -112(fp)
+mult $t3 4 $t2
+add $t0 $t3 $zero
+sw $t0 -116(fp)
+lw $t2 -120(fp)
+mult $t3 2 $t2
+add $t0 $t3 $zero
+sw $t0 -124(fp)
+lw $t1 -128(fp)
+lw $t2 -132(fp)
+add $t3 $t1 $t2
+add $t0 $t3 $zero
+sw $t0 -136(fp)
+li $t0 b[T22]
+['a[T15]', '=', '', 'T23']

@@ -63,6 +63,10 @@
 
     int param_count = 0;
 
+    int repeat_array[3];
+    int repeat_array_count = 0;
+    int repeat_label = 0;
+
 %}
 
 %union 
@@ -75,7 +79,7 @@
 
 %token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
-%token <string>RELATIONAL  LOGICAL 
+%token RELATIONAL LOGICAL 
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -434,8 +438,6 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         condition = 0; 
                                         for(int j=0;j<=99;j++)arith[j]="";
                                         arith_count = 0; 
-                                        for(int j=0;j<=99;j++)right[j]=0;
-                                        right_count = 0; 
                                     }
                                     ;
 
@@ -973,7 +975,6 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
-                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | constant assign_const 
@@ -1017,7 +1018,6 @@ rightside_types             :       function_call
                                                     strcat(tac,"T");
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
-                                                    strcat(tac," ");
                                                     strcat(tac,arith[j]);
                                                     strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
@@ -1049,13 +1049,11 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
-                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | size 
                                     {
                                         $$ = $1;
-                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | STRCONST  
@@ -1072,7 +1070,6 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
-                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | FLAG  
@@ -1089,9 +1086,7 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
-                                        right[right_count++] = temp_number-1;
                                     }
-
                                     
                                     | complex
                                     {
@@ -1107,7 +1102,6 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
-                                        right[right_count++] = temp_number-1;
                                     }
                                     ;
 
@@ -1122,12 +1116,7 @@ assign_var                  :       assignment_types
                                     {
                                         char* str = "arith";
                                         $$ = checkcond(cond,condition,str);
-                                        
-                                        if(strcmp($1,"plus") == 0) strcpy($1,"+");
-                                        else if(strcmp($1,"minus") == 0) strcpy($1,"-");
-                                        else if(strcmp($1,"into") == 0) strcpy($1,"*");
-                                        else if(strcmp($1,"dividedby") == 0) strcpy($1,"/");
-                                        else if(strcmp($1,"remainder") == 0) strcpy($1,"%");
+                                         
                                         arith[arith_count] = $1;
                                         arith_count++;
 
@@ -1476,19 +1465,11 @@ array_state                 :       REMOVE FROM variable
 if_statement                :       IF  
                                     {
                                         //printf("\nprinting if colon line number: %d\n", lines);
-                                        //strcat(tac,"if ");
+                                        strcat(tac,"if ");
                                     }
                                     cond  THEN COLON 
                                     {
-                                        strcat(tac,"if T");
-                                        sprintf(temp_label,"%d",right[0]);
-                                        strcat(tac,temp_label);
-                                        strcat(tac," ");
-                                        strcat(tac,relat);
-                                        strcat(tac," T");
-                                        sprintf(temp_label,"%d",right[1]);
-                                        strcat(tac,temp_label);
-                                        strcat(tac,"  goto L");
+                                        strcat(tac,"goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
@@ -1506,9 +1487,6 @@ if_statement                :       IF
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
                                         strcat(tac, ": ");
-
-                                        for(int j=0;j<=99;j++)right[j]=0;
-                                        right_count = 0; 
                                         
                                     }
                                     body_inside 
@@ -1620,7 +1598,6 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                     | rightside_types RELATIONAL rightside_types         
                                     {
                                         //strcat(tac,$2);
-                                        strcpy(relat,$2);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
@@ -1658,8 +1635,49 @@ varconst                    :       variable {$$ = $1;};
 
 //repeat
 
-repeat_statement            :       REPEAT variable initialization termination incrementation COLON body_inside done 
+repeat_statement            :       REPEAT variable initialization termination incrementation COLON 
                                     {
+
+                                        printf("\nT values: %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2]);
+
+                                        strcat(tac,"goto L");
+                                        repeat_label = label;
+                                        sprintf(temp_label,"%d",repeat_label);
+                                        strcat(tac,temp_label);
+                                        label++;
+                                        strcat(tac, "\n");
+
+                                        //Examples/conditional_tac_example.hallo
+
+                                        strcat(tac, "L");
+                                        strcat(tac,temp_label);
+                                        strcat(tac,": if T");
+
+                                        sprintf(temp_label,"%d",repeat_array[0]);
+                                        strcat(tac,temp_label);                       
+
+                                        strcat(tac," <=");
+                                        strcat(tac," T");
+                                        sprintf(temp_label,"%d",repeat_array[1]);
+                                        strcat(tac,temp_label); 
+                                        strcat(tac," goto L");
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+
+                                        strcat(tac, "\n");
+                                        strcat(tac, "L");
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,": ");
+
+
+                                        label++;
+
+
+
+
+                                        
+
                                         struct DataItem *var = searchUsingIdentifier($2);
                                         if(var == NULL)
                                             printf("%s: Variable not declared\n", $2);
@@ -1674,11 +1692,24 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         }
                                       
                                     }
+                                    body_inside done
+                                    {
+                                        strcat(tac,"increment\n");
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",repeat_label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,"\n\n");
+
+
+                                    }
                                     ;
 
 initialization              :       FROM rightside_types
                                     {
                                         $$ = $2;
+                                        printf("\nT value for initialisation is: %d\n", temp_number);
+                                        repeat_array[repeat_array_count] = temp_number - 1;
+                                        repeat_array_count++;
                                      
                                     } 
                                     |  
@@ -1690,6 +1721,9 @@ initialization              :       FROM rightside_types
 termination                 :       TO rightside_types 
                                     {
                                         $$ = $2; 
+                                        printf("\nT value for termination is: %d\n", temp_number);
+                                        repeat_array[repeat_array_count] = temp_number - 1;
+                                        repeat_array_count++;
                                     }
                                     |  
                                     {
@@ -1700,6 +1734,9 @@ termination                 :       TO rightside_types
 incrementation              :       UPDATE ARITHMETIC rightside_types
                                     {
                                         $$ = $3;
+                                        printf("\nT value for incrementation is: %d\n", temp_number);
+                                        repeat_array[repeat_array_count] = temp_number - 1;
+                                        repeat_array_count++;
 
                                     } 
                                     | 
