@@ -5,7 +5,7 @@ start
     num diff is 0.
     num quotient is 0.
 
-    repeat i from 1 to 10 update inc by 1:
+    repeat i from 1 to 10 update dec by 1:
         sum is sum plus i.
         prod is prod into i.
         quotient is quotient dividedby i.	

@@ -1,79 +1,96 @@
-lw $t2 -8(fp)
-mult $t3 4 $t2
+li $t0 sizeof(arr)
+['size_arr', '=', '', 'T1']
+li $t0 0
+lw $t1 -8(fp)
+sub $t3 $t1 1
 add $t0 $t3 $zero
 sw $t0 -12(fp)
-mult $t3 4 10
-add $t0 $t3 $zero
-sw $t0 -16(fp)
-li $t0 a[T2]
-['a[T1]', '=', '', 'T3']
-li $t0 10
-['id', '=', '', 'T4']
-lw $t1 -20(fp)
-add $t3 $t1 5
+li $t0 1
+['goto', 'L1']
+['L1:', 'if', 'T2', '<=', 'T3', 'goto', 'L2']
+['L2:', 'T5', '=', '0']
+lw $t1 -16(fp)
+lw $t2 -20(fp)
+sub $t3 $t1 $t2
 add $t0 $t3 $zero
 sw $t0 -24(fp)
 lw $t1 -28(fp)
-sub $t3 $t1 3
+sub $t3 $t1 1
 add $t0 $t3 $zero
 sw $t0 -32(fp)
+li $t0 1
+['goto', 'L3']
+['L3:', 'if', 'T5', '<=', 'T7', 'goto', 'L4']
+['L4:', 'if', 'T9', '=', '4', '*', 'j']
+li $t0 arr[T9]
 lw $t1 -36(fp)
-mult $t3 $t1 3
+add $t3 $t1 1
 add $t0 $t3 $zero
 sw $t0 -40(fp)
 lw $t2 -44(fp)
 mult $t3 4 $t2
 add $t0 $t3 $zero
 sw $t0 -48(fp)
-li $t0 a[T8]
-['id', '=', '', 'T9']
-mult $t3 4 22
-add $t0 $t3 $zero
-sw $t0 -52(fp)
-mult $t3 4 45
+li $t0 number[T12]
+['goto', 'L5']
+['goto', 'L6']
+['L5:', 'T14', '=', '4', '*', 'j']
+li $t0 arr[T14]
+['temp', '=', '', 'T15']
+lw $t2 -52(fp)
+mult $t3 4 $t2
 add $t0 $t3 $zero
 sw $t0 -56(fp)
-lw $t2 -60(fp)
-mult $t3 2 $t2
+lw $t1 -60(fp)
+add $t3 $t1 1
 add $t0 $t3 $zero
 sw $t0 -64(fp)
-lw $t1 -68(fp)
-lw $t2 -72(fp)
-add $t3 $t1 $t2
+lw $t2 -68(fp)
+mult $t3 4 $t2
 add $t0 $t3 $zero
-sw $t0 -76(fp)
-li $t0 10
-['b[T13]', '=', '', 'T14']
-mult $t3 4 2
+sw $t0 -72(fp)
+li $t0 arr[T18]
+['arr[T16]', '=', '', 'T19']
+lw $t1 -76(fp)
+add $t3 $t1 1
 add $t0 $t3 $zero
 sw $t0 -80(fp)
-add $t3 22 2
-add $t0 $t3 $zero
-sw $t0 -84(fp)
-lw $t2 -88(fp)
+lw $t2 -84(fp)
 mult $t3 4 $t2
 add $t0 $t3 $zero
-sw $t0 -92(fp)
+sw $t0 -88(fp)
+li $t0 temp
+['arr[T21]', '=', '', 'T22']
+['']
+lw $t1 -92(fp)
 lw $t2 -96(fp)
-add $t3 45 $t2
+add $t3 $t1 $t2
 add $t0 $t3 $zero
 sw $t0 -100(fp)
+['goto', 'L3']
+['']
 lw $t1 -104(fp)
-sub $t3 $t1 1
+lw $t2 -108(fp)
+add $t3 $t1 $t2
 add $t0 $t3 $zero
-sw $t0 -108(fp)
-lw $t2 -112(fp)
-mult $t3 4 $t2
-add $t0 $t3 $zero
-sw $t0 -116(fp)
+sw $t0 -112(fp)
+['goto', 'L3']
+['']
+li $t0 10
+['get', 'b,', 'c']
+li $t0 "Sowmya"
+['get', 'a']
+lw $t1 -116(fp)
 lw $t2 -120(fp)
-mult $t3 2 $t2
+add $t3 $t1 $t2
 add $t0 $t3 $zero
 sw $t0 -124(fp)
 lw $t1 -128(fp)
 lw $t2 -132(fp)
-add $t3 $t1 $t2
+sub $t3 $t1 $t2
 add $t0 $t3 $zero
 sw $t0 -136(fp)
-li $t0 b[T22]
-['a[T15]', '=', '', 'T23']
+['b', '=', '', 'T24']
+['arr', '=', '', 'T24']
+['disp', '"Sowmya', 'is', 'a', 'good', 'Girl"']
+['disp', 'a,', 'b,', 'c,', '123']

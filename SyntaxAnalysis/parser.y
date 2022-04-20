@@ -56,19 +56,15 @@
     int assign[2];
     int assign_count = 0;
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
     int right[100];
     int right_count = 0;
     char relat[100] = "";
-=======
-    int repeat_array[3];
-    int repeat_array_count = 0;
-    int repeat_label = 0;
->>>>>>> Stashed changes
 
-=======
->>>>>>> parent of c71d11d (merge conflict)
+    int repeat_array[1000];
+    int repeat_array_count = 0;
+    int repeat_label[100];
+    int repeat_label_count = -1;
+
 %}
 
 %union 
@@ -482,15 +478,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[0]);
-<<<<<<< Updated upstream
                                                         strcat(tac," ");
                                                         strcat(tac,arith[0]);
                                                         strcat(tac," ");
-=======
-                                                       
-                                                        strcat(tac,arith[0]);
-                                                       
->>>>>>> Stashed changes
                                                         strcat(tac,cond[1]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=condition-3;j++)
@@ -506,10 +496,6 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac," ");
                                                             strcat(tac,arith[j+1]);
                                                             strcat(tac," ");
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
                                                             strcat(tac,cond[j+2]);
                                                             strcat(tac,"\n");
                                                         }
@@ -603,15 +589,9 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,cond[val_cond]);
-<<<<<<< Updated upstream
                                                         strcat(tac," ");
                                                         strcat(tac,arith[val_arith++]);
                                                         strcat(tac," ");
-=======
-                                                    
-                                                        strcat(tac,arith[val_arith++]);
-                                                       
->>>>>>> Stashed changes
                                                         strcat(tac,cond[++val_cond]);
                                                         strcat(tac,"\n");
                                                         for(int j=0;j<=diff-3;j++)
@@ -624,15 +604,9 @@ leftside_types              :       variable_name assignment_types
                                                             strcat(tac,"T");
                                                             sprintf(string, "%d", temp_number-2);
                                                             strcat(tac,string);
-<<<<<<< Updated upstream
                                                             strcat(tac," ");
                                                             strcat(tac,arith[val_arith++]);
                                                             strcat(tac," ");
-=======
-                                                           
-                                                            strcat(tac,arith[val_arith++]);
-                                                    
->>>>>>> Stashed changes
                                                             strcat(tac,cond[++val_cond]);
                                                             strcat(tac,"\n");
                                                         }
@@ -756,11 +730,7 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
-<<<<<<< Updated upstream
                                                 strcat(tac," ");
-=======
-                                              
->>>>>>> Stashed changes
                                                 strcat(tac,arith[arith_count-1]);
                                                 strcat(tac," ");
                                                 strcat(tac,cond[0]);
@@ -775,11 +745,7 @@ rightside_types             :       function_call
                                                     strcat(tac,"T");
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
-<<<<<<< Updated upstream
                                                     strcat(tac," ");
-=======
-                                                
->>>>>>> Stashed changes
                                                     strcat(tac,arith[j]);
                                                     strcat(tac," ");
                                                     strcat(tac,cond[j+1]);
@@ -826,11 +792,7 @@ rightside_types             :       function_call
                                                             strcat(tac,string);
                                                             strcat(tac," = ");
                                                             strcat(tac,cond[0]);
-<<<<<<< Updated upstream
                                                             strcat(tac," ");
-=======
-                                                           
->>>>>>> Stashed changes
                                                             strcat(tac,arith[0]);
                                                             strcat(tac," ");
                                                             strcat(tac,cond[1]);
@@ -845,11 +807,7 @@ rightside_types             :       function_call
                                                                 strcat(tac,"T");
                                                                 sprintf(string, "%d", temp_number-2);
                                                                 strcat(tac,string);
-<<<<<<< Updated upstream
                                                                 strcat(tac," ");
-=======
-                                                               
->>>>>>> Stashed changes
                                                                 strcat(tac,arith[j+1]);
                                                                 strcat(tac," ");
                                                                 strcat(tac,cond[j+2]);
@@ -912,11 +870,7 @@ rightside_types             :       function_call
                                                                 strcat(tac,string);
                                                                 strcat(tac," = ");
                                                                 strcat(tac,cond[val_cond]);
-<<<<<<< Updated upstream
                                                                 strcat(tac," ");
-=======
-                                                               
->>>>>>> Stashed changes
                                                                 strcat(tac,arith[val_arith++]);
                                                                 strcat(tac," ");
                                                                 strcat(tac,cond[++val_cond]);
@@ -931,11 +885,7 @@ rightside_types             :       function_call
                                                                     strcat(tac,"T");
                                                                     sprintf(string, "%d", temp_number-2);
                                                                     strcat(tac,string);
-<<<<<<< Updated upstream
                                                                     strcat(tac," ");
-=======
-                                                                    
->>>>>>> Stashed changes
                                                                     strcat(tac,arith[val_arith++]);
                                                                     strcat(tac," ");
                                                                     strcat(tac,cond[++val_cond]);
@@ -1036,15 +986,9 @@ rightside_types             :       function_call
                                                 strcat(tac,string);
                                                 strcat(tac," = ");
                                                 strcat(tac,$1);
-<<<<<<< Updated upstream
                                                 strcat(tac," ");
                                                 strcat(tac,arith[arith_count-1]);
                                                 strcat(tac," ");
-=======
-                                              
-                                                strcat(tac,arith[arith_count-1]);
-                                                  strcat(tac," ");
->>>>>>> Stashed changes
                                                 strcat(tac,cond[0]);
                                                 strcat(tac,"\n");
                                                 for(int j=0;j<=condition-2;j++)
@@ -1058,11 +1002,7 @@ rightside_types             :       function_call
                                                     sprintf(string, "%d", temp_number-2);
                                                     strcat(tac,string);
                                                     strcat(tac,arith[j]);
-<<<<<<< Updated upstream
                                                     strcat(tac," ");
-=======
-                                                      strcat(tac," ");
->>>>>>> Stashed changes
                                                     strcat(tac,cond[j+1]);
                                                     strcat(tac,"\n");
                                                 }
@@ -1681,12 +1621,14 @@ varconst                    :       variable {$$ = $1;};
 repeat_statement            :       REPEAT variable initialization termination incrementation COLON 
                                     {
 
-                                        printf("\nT values: %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2]);
+                                        printf("\nT values: %d %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2], repeat_array[3]);
 
                                         strcat(tac,"goto L");
-                                        repeat_label = label;
-                                        sprintf(temp_label,"%d",repeat_label);
+                                        repeat_array_count++;
+                                        repeat_label[repeat_array_count] = label;
+                                        sprintf(temp_label,"%d",repeat_label[repeat_array_count]);
                                         strcat(tac,temp_label);
+                                        
                                         label++;
                                         strcat(tac, "\n");
 
@@ -1696,12 +1638,12 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac,temp_label);
                                         strcat(tac,": if T");
 
-                                        sprintf(temp_label,"%d",repeat_array[0]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
                                         strcat(tac,temp_label);                       
 
                                         strcat(tac," <=");
                                         strcat(tac," T");
-                                        sprintf(temp_label,"%d",repeat_array[1]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-3]);
                                         strcat(tac,temp_label); 
                                         strcat(tac," goto L");
                                         sprintf(temp_label,"%d",label);
@@ -1737,11 +1679,31 @@ repeat_statement            :       REPEAT variable initialization termination i
                                     }
                                     body_inside done
                                     {
-                                        strcat(tac,"increment\n");
-                                        strcat(tac,"goto L");
-                                        sprintf(temp_label,"%d",repeat_label);
+                                        // strcat(tac,"increment\n");
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
                                         strcat(tac,temp_label);
+                                        strcat(tac, " = ");
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
+                                        strcat(tac,temp_label);
+                                        if(repeat_array[repeat_array_count-1]==1){
+                                            strcat(tac," + ");
+                                        }
+                                        else{
+                                            strcat(tac," - ");
+                                        }
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-2]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,"\n");
+
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",repeat_label[repeat_array_count]);
+                                        strcat(tac,temp_label);
+                                        repeat_array_count--;
                                         strcat(tac,"\n\n");
+                                        repeat_array_count = repeat_array_count - 4;
 
 
                                     }
@@ -1780,6 +1742,16 @@ incrementation              :       UPDATE ARITHMETIC rightside_types
                                         printf("\nT value for incrementation is: %d\n", temp_number);
                                         repeat_array[repeat_array_count] = temp_number - 1;
                                         repeat_array_count++;
+                                        if(strcmp($2,"inc by")==0){
+                                            //printf("\nim inc by\n");
+                                            repeat_array[repeat_array_count] = 1;
+                                            repeat_array_count++;
+                                        }
+                                        else if(strcmp($2,"dec by")==0){
+                                            printf("\nim dec by\n");
+                                            repeat_array[repeat_array_count] = 0;
+                                            repeat_array_count++;
+                                        }
 
                                     } 
                                     | 
