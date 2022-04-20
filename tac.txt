@@ -1,54 +1,42 @@
-sum = 0
-prod = 1
-diff = 0
-quotient = 0
-T1 = 1
-T2 = 10
-T3 = 1
-T4 = sumplusi
-sum =  T4
-T5 = prodintoi
-prod =  T5
-T6 = quotientdividedbyi
-quotient =  T6
-disp sum
-if T7 = sum
-T8 = 0
-goto L1
+bubbleSort : 
+T1 = sizeof(arr)
+size_arr =  T1
+T2 = 0
+T3 = size_arr - 1
+T4 = 1
+T5 = 0
+T6 = size_arr - i
+T7 = T6 - 1
+T8 = 1
+T9 = 4 * j
+T10 = arr[T9]
+T11 = j + 1
+T12 = 4 * T11
+T13 = number[T12]
+if T2 greater than T3  goto L1
 goto L2
-L1: d = 10
-if T9 = d
-T10 = 10
-goto L3
-goto L4
-L3: T11 = 5
-d =  T11
-c = 100
-T12 = cplus5
-d =  T12
+L1: T14 = 4 * j
+T15 = arr[T14]
+temp =  T15
+T16 = 4 * j
+T17 = j + 1
+T18 = 4 * T17
+T19 = arr[T18]
+arr[T16] =  T19
+T20 = j + 1
+T21 = 4 * T20
+T22 = temp
+arr[T21] =  T22
 
-L4: T13 = 7
-d =  T13
-
-a = 10
-T14 = dplusc
-a =  T14
-T15 = 20
-c =  T15
-
-L2: if T16 = sum
-T17 = 10
-goto L5
-goto L6
-L5: T18 = 20
-a =  T18
-
-L6: T19 = 30
-a =  T19
-
-if T20 = a
-T21 = 5
-goto L7
-goto L8
-L7: b = 2
-
+temporary : 
+d = 10
+get b, c
+a = "Sowmya"
+get a
+T23 = b + c
+T24 = T23 - d
+b =  T24
+goto bubbleSort : arr
+arr =  T24
+disp "Sowmya is a good Girl"
+disp a, b, c, 123
