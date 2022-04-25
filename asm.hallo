@@ -1,96 +1,110 @@
-li $t0 sizeof(arr)
-['size_arr', '=', '', 'T1']
-li $t0 0
-lw $t1 -8(fp)
-sub $t3 $t1 1
-add $t0 $t3 $zero
-sw $t0 -12(fp)
-li $t0 1
-['goto', 'L1']
-['L1:', 'if', 'T2', '<=', 'T3', 'goto', 'L2']
-['L2:', 'T5', '=', '0']
-lw $t1 -16(fp)
-lw $t2 -20(fp)
-sub $t3 $t1 $t2
-add $t0 $t3 $zero
-sw $t0 -24(fp)
-lw $t1 -28(fp)
-sub $t3 $t1 1
-add $t0 $t3 $zero
-sw $t0 -32(fp)
-li $t0 1
-['goto', 'L3']
-['L3:', 'if', 'T5', '<=', 'T7', 'goto', 'L4']
-['L4:', 'if', 'T9', '=', '4', '*', 'j']
-li $t0 arr[T9]
-lw $t1 -36(fp)
-add $t3 $t1 1
-add $t0 $t3 $zero
-sw $t0 -40(fp)
-lw $t2 -44(fp)
-mult $t3 4 $t2
-add $t0 $t3 $zero
-sw $t0 -48(fp)
-li $t0 number[T12]
-['goto', 'L5']
-['goto', 'L6']
-['L5:', 'T14', '=', '4', '*', 'j']
-li $t0 arr[T14]
-['temp', '=', '', 'T15']
-lw $t2 -52(fp)
-mult $t3 4 $t2
-add $t0 $t3 $zero
-sw $t0 -56(fp)
-lw $t1 -60(fp)
-add $t3 $t1 1
-add $t0 $t3 $zero
-sw $t0 -64(fp)
-lw $t2 -68(fp)
-mult $t3 4 $t2
-add $t0 $t3 $zero
-sw $t0 -72(fp)
-li $t0 arr[T18]
-['arr[T16]', '=', '', 'T19']
-lw $t1 -76(fp)
-add $t3 $t1 1
-add $t0 $t3 $zero
-sw $t0 -80(fp)
-lw $t2 -84(fp)
-mult $t3 4 $t2
-add $t0 $t3 $zero
-sw $t0 -88(fp)
-li $t0 temp
-['arr[T21]', '=', '', 'T22']
-['']
-lw $t1 -92(fp)
-lw $t2 -96(fp)
-add $t3 $t1 $t2
-add $t0 $t3 $zero
-sw $t0 -100(fp)
-['goto', 'L3']
-['']
-lw $t1 -104(fp)
-lw $t2 -108(fp)
-add $t3 $t1 $t2
-add $t0 $t3 $zero
-sw $t0 -112(fp)
-['goto', 'L3']
-['']
-li $t0 10
-['get', 'b,', 'c']
-li $t0 "Sowmya"
-['get', 'a']
-lw $t1 -116(fp)
-lw $t2 -120(fp)
-add $t3 $t1 $t2
-add $t0 $t3 $zero
-sw $t0 -124(fp)
-lw $t1 -128(fp)
-lw $t2 -132(fp)
-sub $t3 $t1 $t2
-add $t0 $t3 $zero
-sw $t0 -136(fp)
-['b', '=', '', 'T24']
-['arr', '=', '', 'T24']
-['disp', '"Sowmya', 'is', 'a', 'good', 'Girl"']
-['disp', 'a,', 'b,', 'c,', '123']
+	li $t0, sizeof(arr)
+	li $t0, T1
+	li $t0, 0
+	lw $t1, -8(fp)
+	sub $t3, $t1, 1
+	add $t0, $t3, $zero
+	sw $t0, -12(fp)
+	li $t0, 1
+	j L1
+L1:
+	['if', 'T3', '<=', 'T4', 'goto', 'L2']
+L2:
+	li $t0, 0
+	lw $t1, -16(fp)
+	lw $t2, -20(fp)
+	sub $t3, $t1, $t2
+	add $t0, $t3, $zero
+	sw $t0, -24(fp)
+	lw $t1, -28(fp)
+	sub $t3, $t1, 1
+	add $t0, $t3, $zero
+	sw $t0, -32(fp)
+	li $t0, 1
+	j L3
+L3:
+	['if', 'T7', '<=', 'T8', 'goto', 'L4']
+L4:
+	['if', 'T9', '=', '4', '*', 'j']
+	li $t0, arr(T9)
+	lw $t1, -36(fp)
+	add $t3, $t1, 1
+	add $t0, $t3, $zero
+	sw $t0, -40(fp)
+	lw $t2, -44(fp)
+	mult $t3, 4, $t2
+	add $t0, $t3, $zero
+	sw $t0, -48(fp)
+	li $t0, number(T12)
+	j L5
+	j L6
+L5:
+	li $t0, arr(T14)
+	li $t0, T15
+	lw $t2, -52(fp)
+	mult $t3, 4, $t2
+	add $t0, $t3, $zero
+	sw $t0, -56(fp)
+	lw $t1, -60(fp)
+	add $t3, $t1, 1
+	add $t0, $t3, $zero
+	sw $t0, -64(fp)
+	lw $t2, -68(fp)
+	mult $t3, 4, $t2
+	add $t0, $t3, $zero
+	sw $t0, -72(fp)
+	li $t0, arr(T18)
+	li $t0, T19
+	lw $t1, -76(fp)
+	add $t3, $t1, 1
+	add $t0, $t3, $zero
+	sw $t0, -80(fp)
+	lw $t2, -84(fp)
+	mult $t3, 4, $t2
+	add $t0, $t3, $zero
+	sw $t0, -88(fp)
+	li $t0, temp
+	li $t0, T22
+	lw $t1, -92(fp)
+	lw $t2, -96(fp)
+	sub $t3, $t1, $t2
+	add $t0, $t3, $zero
+	sw $t0, -100(fp)
+	j L3
+	lw $t1, -104(fp)
+	lw $t2, -108(fp)
+	sub $t3, $t1, $t2
+	add $t0, $t3, $zero
+	sw $t0, -112(fp)
+	j L1
+	li $t0, 10
+	['get', 'b,', 'c']
+	li $t0, "Sowmya"
+	['get', 'a']
+	lw $t1, -116(fp)
+	lw $t2, -120(fp)
+	add $t3, $t1, $t2
+	add $t0, $t3, $zero
+	sw $t0, -124(fp)
+	lw $t1, -128(fp)
+	lw $t2, -132(fp)
+	sub $t3, $t1, $t2
+	add $t0, $t3, $zero
+	sw $t0, -136(fp)
+	li $t0, T24
+	li $t0, T24
+	li $v0, 4
+	la $a0, "Sowmya is a good Girl" 
+	syscall
+	li $v0, 1
+	la $a0, a
+	syscall
+	li $v0, 1
+	la $a0, b
+	syscall
+	li $v0, 1
+	la $a0, c
+	syscall
+	li $v0, 1
+	la $a0, 123
+	syscall

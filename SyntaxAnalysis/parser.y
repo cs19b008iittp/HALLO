@@ -427,7 +427,7 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         }
                                         strcat(tac,leftside);
                                         strcat(tac," = ");
-                                        strcat(tac," T");
+                                        strcat(tac,"T");
                                         char string[20];
                                         sprintf(string, "%d", temp_number-1);
                                         strcat(tac,string);
@@ -649,11 +649,11 @@ leftside_types              :       variable_name assignment_types
                                                 strcat(tac,string);
                                                 strcat(tac,"\n");
 
-                                                strcat(leftside,"[");
+                                                strcat(leftside,"(");
                                                 strcat(leftside,"T");
                                                 sprintf(string, "%d", temp_number-1);
                                                 strcat(leftside,string);
-                                                strcat(leftside,"]");
+                                                strcat(leftside,")");
 
                                             }
                                             else
@@ -829,10 +829,10 @@ rightside_types             :       function_call
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,$1);
-                                                        strcat(tac,"[T");
+                                                        strcat(tac,"(T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,"]");   
+                                                        strcat(tac,")");   
                                                         strcat(tac,"\n");  
                                                                           
                                                     }
@@ -935,10 +935,10 @@ rightside_types             :       function_call
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,$1);
-                                                        strcat(tac,"[T");
+                                                        strcat(tac,"(T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,"]");
+                                                        strcat(tac,")");
                                                         strcat(tac,"\n");
                                                     }
                                                     else
@@ -1496,7 +1496,7 @@ otherwise                   :       OTHERWISE
                                         else_labels[else_labels_iterator] = 0;
                                         else_labels_iterator--;
                                         strcat(tac,temp_label);
-                                        strcat(tac,": ");
+                                        strcat(tac,": \n");
 
 
                                         strcat(tac,"if ");
@@ -1520,7 +1520,7 @@ otherwise                   :       OTHERWISE
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
-                                        strcat(tac, ": ");
+                                        strcat(tac, ": \n");
                                     } 
                                     body_inside
                                     {
@@ -1540,7 +1540,7 @@ otherwise                   :       OTHERWISE
                                         else_labels[else_labels_iterator] = 0;
                                         else_labels_iterator--;
                                         strcat(tac,temp_label);
-                                        strcat(tac,": ");
+                                        strcat(tac,": \n");
                                     }
                                     body_inside
                                     {
@@ -1636,7 +1636,7 @@ repeat_statement            :       REPEAT variable initialization termination i
 
                                         strcat(tac, "L");
                                         strcat(tac,temp_label);
-                                        strcat(tac,": if T");
+                                        strcat(tac,": \nif T");
 
                                         sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
                                         strcat(tac,temp_label);                       
@@ -1653,7 +1653,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
-                                        strcat(tac,": ");
+                                        strcat(tac,": \n");
 
 
                                         label++;
