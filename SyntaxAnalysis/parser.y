@@ -49,6 +49,7 @@
     int line_number=1;
 
     char tac[100000] = "";
+    char data[100000] = "";
     int temp_number = 1;
 
     char leftside[1000] = "";
@@ -67,6 +68,8 @@
     int repeat_array_count = 0;
     int repeat_label[100];
     int repeat_label_count = -1;
+
+    bool main_present=false;
 
 %}
 
@@ -113,11 +116,21 @@ body                        :       bodytypes body {in_main = true;} | {in_main 
  
 bodytypes                   :       declarations 
                                     {
+                                        if(main_present==false)
+                                        {
+                                        strcat(tac,"start:\n");
+                                        main_present=true;
+                                        }
                                         //printf("declarations %d\n",line_number);
                                          line_number++;
                                     }
                                     | statement 
                                     {
+                                        if(main_present==false)
+                                        {
+                                        strcat(tac,"start:\n");
+                                        main_present=true;
+                                        }
                                         //printf("statements %d\n",line_number);
                                          line_number++;
                                     }
@@ -198,6 +211,10 @@ declaration                 :       TYPE names
                                         strcpy(containerDatatype,$1);
                                         bool flag = true;
                                         containerDatatype[strlen(containerDatatype)-1] = '\0';
+
+                                        strcat(data,$2);
+                                        strcat(data,": .word ");
+
                                         if(searchUsingIdentifier($2) == NULL)
                                         {
                                             if(containerDatatype=="data")
@@ -205,10 +222,16 @@ declaration                 :       TYPE names
                                                 //check for "data" datatype
                                                 for(int i=0;i<=cIterator-1;i++){
                                                  bool check=checkCorrectAssignment("num",cEntries[i])|checkCorrectAssignment("string",cEntries[i])|checkCorrectAssignment("com",cEntries[i])|checkCorrectAssignment("flag",cEntries[i]);
+                                                    
+                                                    strcat(data,cEntries[i]);
+                                                    if(i!=cIterator-1)
+                                                      strcat(data,",");
+                                                    
                                                     if(!check){
                                                         flag = false;
                                                     }
                                                 }
+                                                strcat(data,"\n");
                                                 if(flag == true)
                                                 {
                                                     insert($2,$1,1,key,"","");
@@ -221,10 +244,16 @@ declaration                 :       TYPE names
                                             }
                                             else{
                                                 for(int i=0;i<=cIterator-1;i++){
+
+                                                    strcat(data,cEntries[i]);
+                                                    if(i!=cIterator-1)
+                                                      strcat(data,",");
+
                                                     if(!checkCorrectAssignment(containerDatatype,cEntries[i])){
                                                         flag = false;
                                                     }
                                                 }
+                                                strcat(data,"\n");
                                                 if(flag == true){
                                                     insert($2,$1,1,key,"","");
                                                     key++;
@@ -272,16 +301,29 @@ declaration                 :       TYPE names
                                         type = $1;
                                         char *mdatatype = type;
                                         bool flag = true;
+
                                         if(searchUsingIdentifier($2) == NULL)
                                         {
+
+                                            
+
+                                        strcat(data,$3);
+                                        strcat(data,": .word ");
+
                                             if(mdatatype=="data")
                                             {
                                                 //check for "data" datatype
                                                 for(int i=0;i<=mIterator-1;i++){
+
+                                                    strcat(data,mEntries[i]);
+                                                    if(i!=mIterator-1)
+                                                      strcat(data,",");
+
                                                     if(!checkCorrectAssignment(mdatatype,mEntries[i])){
                                                         flag = false;
                                                     }
                                                 }
+                                                strcat(data,"\n");
                                                 if(flag == true){
                                                     insert($3,type,1,key,$4,$6);
                                                     key++;
@@ -293,10 +335,16 @@ declaration                 :       TYPE names
                                             }
                                             else{
                                                 for(int i=0;i<=mIterator-1;i++){
+
+                                                    strcat(data,cEntries[i]);
+                                                    if(i!=cIterator-1)
+                                                      strcat(data,",");
+
                                                     if(!checkCorrectAssignment(mdatatype,mEntries[i])){
                                                         flag = false;
                                                     }
                                                 }
+                                                 strcat(data,"\n");
                                                 if(flag == true){
                                                     insert($3,type,1,key,$4,$6);
                                                     key++;
@@ -367,10 +415,20 @@ init                        :       variable ASSIGNMENT types_init
 
                                         //TAC
                                         //printf("%s = %s;\n",$1,$3);
-                                        strcat(tac,$1);
-                                        strcat(tac," = ");
-                                        strcat(tac,$3);
-                                        strcat(tac,"\n");
+                                        if($3[0]=='"')
+                                        {
+                                            strcat(data,$1);
+                                            strcat(data,": .asciiz ");
+                                            strcat(data,$3);
+                                            strcat(data,"\n");
+                                        }
+                                        else
+                                        {
+                                            strcat(tac,$1);
+                                            strcat(tac," = ");
+                                            strcat(tac,$3);
+                                            strcat(tac,"\n");
+                                        }
                                     }
                                     ;
 
@@ -428,13 +486,25 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         {
                                             printf("%s, %s, error in arithmetic statement\n", $1, $3);
                                         }
-                                        strcat(tac,leftside);
-                                        strcat(tac," = ");
-                                        strcat(tac,"T");
-                                        char string[20];
-                                        sprintf(string, "%d", temp_number-1);
-                                        strcat(tac,string);
-                                        strcat(tac,"\n");
+
+                                        if(strcmp($3,"string")!=0)
+                                        {
+                                            strcat(tac,leftside);
+                                            strcat(tac," = ");
+                                            strcat(tac,"T");
+                                            char string[20];
+                                            sprintf(string, "%d", temp_number-1);
+                                            strcat(tac,string);
+                                            strcat(tac,"\n");
+                                        }
+                                        else
+                                        {
+                                            strcat(data,leftside);
+                                            strcat(data,": .asciiz ");
+                                            strcat(data,rightside);
+                                            strcat(data,"\n");
+                                        }
+
                                         for(int j=0;j<=99;j++)cond[j]="";
                                         condition = 0; 
                                         for(int j=0;j<=99;j++)arith[j]="";
@@ -1063,6 +1133,7 @@ rightside_types             :       function_call
                                         condition++;
                                         $$ = "string";
                                    
+                                        /*
                                         //TAC
                                         strcat(tac,"T");
                                         char string[20];
@@ -1071,6 +1142,9 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+                                        */
+
+                                        strcpy(rightside,$1);
                                     }
 
                                     | FLAG  
@@ -2022,7 +2096,8 @@ int main(int argc, char* argv[]) {
 
    //display(); 
 
-     FILE *file = fopen("tac.txt", "w");
+    FILE *file = fopen("tac.txt", "w");
+    FILE *file_data = fopen("data.txt", "w");
     if(argc > 1)
     {
         FILE *fp = fopen(argv[1], "r");
@@ -2042,5 +2117,8 @@ int main(int argc, char* argv[]) {
     printf("\n==========================: TAC :===========================\n");
     printf("%s\n", tac);
     fputs(tac,file);
+    printf("\n==========================: DATA :===========================\n");
+    printf("%s\n", data);
+    fputs(data,file_data);
     return 0;
 }
