@@ -1,4 +1,4 @@
-note bubbleSort nums arr, num b, num c, num d:
+note bubbleSort nums arr:
    ignore Hello 
    num size_arr.
    size_arr is size of arr. ignore Inline
@@ -25,7 +25,6 @@ ignore outside
 start
    ignore Separate Line
    num b, c.
-   num d
    num d is 10.
    get b, c.
    string a is "Sowmya".

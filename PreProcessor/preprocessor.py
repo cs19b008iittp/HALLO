@@ -9,6 +9,7 @@ filename = "./Examples/example1.hallo"
 # filename = "./Examples/conditional_tac_example.hallo"
 
 input_file = open(filename, 'r')
+
 output_file = open("processed_file.hallo", 'w')
 
 macros = {}

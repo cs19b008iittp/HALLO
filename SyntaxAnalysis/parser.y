@@ -38,6 +38,7 @@
     int param_no = 0;
     bool in_main = false;
     char* temp_var = "";
+    char function_name[20]="";
 
     char* cond[100] = {};
     int condition = 0;
@@ -59,6 +60,8 @@
     int right[100];
     int right_count = 0;
     char relat[100] = "";
+
+    int param_count = 0;
 
     int repeat_array[1000];
     int repeat_array_count = 0;
@@ -83,7 +86,7 @@
 
 %type <string> names init variable types_init contentries leftside_types assign_var function_end array_state
 %type <string> constant varconst complex size rightside_types  assign_const data function_call  
-%type <string> initialization termination incrementation constants inputs variable_name
+%type <string> initialization termination incrementation constants inputs variable_name function_name
 
 %token REPEAT FROM TO DONE UPDATE
  
@@ -675,6 +678,21 @@ rightside_types             :       function_call
                                         //add TAC for rightside_types
                                         struct Function* temp = searchFunctions($1);
                                         $$ = temp->return_type;
+                                        right[right_count++] = temp_number-1;
+                                        
+                                        strcat(tac,"goto ");
+                                        strcat(tac,$1); 
+                                        strcat(tac," : ");
+                                        printf("%d\n",param_no);
+                                        int i;
+                                        for(i=0;i<=param_count-2;i++)
+                                        {
+                                          strcat(tac,param[i]);
+                                          strcat(tac, " , ");
+                                        }
+                                        strcat(tac,param[i]);
+                                        strcat(tac,"\n");
+
                                     } 
                                      
                                     | variable assign_var 
@@ -1777,6 +1795,7 @@ function_call               :       CALL variable param
                                             if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
                                                 printf("Function parameter error: %s\n", func->name);
                                         }
+                                        param_count = param_no;
                                         param_no = 0;
                                         $$ = $2;
                                     }
@@ -1791,6 +1810,7 @@ function_call               :       CALL variable param
                                             if(func->no_of_params != param_no)
                                                 printf("Function parameter error: %s\n", func->name);
                                         }
+                                        param_count = param_no;
                                         param_no = 0;
                                         $$ = $2;
                                     }
@@ -1800,14 +1820,25 @@ function_call               :       CALL variable param
 
 //functions
 
-functions_optional          :       functions_optional function_call_outside {in_main = false;} 
-                                    | {in_main = false;} ;
+functions_optional          :       functions_optional function_call_outside 
+                                    {
+                                        in_main = false;
+                                    } 
+                                    | 
+                                    {
+                                        in_main = false;
+                                    } ;
 
-function_call_outside       :       NOTE ID param_note COLON body_inside_function function_end
+function_name               :      ID{ $$ = $1; strcpy(function_name,$1);};
+
+function_call_outside       :       NOTE function_name param_note COLON body_inside_function function_end
                                     {
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL) 
+                                        {
                                             insertFunction($2, function_no++, param_no, parm, true,$6);
+                                            
+                                        }
                                         else if(func->dec == false)
                                         {
                                             if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
@@ -1817,12 +1848,13 @@ function_call_outside       :       NOTE ID param_note COLON body_inside_functio
                                         }
                                         else
                                             printf("Function name exists: %s\n", $2);
+                                        param_count = param_no;
                                         param_no = 0;
 
                                         deleteAllSymbol();
                                         key=0;
                                     }
-                                    | NOTE ID COLON body_inside_function function_end
+                                    | NOTE function_name COLON body_inside_function function_end
                                     {
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL)
@@ -1834,6 +1866,7 @@ function_call_outside       :       NOTE ID param_note COLON body_inside_functio
                                             else
                                                 functions[func->key]->dec = true;
                                         }
+                                        param_count = param_no;
                                         param_no = 0;
                                         deleteAllSymbol();
                                         key = 0;
@@ -1939,7 +1972,14 @@ function_end                :       SEND ID FULLSTOP
 
 //body inside for functions
 
-body_inside_function        :       body_inside_function bodytypes_inside_function | ;
+body_inside_function        :       body_inside_function bodytypes_inside_function 
+                                     | 
+                                     {
+                                        strcat(tac,function_name); 
+                                        strcat(tac," : ");
+                                        strcat(tac,"\n");
+                                     }
+                                     ;
 
 bodytypes_inside_function   :       statement_inside_function 
                                     {
