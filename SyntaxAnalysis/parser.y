@@ -63,9 +63,10 @@
 
     int param_count = 0;
 
-    int repeat_array[3];
+    int repeat_array[1000];
     int repeat_array_count = 0;
-    int repeat_label = 0;
+    int repeat_label[100];
+    int repeat_label_count = -1;
 
 %}
 
@@ -429,7 +430,7 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         }
                                         strcat(tac,leftside);
                                         strcat(tac," = ");
-                                        strcat(tac," T");
+                                        strcat(tac,"T");
                                         char string[20];
                                         sprintf(string, "%d", temp_number-1);
                                         strcat(tac,string);
@@ -651,11 +652,11 @@ leftside_types              :       variable_name assignment_types
                                                 strcat(tac,string);
                                                 strcat(tac,"\n");
 
-                                                strcat(leftside,"[");
+                                                strcat(leftside,"(");
                                                 strcat(leftside,"T");
                                                 sprintf(string, "%d", temp_number-1);
                                                 strcat(leftside,string);
-                                                strcat(leftside,"]");
+                                                strcat(leftside,")");
 
                                             }
                                             else
@@ -846,10 +847,10 @@ rightside_types             :       function_call
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,$1);
-                                                        strcat(tac,"[T");
+                                                        strcat(tac,"(T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,"]");   
+                                                        strcat(tac,")");   
                                                         strcat(tac,"\n");  
                                                                           
                                                     }
@@ -952,10 +953,10 @@ rightside_types             :       function_call
                                                         strcat(tac,string);
                                                         strcat(tac," = ");
                                                         strcat(tac,$1);
-                                                        strcat(tac,"[T");
+                                                        strcat(tac,"(T");
                                                         sprintf(string, "%d", temp_number-2);
                                                         strcat(tac,string);
-                                                        strcat(tac,"]");
+                                                        strcat(tac,")");
                                                         strcat(tac,"\n");
                                                     }
                                                     else
@@ -1513,7 +1514,7 @@ otherwise                   :       OTHERWISE
                                         else_labels[else_labels_iterator] = 0;
                                         else_labels_iterator--;
                                         strcat(tac,temp_label);
-                                        strcat(tac,": ");
+                                        strcat(tac,": \n");
 
 
                                         strcat(tac,"if ");
@@ -1537,7 +1538,7 @@ otherwise                   :       OTHERWISE
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
-                                        strcat(tac, ": ");
+                                        strcat(tac, ": \n");
                                     } 
                                     body_inside
                                     {
@@ -1557,7 +1558,7 @@ otherwise                   :       OTHERWISE
                                         else_labels[else_labels_iterator] = 0;
                                         else_labels_iterator--;
                                         strcat(tac,temp_label);
-                                        strcat(tac,": ");
+                                        strcat(tac,": \n");
                                     }
                                     body_inside
                                     {
@@ -1638,12 +1639,14 @@ varconst                    :       variable {$$ = $1;};
 repeat_statement            :       REPEAT variable initialization termination incrementation COLON 
                                     {
 
-                                        printf("\nT values: %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2]);
+                                        printf("\nT values: %d %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2], repeat_array[3]);
 
                                         strcat(tac,"goto L");
-                                        repeat_label = label;
-                                        sprintf(temp_label,"%d",repeat_label);
+                                        repeat_array_count++;
+                                        repeat_label[repeat_array_count] = label;
+                                        sprintf(temp_label,"%d",repeat_label[repeat_array_count]);
                                         strcat(tac,temp_label);
+                                        
                                         label++;
                                         strcat(tac, "\n");
 
@@ -1651,14 +1654,14 @@ repeat_statement            :       REPEAT variable initialization termination i
 
                                         strcat(tac, "L");
                                         strcat(tac,temp_label);
-                                        strcat(tac,": if T");
+                                        strcat(tac,": \nif T");
 
-                                        sprintf(temp_label,"%d",repeat_array[0]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
                                         strcat(tac,temp_label);                       
 
                                         strcat(tac," <=");
                                         strcat(tac," T");
-                                        sprintf(temp_label,"%d",repeat_array[1]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-3]);
                                         strcat(tac,temp_label); 
                                         strcat(tac," goto L");
                                         sprintf(temp_label,"%d",label);
@@ -1668,7 +1671,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
-                                        strcat(tac,": ");
+                                        strcat(tac,": \n");
 
 
                                         label++;
@@ -1694,11 +1697,31 @@ repeat_statement            :       REPEAT variable initialization termination i
                                     }
                                     body_inside done
                                     {
-                                        strcat(tac,"increment\n");
-                                        strcat(tac,"goto L");
-                                        sprintf(temp_label,"%d",repeat_label);
+                                        // strcat(tac,"increment\n");
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
                                         strcat(tac,temp_label);
+                                        strcat(tac, " = ");
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
+                                        strcat(tac,temp_label);
+                                        if(repeat_array[repeat_array_count-1]==1){
+                                            strcat(tac," + ");
+                                        }
+                                        else{
+                                            strcat(tac," - ");
+                                        }
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-2]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,"\n");
+
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",repeat_label[repeat_array_count]);
+                                        strcat(tac,temp_label);
+                                        repeat_array_count--;
                                         strcat(tac,"\n\n");
+                                        repeat_array_count = repeat_array_count - 4;
 
 
                                     }
@@ -1737,6 +1760,16 @@ incrementation              :       UPDATE ARITHMETIC rightside_types
                                         printf("\nT value for incrementation is: %d\n", temp_number);
                                         repeat_array[repeat_array_count] = temp_number - 1;
                                         repeat_array_count++;
+                                        if(strcmp($2,"inc by")==0){
+                                            //printf("\nim inc by\n");
+                                            repeat_array[repeat_array_count] = 1;
+                                            repeat_array_count++;
+                                        }
+                                        else if(strcmp($2,"dec by")==0){
+                                            printf("\nim dec by\n");
+                                            repeat_array[repeat_array_count] = 0;
+                                            repeat_array_count++;
+                                        }
 
                                     } 
                                     | 
