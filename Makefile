@@ -9,4 +9,4 @@ preprocess:
 tactoasm:
 	python3 ./MipsCode/asmCodeGen.py
 clean:
-	rm -f parser y.tab.c lex.yy.c y.tab.h y.output processed_file.hallo asm.hallo tac.txt
+	rm -f parser y.tab.c lex.yy.c y.tab.h y.output processed_file.hallo asm.hallo

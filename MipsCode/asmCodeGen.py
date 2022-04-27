@@ -2,9 +2,11 @@
 # $t1, $t2, $t3: arithmetic operation
 # $t4: get input
 # $t5: 
+# $t6 return data
 
 filename = "./tac.txt"
 
+head_input_file = open("data.txt", 'r')
 input_file = open(filename, 'r')
 output_file = open("asm.hallo", 'w')
 
@@ -12,6 +14,12 @@ mem = {}
 
 fp = -8
 tab = 1
+
+output_file.write(".data\n")
+for line in head_input_file:
+    output_file.write("\t" + line)
+
+output_file.write("\n.text\n.globl main\n\n")
 
 for line in input_file:
     flag = ""
