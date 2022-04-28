@@ -83,7 +83,7 @@
 
 %token <string>NUMBERCONST <string>FLOATCONST <string>CONTAINER MATRIX <string>STRCONST <string>FLAG SEMI <string>ARITHMETIC
 
-%token RELATIONAL LOGICAL 
+%token <string>RELATIONAL LOGICAL 
 
 %token COMMA FULLSTOP <string>ID <string>TYPE COLON BY
 
@@ -110,7 +110,12 @@
 %left '!'
 
 %%
-program                     :       functions_optional START body END FULLSTOP functions_optional ;
+program                     :       functions_optional start body END FULLSTOP functions_optional ;
+
+start                       :       START
+                                    {
+                                        strcat(tac,"start:\n");
+                                    }
 
 body                        :       bodytypes body {in_main = true;} | {in_main = true;} ;
  
@@ -118,7 +123,6 @@ bodytypes                   :       declarations
                                     {
                                         if(main_present==false)
                                         {
-                                        strcat(tac,"start:\n");
                                         main_present=true;
                                         }
                                         //printf("declarations %d\n",line_number);
@@ -128,7 +132,6 @@ bodytypes                   :       declarations
                                     {
                                         if(main_present==false)
                                         {
-                                        strcat(tac,"start:\n");
                                         main_present=true;
                                         }
                                         //printf("statements %d\n",line_number);
@@ -509,6 +512,8 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                         condition = 0; 
                                         for(int j=0;j<=99;j++)arith[j]="";
                                         arith_count = 0; 
+                                         for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
                                     }
                                     ;
 
@@ -750,7 +755,7 @@ rightside_types             :       function_call
                                         $$ = temp->return_type;
                                         right[right_count++] = temp_number-1;
                                         
-                                        strcat(tac,"goto ");
+                                        strcat(tac,"\ngoto ");
                                         strcat(tac,$1); 
                                         strcat(tac," : ");
                                         printf("%d\n",param_no);
@@ -762,6 +767,8 @@ rightside_types             :       function_call
                                         }
                                         strcat(tac,param[i]);
                                         strcat(tac,"\n");
+
+                                        right[right_count++] = temp_number-1;
 
                                     } 
                                      
@@ -1038,6 +1045,8 @@ rightside_types             :       function_call
                                                 }
                                             }
                                         }
+
+                                        right[right_count++] = temp_number-1;
                                         for(int j=0;j<=99;j++) cond[j]="";
                                         condition = 0;
 
@@ -1120,11 +1129,14 @@ rightside_types             :       function_call
 
                                         for(int j=0;j<=1;j++)assign[j]=0;
                                         assign_count = 0; 
+
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | size 
                                     {
                                         $$ = $1;
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | STRCONST  
@@ -1145,6 +1157,8 @@ rightside_types             :       function_call
                                         */
 
                                         strcpy(rightside,$1);
+
+                                        right[right_count++] = temp_number-1;
                                     }
 
                                     | FLAG  
@@ -1161,6 +1175,8 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+
+                                        right[right_count++] = temp_number-1;
                                     }
                                     
                                     | complex
@@ -1177,6 +1193,8 @@ rightside_types             :       function_call
                                         strcat(tac," = ");
                                         strcat(tac,$1);
                                         strcat(tac,"\n");
+
+                                        right[right_count++] = temp_number-1;
                                     }
                                     ;
 
@@ -1191,6 +1209,12 @@ assign_var                  :       assignment_types
                                     {
                                         char* str = "arith";
                                         $$ = checkcond(cond,condition,str);
+
+                                        if(strcmp($1,"plus") == 0) strcpy($1,"+");
+                                        else if(strcmp($1,"minus") == 0) strcpy($1,"-");
+                                        else if(strcmp($1,"into") == 0) strcpy($1,"*");
+                                        else if(strcmp($1,"dividedby") == 0) strcpy($1,"/");
+                                        else if(strcmp($1,"remainder") == 0) strcpy($1,"%");
                                          
                                         arith[arith_count] = $1;
                                         arith_count++;
@@ -1537,14 +1561,21 @@ array_state                 :       REMOVE FROM variable
 
 //if statement 
 
-if_statement                :       IF  
+if_statement                :       IF cond THEN COLON 
                                     {
-                                        //printf("\nprinting if colon line number: %d\n", lines);
-                                        strcat(tac,"if ");
-                                    }
-                                    cond  THEN COLON 
-                                    {
-                                        strcat(tac,"goto L");
+                                        strcat(tac,"if T");
+                                        sprintf(temp_label,"%d",right[0]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac," ");
+                                        strcat(tac,relat);
+                                        strcat(tac," T");
+                                        sprintf(temp_label,"%d",right[1]);
+                                        strcat(tac,temp_label);
+
+                                        for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
+
+                                        strcat(tac," goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
@@ -1561,7 +1592,7 @@ if_statement                :       IF
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",if_label);
                                         strcat(tac,temp_label);
-                                        strcat(tac, ": ");
+                                        strcat(tac, ": \n");
                                         
                                     }
                                     body_inside 
@@ -1589,13 +1620,22 @@ otherwise                   :       OTHERWISE
                                         else_labels_iterator--;
                                         strcat(tac,temp_label);
                                         strcat(tac,": \n");
-
-
-                                        strcat(tac,"if ");
                                     }
                                     cond THEN COLON 
                                     {
-                                        strcat(tac,"goto L");
+                                        strcat(tac,"if T");
+                                        sprintf(temp_label,"%d",right[0]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac," ");
+                                        strcat(tac,relat);
+                                        strcat(tac," T");
+                                        sprintf(temp_label,"%d",right[1]);
+                                        strcat(tac,temp_label);
+
+                                        for(int j=0;j<=99;j++)right[j]=0;
+                                        right_count = 0; 
+
+                                        strcat(tac," goto L");
                                         if_label = label;
                                         sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
@@ -1673,6 +1713,7 @@ cond                        :       rightside_types RELATIONAL rightside_types L
                                     | rightside_types RELATIONAL rightside_types         
                                     {
                                         //strcat(tac,$2);
+                                        strcpy(relat,$2);
                                         struct DataItem* data = searchUsingIdentifier(cond[0]);
                                         if(data != NULL)
                                         {
@@ -1730,12 +1771,12 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac,temp_label);
                                         strcat(tac,": \nif T");
 
-                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-5]);
                                         strcat(tac,temp_label);                       
 
                                         strcat(tac," <=");
                                         strcat(tac," T");
-                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-3]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
                                         strcat(tac,temp_label); 
                                         strcat(tac," goto L");
                                         sprintf(temp_label,"%d",label);
@@ -1773,20 +1814,20 @@ repeat_statement            :       REPEAT variable initialization termination i
                                     {
                                         // strcat(tac,"increment\n");
                                         strcat(tac,"T");
-                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-5]);
                                         strcat(tac,temp_label);
                                         strcat(tac, " = ");
                                         strcat(tac,"T");
-                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-5]);
                                         strcat(tac,temp_label);
-                                        if(repeat_array[repeat_array_count-1]==1){
+                                        if(repeat_array[repeat_array_count-2]==1){
                                             strcat(tac," + ");
                                         }
                                         else{
                                             strcat(tac," - ");
                                         }
                                         strcat(tac,"T");
-                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-2]);
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-3]);
                                         strcat(tac,temp_label);
                                         strcat(tac,"\n");
 
