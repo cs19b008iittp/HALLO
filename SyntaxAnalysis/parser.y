@@ -1754,6 +1754,13 @@ varconst                    :       variable {$$ = $1;};
 repeat_statement            :       REPEAT variable initialization termination incrementation COLON 
                                     {
 
+                                        strcat(tac,$2);
+                                        strcat(tac," = ");
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-4]);
+                                        strcat(tac,temp_label);    
+                                        strcat(tac,"\n");
+
                                         printf("\nT values: %d %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2], repeat_array[3]);
 
                                         strcat(tac,"goto L");

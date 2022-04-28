@@ -1,7 +1,7 @@
 start
     num i.
     num sum is 0.
-    ignore num prod is 1.
+    num prod is 1.
     num diff is 0.
     nums SHIT.
     num quotient is 0.

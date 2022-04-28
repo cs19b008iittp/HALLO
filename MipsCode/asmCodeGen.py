@@ -8,12 +8,11 @@ filename = "./tac.txt"
 
 head_input_file = open("data.txt", 'r')
 input_file = open(filename, 'r')
-output_file = open("asm.hallo", 'w')
+output_file = open("assembly.asm", 'w')
 
 mem = {}
 
-fp = -8
-tab = 1
+fp = 0
 
 output_file.write(".data\n")
 for line in head_input_file:
@@ -25,29 +24,29 @@ for line in input_file:
     flag = ""
     command = line.replace("\n","").split(" ")
     if (len(command) == 5 and command[1] == "="):
-        output_file.write(tab*"\t" + "#=====Arithmetic Assignment=====\n")
+        output_file.write("#=====Arithmetic Assignment=====\n")
         if not command[2].isdigit():
-            output_file.write(tab*"\t" + "lw $t1, " + str(fp) + "(fp)\n")
+            output_file.write("\tlw $t1, " + mem[command[2]] + "\t# " + command[2] + "\n")
             flag = "F"
-            fp -= 4
+            fp += 4
         else:
             flag = "T"
 
         if not command[4].isdigit():
-            output_file.write(tab*"\t" + "lw $t2, " + str(fp) + "(fp)\n")
+            output_file.write("\tlw $t2, " + mem[command[4]] + "\t# " + command[4] + "\n")
             flag += "F"
-            fp -= 4
+            fp += 4
         else:
             flag += "T"
 
         if command[3] == "+":
-            output_file.write(tab*"\t" + "add ")
+            output_file.write("\tadd ")
         elif command[3] == "-":
-            output_file.write(tab*"\t" + "sub ")
+            output_file.write("\tsub ")
         elif command[3] == "*":
-            output_file.write(tab*"\t" + "mult ")
+            output_file.write("\tmult ")
         elif command[3] == "/":
-            output_file.write(tab*"\t" + "div ")
+            output_file.write("\tdiv ")
         
         if flag == "FF":
             output_file.write("$t3, $t1, $t2")
@@ -59,65 +58,70 @@ for line in input_file:
             output_file.write("$t3, " + str(command[2]) + ", " + str(command[4]))
 
         output_file.write("\n")
-        output_file.write(tab*"\t" + "add $t0, $t3, $zero\n")
-        output_file.write(tab*"\t" + "sw $t0, " + str(fp) + "(fp)\n")
-        mem[command[0]] = str(fp) + "(fp)"
-        fp -= 4
+        output_file.write("\tadd $t0, $t3, $zero\n")
+        output_file.write("\tsw $t0, " + str(fp) + "($s0)\t#"+ command[0] + "\n")
+        mem[command[0]] = str(fp) + "($s0)"
+        fp += 4
 
     elif (len(command) == 3 and command[1] == "="):
-        output_file.write(tab*"\t" + "#=====Assignment=====\n")
-        output_file.write(tab*"\t" + "li $t0, " + command[2] + "\n")
-        output_file.write(tab*"\t" + "sw $t0, " + str(fp) + "(fp)\n")
-        mem[command[0]] = str(fp) + "(fp)"
-        fp -= 4
+        output_file.write("#=====Assignment=====\n")
+        if not command[2].isdigit():
+            output_file.write("\tlw $t0, " + mem[command[2]] + "\t# " + command[2] + "\n")
+        else:
+            output_file.write("\tli $t0, " + command[2] + "\n")
+        output_file.write("\tsw $t0, " + str(fp) + "($s0)\t#"+ command[0] + "\n")
+        mem[command[0]] = str(fp) + "($s0)"
+        fp += 4
     elif ":" in command[0]:
-        output_file.write(tab*"\t" + "#=====Block Begin=====\n")
-        tab -= 1
-        output_file.write(tab*"\t" + command[0] + "\n")
-        tab += 1
+        output_file.write("#=====Block Begin=====\n")
+        if command[0] == "start:":
+            output_file.write("main:\n")
+            output_file.write("\tlui $s0, 0x1001\n")
+        else:
+            output_file.write(command[0] + "\n")
     elif command[0] == "goto":
-        output_file.write(tab*"\t" + "#=====Jump=====\n")
-        output_file.write(tab*"\t" + "j " + command[1] + "\n")
+        output_file.write("#=====Jump=====\n")
+        output_file.write("\tj " + command[1] + "\n")
     elif command[0] == "disp":
-        output_file.write(tab*"\t" + "#=====Display=====\n")
+        output_file.write("#=====Display=====\n")
         if '"' in command[1]:
             txt = ""
             for i in range(1, len(command)):
-                txt += command[i] + " "
-            output_file.write(tab*"\t" + "li $v0, 4\n")
-            output_file.write(tab*"\t" + "la $a0, " + txt + "\n")
-            output_file.write(tab*"\t" + "syscall\n")
+                txt += mem[command[i]] + " "
+            output_file.write("\tli $v0, 5\n")
+            output_file.write("\tla $a0, " + txt + "\n")
+            output_file.write("\tsyscall\n")
         else:
             for i in range(1, len(command)):
-                output_file.write(tab*"\t" + "li $v0, 1\n")
-                output_file.write(tab*"\t" + "la $a0, " + command[i].replace(",", "") + "\n")
-                output_file.write(tab*"\t" + "syscall\n") 
+                output_file.write("\tli $v0, 4\n")
+                output_file.write("\tla $a0, " + command[i].replace(",", "") + "\n")
+                output_file.write("\tsyscall\n") 
     elif command[0] == "get":
-        output_file.write(tab*"\t" + "#=====Input=====\n")
-        output_file.write(tab*"\t" + "li $v0, 5\n")
-        output_file.write(tab*"\t" + "syscall\n")
-        output_file.write(tab*"\t" + "move $t4, $v0\n")
+        output_file.write("#=====Input=====\n")
+        output_file.write("\tli $v0, 5\n")
+        output_file.write("\tsyscall\n")
+        output_file.write("\tmove $t4, $v0\n")
     elif command[0] == "if":
-        output_file.write(tab*"\t" + "#=====If Condition=====\n")
-        output_file.write(tab*"\t" + "lw $t1, "  + "\n")
-        output_file.write(tab*"\t" + "lw $t2, "  + "\n")
-        output_file.write(tab*"\t" + "sub $t3, $t1, $t2\n")
+        output_file.write("#=====If Condition=====\n")
+        output_file.write("\tlw $t1, " + mem[command[1]] + "\t# " + command[1] + "\n")
+        output_file.write("\tlw $t2, " + mem[command[3]] + "\t# " + command[3]  + "\n")
+        output_file.write("\tsub $t3, $t1, $t2\n")
 
         if command[2] == "=":
-            output_file.write(tab*"\t" + "beq $t3, $zero, LL\n")
+            output_file.write("\tbeq $t3, $zero, " + command[5] + "\n")
         elif command[2] == "<":
-            output_file.write(tab*"\t" + "bltz $t3, LL\n")
+            output_file.write("\tbltz $t3, " + command[5] + "\n")
         elif command[2] == ">":
-            output_file.write(tab*"\t" + "bgtz $t3, LL\n")
+            output_file.write("\tbgtz $t3, " + command[5] + "\n")
         elif command[2] == "<=":
-            output_file.write(tab*"\t" + "blez $t3, LL\n")
+            output_file.write("\tblez $t3, " + command[5] + "\n")
         elif command[2] == ">=":
-            output_file.write(tab*"\t" + "bgez $t3, LL\n")
+            output_file.write("\tbgez $t3, " + command[5] + "\n")
 
     elif command[0] == "":
         continue
     else:
-        output_file.write(tab*"\t" + str(command) + "\n")
+        output_file.write("\t" + str(command) + "\n")
 
 output_file.close()
 input_file.close()

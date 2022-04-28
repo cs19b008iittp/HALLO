@@ -1,0 +1,5 @@
+start
+    string h.
+    h is "Hello World".
+    display h.
+end.

@@ -1,0 +1,17 @@
+start
+    string h.
+    h is "Hello World".
+    display h.
+    num sum is 20.
+    if sum = 0 then:
+        num a, b, c.
+        a is 10.
+        done.
+    otherwise sum = 10 then:
+        a is 20.
+        done.
+    otherwise:
+        a is 30.
+        done.
+    display a.
+end.
