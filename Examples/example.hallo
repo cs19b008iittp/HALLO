@@ -5,19 +5,16 @@ start
     num diff is 0.
     nums SHIT.
     num quotient is 0.
+    num a.
 
-    repeat i from 2 to 10 update inc by 1:
+    repeat i from 2 to 10 update inc by 1: 
         sum is sum plus i.
-        prod is prod into i.
-        quotient is quotient dividedby i.	
+        display sum.
         done.
-    display sum.
     if sum = 0 then:
-        num a, b, c.
         a is 10.
         done.
     otherwise sum = 10 then:
-        num a.
         a is 20.
         done.
     otherwise:

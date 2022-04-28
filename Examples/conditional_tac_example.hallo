@@ -5,12 +5,6 @@ start
     num diff is 0.
     num quotient is 0.
 
-    repeat i from 1 to 10 update dec by 1:
-        sum is sum plus i.
-        prod is prod into i.
-        quotient is quotient dividedby i.	
-        done.
-    display sum.
     if sum = 0 then:
         num d is 10.
         if d = 10 then:
@@ -31,7 +25,5 @@ start
     otherwise:
         a is 30.
         done.
-    if a = 5 then:
-        num b is 2.
-        done.
+    display a, c, d.
 end.

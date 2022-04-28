@@ -71,6 +71,11 @@
 
     bool main_present=false;
 
+    int if_lab = 0;
+    int repeat_lab = 0;
+
+    char repeat_variable[100] = "";
+
 %}
 
 %union 
@@ -1297,7 +1302,7 @@ constants		            :       constants COMMA variable
                                     | constants COMMA STRCONST 
                                     {
                                         char *temp = $1;
-                                        strcat(temp, ", ");
+                                        strcat(temp, ", $");
                                         strcat(temp, $3);
                                         $$ = temp;
                                     }
@@ -1314,10 +1319,24 @@ constants		            :       constants COMMA variable
                                     {
                                         if(searchUsingIdentifier($1) == NULL)
                                             printf("Identifier is not declared: %s\n", $1);
-                                        $$ = $1;
+                                        else if(strcmp(searchUsingIdentifier($1)->type,"string")==0)
+                                        {
+                                            char temp[100] = "";
+                                            strcat(temp, "$");
+                                            strcat(temp, $1);
+                                            $$ = temp;
+                                        }
+                                        else
+                                         $$ = $1;
                                     }
 
-                                    | STRCONST { $$ = $1;}
+                                    | STRCONST 
+                                    { 
+                                        char *temp = "";
+                                        strcat(temp, "$");
+                                        strcat(temp, $1);
+                                        $$ = temp;
+                                    }
 
                                     | constant { $$ = $1;};
 
@@ -1603,7 +1622,13 @@ if_statement                :       IF cond THEN COLON
                                     }
                                     done
                                     {
-                                        strcat(tac,"\n");
+                                        strcat(tac,"goto L");
+                                        if_label = label;
+                                        sprintf(temp_label,"%d",label);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                        label++;
+                                        if_lab = if_label;
                                     }
                                     otherwise
                                     {
@@ -1661,7 +1686,11 @@ otherwise                   :       OTHERWISE
                                     }
                                     done
                                     {
-                                        strcat(tac,"\n");
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",if_lab);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                        label++;
                                     }
                                     otherwise 
                                     | OTHERWISE COLON 
@@ -1681,6 +1710,12 @@ otherwise                   :       OTHERWISE
                                     done
                                     {
                                         strcat(tac,"\n");
+
+                                        strcat(tac,"L");
+                                        sprintf(temp_label,"%d",if_lab);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ":\n");
+                                        label++;
                                     } 
                                     | 
                                     {
@@ -1753,7 +1788,7 @@ varconst                    :       variable {$$ = $1;};
 
 repeat_statement            :       REPEAT variable initialization termination incrementation COLON 
                                     {
-
+                                        strcpy(repeat_variable,$2);
                                         strcat(tac,$2);
                                         strcat(tac," = ");
                                         strcat(tac,"T");
@@ -1790,16 +1825,26 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac,temp_label);
 
                                         strcat(tac, "\n");
+
+                                        
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",++label);
+                                        repeat_lab = label;
+                                        strcat(tac,temp_label);
+                                        label++;
+                                        strcat(tac, "\n");
+
                                         strcat(tac, "L");
-                                        sprintf(temp_label,"%d",label);
+                                        sprintf(temp_label,"%d",label-2);
                                         strcat(tac,temp_label);
                                         strcat(tac,": \n");
+
 
 
                                         label++;
 
 
-
+                                        
 
                                         
 
@@ -1838,12 +1883,25 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac,temp_label);
                                         strcat(tac,"\n");
 
+                                        strcat(tac,repeat_variable);
+                                        strcat(tac," = ");
+                                        strcat(tac,"T");
+                                        sprintf(temp_label,"%d",repeat_array[repeat_array_count-5]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac,"\n");
+
                                         strcat(tac,"goto L");
                                         sprintf(temp_label,"%d",repeat_label[repeat_array_count]);
                                         strcat(tac,temp_label);
                                         repeat_array_count--;
                                         strcat(tac,"\n\n");
                                         repeat_array_count = repeat_array_count - 4;
+
+                                        strcat(tac,"L");
+                                        sprintf(temp_label,"%d",repeat_lab);
+                                        strcat(tac,temp_label);
+                                        label++;
+                                        strcat(tac, ":\n");
 
 
                                     }
@@ -2168,5 +2226,6 @@ int main(int argc, char* argv[]) {
     printf("\n==========================: DATA :===========================\n");
     printf("%s\n", data);
     fputs(data,file_data);
+
     return 0;
 }

@@ -59,9 +59,12 @@ for line in input_file:
 
         output_file.write("\n")
         output_file.write("\tadd $t0, $t3, $zero\n")
-        output_file.write("\tsw $t0, " + str(fp) + "($s0)\t#"+ command[0] + "\n")
-        mem[command[0]] = str(fp) + "($s0)"
-        fp += 4
+        if command[0] in mem:
+            output_file.write("\tsw $t0, " + mem[command[0]] + "\t#"+ command[0] + "\n")
+        else:
+            output_file.write("\tsw $t0, " + str(fp) + "($s0)\t#"+ command[0] + "\n")
+            mem[command[0]] = str(fp) + "($s0)"
+            fp += 4
 
     elif (len(command) == 3 and command[1] == "="):
         output_file.write("#=====Assignment=====\n")
@@ -69,9 +72,12 @@ for line in input_file:
             output_file.write("\tlw $t0, " + mem[command[2]] + "\t# " + command[2] + "\n")
         else:
             output_file.write("\tli $t0, " + command[2] + "\n")
-        output_file.write("\tsw $t0, " + str(fp) + "($s0)\t#"+ command[0] + "\n")
-        mem[command[0]] = str(fp) + "($s0)"
-        fp += 4
+        if command[0] in mem:
+            output_file.write("\tsw $t0, " + mem[command[0]] + "\t#"+ command[0] + "\n")
+        else:
+            output_file.write("\tsw $t0, " + str(fp) + "($s0)\t#"+ command[0] + "\n")
+            mem[command[0]] = str(fp) + "($s0)"
+            fp += 4
     elif ":" in command[0]:
         output_file.write("#=====Block Begin=====\n")
         if command[0] == "start:":
@@ -84,17 +90,18 @@ for line in input_file:
         output_file.write("\tj " + command[1] + "\n")
     elif command[0] == "disp":
         output_file.write("#=====Display=====\n")
-        if '"' in command[1]:
+        if '$' in command[1]:
             txt = ""
             for i in range(1, len(command)):
-                txt += mem[command[i]] + " "
-            output_file.write("\tli $v0, 5\n")
+                txt += command[i].replace("$","") + " "
+            output_file.write("\tli $v0, 4\n")
             output_file.write("\tla $a0, " + txt + "\n")
             output_file.write("\tsyscall\n")
         else:
             for i in range(1, len(command)):
-                output_file.write("\tli $v0, 4\n")
-                output_file.write("\tla $a0, " + command[i].replace(",", "") + "\n")
+                output_file.write("\tli $v0, 1\n")
+                output_file.write("\tlw $v1, " + mem[command[i].replace(",", "")] + "\n")
+                output_file.write("\tadd $a0, $v1, $zero\n")
                 output_file.write("\tsyscall\n") 
     elif command[0] == "get":
         output_file.write("#=====Input=====\n")
@@ -123,5 +130,6 @@ for line in input_file:
     else:
         output_file.write("\t" + str(command) + "\n")
 
+output_file.write("\n\tjr $ra")
 output_file.close()
 input_file.close()
