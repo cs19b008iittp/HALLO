@@ -1,0 +1,15 @@
+note value_b:
+    num b.
+    b is 20.
+send b.
+
+ignore outside
+
+start
+    ignore Separate Line
+    num a, b.
+    a is 10.
+    b is call value_b.
+    display a.
+    display b.
+end.

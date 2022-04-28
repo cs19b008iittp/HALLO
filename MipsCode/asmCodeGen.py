@@ -12,6 +12,8 @@ output_file = open("assembly.asm", 'w')
 
 mem = {}
 
+mem["func"] = "$t6"
+
 fp = 0
 
 output_file.write(".data\n")
@@ -69,7 +71,10 @@ for line in input_file:
     elif (len(command) == 3 and command[1] == "="):
         output_file.write("#=====Assignment=====\n")
         if not command[2].isdigit():
-            output_file.write("\tlw $t0, " + mem[command[2]] + "\t# " + command[2] + "\n")
+            if not mem[command[2]] == "$t6":
+                output_file.write("\tlw $t0, " + mem[command[2]] + "\t# " + command[2] + "\n")
+            else:
+                output_file.write("\tadd $t0, " + mem[command[2]] + ", $zero" + "\t# " + command[2] + "\n")
         else:
             output_file.write("\tli $t0, " + command[2] + "\n")
         if command[0] in mem:
@@ -124,7 +129,9 @@ for line in input_file:
             output_file.write("\tblez $t3, " + command[5] + "\n")
         elif command[2] == ">=":
             output_file.write("\tbgez $t3, " + command[5] + "\n")
-
+    elif command[0] == "send":
+        print(123, mem)
+        output_file.write("\tlw " + mem["func"] + ", " + mem[command[1]] + "\n")
     elif command[0] == "":
         continue
     else:

@@ -1,48 +1,14 @@
+value_b: 
+T1 = 20
+b = T1
+send b
+goto Lvalue_b
 start:
-sum = 0
-prod = 1
-diff = 0
-quotient = 0
-T1 = sum
-T2 = 0
-if T1 = T2 goto L1
-goto L2
-L1: 
-d = 10
-T3 = d
-T4 = 10
-if T3 = T4 goto L3
-goto L4
-L3: 
-T5 = 5
-d = T5
-c = 100
-T6 = c + 5
-d = T6
-goto L5
-L4: 
-T7 = 7
-d = T7
+T2 = 10
+a = T2
 
-L5:
-a = 10
-T8 = d + c
-a = T8
-T9 = 20
-c = T9
-goto L7
-L2: 
-T10 = sum
-T11 = 10
-if T10 = T11 goto L8
-goto L9
-L8: 
-T12 = 20
-a = T12
-goto L7
-L9: 
-T13 = 30
-a = T13
-
-L7:
-disp a, c, d
+goto value_b
+Lvalue_b:
+b = func
+disp a
+disp b

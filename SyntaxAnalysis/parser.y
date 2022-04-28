@@ -62,6 +62,8 @@
     int right_count = 0;
     char relat[100] = "";
 
+    char right_type[100] = "no";
+   
     int param_count = 0;
 
     int repeat_array[1000];
@@ -495,7 +497,15 @@ assignment                  :       leftside_types ASSIGNMENT rightside_types
                                             printf("%s, %s, error in arithmetic statement\n", $1, $3);
                                         }
 
-                                        if(strcmp($3,"string")!=0)
+                                        if(strcmp(right_type,"func")==0)
+                                        {
+                                            strcat(tac,leftside);
+                                            strcat(tac," = func");
+                                            strcat(tac,"\n");
+
+                                            strcpy(right_type,"no");
+                                        }
+                                        else if(strcmp($3,"string")!=0)
                                         {
                                             strcat(tac,leftside);
                                             strcat(tac," = ");
@@ -760,9 +770,10 @@ rightside_types             :       function_call
                                         $$ = temp->return_type;
                                         right[right_count++] = temp_number-1;
                                         
+                                        strcpy(right_type,"func");
+
                                         strcat(tac,"\ngoto ");
                                         strcat(tac,$1); 
-                                        strcat(tac," : ");
                                         printf("%d\n",param_no);
                                         int i;
                                         for(i=0;i<=param_count-2;i++)
@@ -770,8 +781,13 @@ rightside_types             :       function_call
                                           strcat(tac,param[i]);
                                           strcat(tac, " , ");
                                         }
+                                        if (param_count-2>=0)
                                         strcat(tac,param[i]);
                                         strcat(tac,"\n");
+
+                                        strcat(tac,"L");
+                                        strcat(tac,$1);
+                                        strcat(tac,":\n");
 
                                         right[right_count++] = temp_number-1;
 
@@ -2013,6 +2029,9 @@ function_name               :      ID{ $$ = $1; strcpy(function_name,$1);};
 
 function_call_outside       :       NOTE function_name param_note COLON body_inside_function function_end
                                     {
+                                        strcat(tac,"goto L");
+                                        strcat(tac,$2);
+                                        strcat(tac,"\n");
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL) 
                                         {
@@ -2036,6 +2055,9 @@ function_call_outside       :       NOTE function_name param_note COLON body_ins
                                     }
                                     | NOTE function_name COLON body_inside_function function_end
                                     {
+                                        strcat(tac,"goto L");
+                                        strcat(tac,$2);
+                                        strcat(tac,"\n");
                                         struct Function *func = searchFunctions($2);
                                         if(func == NULL)
                                             insertFunction($2, function_no++, 0, NULL, true,$5);
@@ -2142,6 +2164,13 @@ function_end                :       SEND ID FULLSTOP
                                         {
                                             $$ = searchUsingIdentifier($2)->type;
                                         }
+
+                                        strcat(tac,"send ");
+                                        strcat(tac,$2);
+                                        strcat(tac,"\n");
+
+
+
                                     }
                                     | SEND FULLSTOP 
                                     {
