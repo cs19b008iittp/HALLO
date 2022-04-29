@@ -1,13 +1,10 @@
 start
-   nums a.
-   num id.
-   ignore a id is a 10.
-   id is 10.
-   id is id+5-3*3.
-   skip
-   num matrix b 2 by 2 .
-   b 22 45 is 10.
-   a 2 is b 22+2 45+id-1.
-   skip
+   nums a is 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.
+   num id, idz.
+   id is a 9.
+   num matrix b 2 by 2.
+   b is 20, 30, 40, 50.
+   idz is b 1 1.
    display id.
+   display idz.
 end.

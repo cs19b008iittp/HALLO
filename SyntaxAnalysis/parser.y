@@ -263,7 +263,7 @@ declaration                 :       TYPE names
 
                                                     strcat(data,cEntries[i]);
                                                     if(i!=cIterator-1)
-                                                      strcat(data,",");
+                                                      strcat(data,", ");
 
                                                     if(!checkCorrectAssignment(containerDatatype,cEntries[i])){
                                                         flag = false;
@@ -333,7 +333,7 @@ declaration                 :       TYPE names
 
                                                     strcat(data,mEntries[i]);
                                                     if(i!=mIterator-1)
-                                                      strcat(data,",");
+                                                      strcat(data,", ");
 
                                                     if(!checkCorrectAssignment(mdatatype,mEntries[i])){
                                                         flag = false;
