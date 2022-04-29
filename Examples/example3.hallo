@@ -2,9 +2,12 @@ start
    nums a is 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.
    num id, idz.
    id is a 9.
+   a 7 is 3.
+   skip
    num matrix b 2 by 2.
    b is 20, 30, 40, 50.
    idz is b 1 1.
+   skip
    display id.
-   display idz.
+   ignore display idz.
 end.

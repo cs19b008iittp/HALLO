@@ -46,15 +46,25 @@ for line in input_file:
         else:
             flag += "T"
         
-        if flag == "FF":
-            output_file.write("$t3, $t1, $t2\n")
-        elif flag == "TF":
-            output_file.write("\tli $t1, " + str(command[2]) + "\n")
+        if flag == "TF":
+            if command[2].isdigit():
+                output_file.write("\tli $t1, " + str(command[2]) + "\n")
+            else:
+                output_file.write("\tlw $t1, " + str(mem[command[2]]) + "\n")
         elif flag == "FT":
-            output_file.write("\tli $t2, " + str(command[4]) + "\n")
+            if command[4].isdigit():
+                output_file.write("\tli $t2, " + str(command[4]) + "\n")
+            else:
+                output_file.write("\tlw $t2, " + str(mem[command[4]]) + "\n")
         else:
-            output_file.write("\tli $t1, " + str(command[2]) + "\n")
-            output_file.write("\tli $t2, " + str(command[4]) + "\n")
+            if command[2].isdigit():
+                output_file.write("\tli $t1, " + str(command[2]) + "\n")
+            else:
+                output_file.write("\tlw $t1, " + str(mem[command[2]]) + "\n")
+            if command[4].isdigit():
+                output_file.write("\tli $t2, " + str(command[4]) + "\n")
+            else:
+                output_file.write("\tlw $t2, " + str(mem[command[4]]) + "\n")
 
         if command[3] == "+":
             output_file.write("\tadd ")
@@ -117,12 +127,21 @@ for line in input_file:
             output_file.write("\tli $v0, 4\n")
             output_file.write("\tla $a0, " + txt + "\n")
             output_file.write("\tsyscall\n")
+            output_file.write("\tli $v0 11\n")
+            output_file.write("\tli $a0, 0x20 \n")
+            output_file.write("\tsyscall\n")
         else:
             for i in range(1, len(command)):
                 output_file.write("\tli $v0, 1\n")
                 output_file.write("\tlw $v1, " + mem[command[i].replace(",", "")] + "\n")
                 output_file.write("\tadd $a0, $v1, $zero\n")
                 output_file.write("\tsyscall\n") 
+                output_file.write("\tli $v0 11\n")
+                output_file.write("\tli $a0, 0x20 \n")
+                output_file.write("\tsyscall\n")
+        output_file.write("\tli $v0 11\n")
+        output_file.write("\tli $a0 10\n")
+        output_file.write("\tsyscall\n")
     elif command[0] == "get":
         output_file.write("#=====Input=====\n")
         output_file.write("\tli $v0, 5\n")
@@ -151,7 +170,6 @@ for line in input_file:
         elif command[2] == ">=":
             output_file.write("\tbgez $t3, " + command[5] + "\n")
     elif command[0] == "send":
-        print(123, mem)
         output_file.write("\tlw " + mem["func"] + ", " + mem[command[1]] + "\n")
     elif command[0] == "":
         continue

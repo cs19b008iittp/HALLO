@@ -1,0 +1,15 @@
+start
+    num sum is 0.
+    get sum.
+    num a.
+    if sum = 0 then:
+        a is 10.
+        done.
+    otherwise sum = 10 then:
+        a is 20.
+        done.
+    otherwise:
+        a is 30.
+        done.
+    display a.
+end.
