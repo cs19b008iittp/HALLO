@@ -1,2 +1,1 @@
-te: .asciiz "Before swapping, values of a and b respectively are:"
-tem: .asciiz "After swapping, values of a and b respectively are:"
+h: .asciiz "Hello World"

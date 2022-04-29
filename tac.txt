@@ -1,15 +1,7 @@
+helloWorld: 
+disp $h
+goto LhelloWorld
 start:
-a = 10
-b = 20
-disp $te
-disp a
-disp b
-T1 = a
-temp = T1
-T2 = b
-a = T2
-T3 = temp
-b = T3
-disp $tem
-disp a
-disp b
+
+goto helloWorld
+LhelloWorld:

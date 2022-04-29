@@ -3,20 +3,19 @@ def replaceMacros(line, macros):
         line = line.replace(micro, macros[micro])
     return line
 
-# filename = input("Filepath: ")
+filename = input("Filepath: ")
 
 # filename = "./Examples/hello_world.hallo"
 # filename = "./Examples/example.hallo"
 # filename = "./Examples/conditional.hallo"
-#filename = "./Examples/example3.hallo"
+# filename = "./Examples/example3.hallo"
 # filename = "./Examples/functions.hallo"
 # filename = "./Examples/input.hallo"
 # filename = "./Examples/conditional_tac_example.hallo"
-#filename = "./Examples/bubbleSort.hallo"
-#filename = "./Examples/matrix.hallo"
-filename = "./Examples/paragraph.hallo"
-
+# filename = "./Examples/import.hallo"
+# filename = "./Examples/matrix.hallo"
 # filename = "./Examples/paragraph.hallo"
+# filename = "./Examples/test.hallo"
 
 input_file = open(filename, 'r')
 
