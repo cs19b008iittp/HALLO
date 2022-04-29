@@ -5,7 +5,7 @@ def replaceMacros(line, macros):
 
 # filename = input("Filepath: ")
 
-filename = "./Examples/functions.hallo"
+filename = "./Examples/example1.hallo"
 # filename = "./Examples/conditional_tac_example.hallo"
 
 input_file = open(filename, 'r')

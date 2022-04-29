@@ -71,6 +71,12 @@
     int repeat_label[100];
     int repeat_label_count = -1;
 
+    int repeat_num[100];
+    int repeat_num_count = 0;
+
+    char* repeat_var[100] = {};
+    int repeat_var_count = 0;
+
     bool main_present=false;
 
     int if_lab = 0;
@@ -1850,6 +1856,9 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         label++;
                                         strcat(tac, "\n");
 
+                                        repeat_num[repeat_num_count++] = label-1;
+                                        repeat_var[repeat_var_count++] = $2;
+
                                         strcat(tac, "L");
                                         sprintf(temp_label,"%d",label-2);
                                         strcat(tac,temp_label);
@@ -1899,7 +1908,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac,temp_label);
                                         strcat(tac,"\n");
 
-                                        strcat(tac,repeat_variable);
+                                        strcat(tac,repeat_var[--repeat_var_count]);
                                         strcat(tac," = ");
                                         strcat(tac,"T");
                                         sprintf(temp_label,"%d",repeat_array[repeat_array_count-5]);
@@ -1914,7 +1923,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         repeat_array_count = repeat_array_count - 4;
 
                                         strcat(tac,"L");
-                                        sprintf(temp_label,"%d",repeat_lab);
+                                        sprintf(temp_label,"%d",repeat_num[--repeat_num_count]);
                                         strcat(tac,temp_label);
                                         label++;
                                         strcat(tac, ":\n");
