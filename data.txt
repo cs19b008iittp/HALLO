@@ -1,0 +1,2 @@
+a: .word 1, 2, 3, 8
+sum: .asciiz "sum is : "

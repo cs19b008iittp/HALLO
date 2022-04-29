@@ -1,0 +1,13 @@
+start
+   num matrix a 2 by 2 is 1, 2, 3 ,8.
+   num tempx,tempy,tempz.
+   tempx is a 1 0.
+   tempy is a 1 1.
+   display tempx.
+   display tempy.
+   tempz is tempx plus tempy.
+   string sum.
+   sum is "sum is : ".
+   display sum.
+   display tempz.
+end.

@@ -241,7 +241,7 @@ declaration                 :       TYPE names
                                                     
                                                     strcat(data,cEntries[i]);
                                                     if(i!=cIterator-1)
-                                                      strcat(data,",");
+                                                      strcat(data,", ");
                                                     
                                                     if(!check){
                                                         flag = false;
@@ -352,9 +352,9 @@ declaration                 :       TYPE names
                                             else{
                                                 for(int i=0;i<=mIterator-1;i++){
 
-                                                    strcat(data,cEntries[i]);
-                                                    if(i!=cIterator-1)
-                                                      strcat(data,",");
+                                                    strcat(data,mEntries[i]);
+                                                    if(i!=mIterator-1)
+                                                      strcat(data,", ");
 
                                                     if(!checkCorrectAssignment(mdatatype,mEntries[i])){
                                                         flag = false;
@@ -465,13 +465,13 @@ contentries                 :       contentries COMMA types_init
 
 matentries                  :       matentries COMMA types_init 
                                     {
-                                        mEntries[cIterator] = $3;
+                                        mEntries[mIterator] = $3;
                                         mIterator++;
                                     }
 
                                     | types_init 
                                     {
-                                        mEntries[cIterator] = $1;
+                                        mEntries[mIterator] = $1;
                                         mIterator++;
                                     }
                                     ;
