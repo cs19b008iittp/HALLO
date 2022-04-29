@@ -1,5 +1,0 @@
-start:
-disp $h
-a = 10
-get a
-disp a
