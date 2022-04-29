@@ -46,7 +46,7 @@ for line in input_file:
         elif command[3] == "-":
             output_file.write("\tsub ")
         elif command[3] == "*":
-            output_file.write("\tmult ")
+            output_file.write("\tmul ")
         elif command[3] == "/":
             output_file.write("\tdiv ")
         
@@ -113,6 +113,16 @@ for line in input_file:
         output_file.write("\tli $v0, 5\n")
         output_file.write("\tsyscall\n")
         output_file.write("\tmove $t4, $v0\n")
+        # print(mem)
+        # mem[command[1]] = str(fp) + "($s0)"
+        # fp += 4
+        # print(mem)
+        if command[1] in mem:
+            output_file.write("\tsw $t4, " + mem[command[1]] + "\t#"+ command[1] + "\n")
+        else:
+            output_file.write("\tsw $t4, " + str(fp) + "($s0)\t#"+ command[1] + "\n")
+            mem[command[1]] = str(fp) + "($s0)"
+            fp += 4
     elif command[0] == "if":
         output_file.write("#=====If Condition=====\n")
         output_file.write("\tlw $t1, " + mem[command[1]] + "\t# " + command[1] + "\n")

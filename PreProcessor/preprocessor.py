@@ -5,7 +5,7 @@ def replaceMacros(line, macros):
 
 # filename = input("Filepath: ")
 
-filename = "./Examples/example1.hallo"
+filename = "./Examples/hello_world.hallo"
 # filename = "./Examples/conditional_tac_example.hallo"
 
 input_file = open(filename, 'r')
@@ -24,6 +24,11 @@ for line in input_file:
             code += line.replace("\n", " ").replace("\t", " ")
         output_file.write(code)
         output_file.write("\n")
+    elif "skip" in words:
+        output_file.write("\n")
+        skip = not skip
+    elif skip:
+        output_file.write("\n")
     elif words[0] == "let":
         micro = ""
         macro = ""
@@ -37,11 +42,6 @@ for line in input_file:
                 macro += " " + words[i]
         if micro == "":
             print("\nError in Macros\n")
-        output_file.write("\n")
-    elif "skip" in words:
-        output_file.write("\n")
-        skip = not skip
-    elif skip:
         output_file.write("\n")
     else:
         output_file.write(replaceMacros(line, macros))
