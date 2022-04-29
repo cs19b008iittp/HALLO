@@ -1720,13 +1720,24 @@ otherwise                   :       OTHERWISE
                                         sprintf(temp_label,"%d",if_lab);
                                         strcat(tac,temp_label);
                                         strcat(tac, ":\n");
-                                        label++;
                                     } 
                                     | 
                                     {
                                         else_labels[else_labels_iterator] = 0;
                                         else_labels_iterator--;
                                         //printf("\nprinting otherwise line number3: %d\n", lines);
+
+                                        strcat(tac,"L");
+                                        sprintf(temp_label,"%d",if_lab);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ":\n");
+
+                                        
+                                       strcat(tac,"L");
+                                        sprintf(temp_label,"%d",if_lab-1);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, ":\n");
+                                 
                                     }
                                     ;
 

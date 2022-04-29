@@ -46,9 +46,7 @@ for line in input_file:
         else:
             flag += "T"
         
-        if flag == "FF":
-            output_file.write("$t3, $t1, $t2\n")
-        elif flag == "TF":
+        if flag == "TF":
             output_file.write("\tli $t1, " + str(command[2]) + "\n")
         elif flag == "FT":
             output_file.write("\tli $t2, " + str(command[4]) + "\n")

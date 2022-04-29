@@ -1,0 +1,16 @@
+start
+   ignore Separate Line
+   nums arr is 64,34,25,12,22,11,90,69.
+   num size_arr is 8.
+   num i,j.
+   repeat i from 0 to 7 update inc by 1:
+      repeat j from 0 to 7 - i  update inc by 1:
+         if arr j >= arr j+1 then:
+            num temp.
+            temp is arr j.
+            arr j is arr j+1.
+            arr j+1 is temp.
+            done.
+         done.
+      done.
+end.
