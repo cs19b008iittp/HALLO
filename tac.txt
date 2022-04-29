@@ -31,6 +31,7 @@ L9:
 T14 = 4 * j
 T15 = arr(T14)
 temp = T15
+goto L7
 T16 = 4 * j
 T17 = j + 1
 T18 = 4 * T17
