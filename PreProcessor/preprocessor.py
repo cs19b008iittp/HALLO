@@ -15,6 +15,8 @@ def replaceMacros(line, macros):
 #filename = "./Examples/bubbleSort.hallo"
 filename = "./Examples/matrix.hallo"
 
+# filename = "./Examples/paragraph.hallo"
+
 input_file = open(filename, 'r')
 
 output_file = open("processed_file.hallo", 'w')

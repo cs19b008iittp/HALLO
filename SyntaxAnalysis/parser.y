@@ -1370,7 +1370,13 @@ inputs                      :       inputs COMMA variable
                                     }
                                     ;
 
-leave                       :       LEAVE ;
+leave                       :       LEAVE 
+                                    {
+                                        strcat(tac,"goto L");
+                                        sprintf(temp_label,"%d",repeat_num[--repeat_num_count]);
+                                        strcat(tac,temp_label);
+                                        strcat(tac, "\n");
+                                    };
   
 
 
