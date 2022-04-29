@@ -778,23 +778,6 @@ rightside_types             :       function_call
                                         
                                         strcpy(right_type,"func");
 
-                                        strcat(tac,"\ngoto ");
-                                        strcat(tac,$1); 
-                                        //printf("%d\n",param_no);
-                                        int i;
-                                        for(i=0;i<=param_count-2;i++)
-                                        {
-                                          strcat(tac,param[i]);
-                                          strcat(tac, " , ");
-                                        }
-                                        if (param_count-2>=0)
-                                        strcat(tac,param[i]);
-                                        strcat(tac,"\n");
-
-                                        strcat(tac,"L");
-                                        strcat(tac,$1);
-                                        strcat(tac,":\n");
-
                                         right[right_count++] = temp_number-1;
 
                                     } 
@@ -2000,6 +1983,25 @@ function_call               :       CALL variable param
                                             if(func->no_of_params != param_no && strcmp(func->params, parm) != 0)
                                                 printf("Function parameter error: %s\n", func->name);
                                         }
+
+                                        strcat(tac,"\ngoto ");
+                                        strcat(tac,$2); 
+                                        //printf("%d\n",param_no);
+                                        int i;
+                                        for(i=0;i<=param_count-2;i++)
+                                        {
+                                          strcat(tac,param[i]);
+                                          strcat(tac, " , ");
+                                        }
+                                        if (param_count-2>=0)
+                                        strcat(tac,param[i]);
+                                        strcat(tac,"\n");
+
+                                        strcat(tac,"L");
+                                        strcat(tac,$2);
+                                        strcat(tac,":\n");
+
+
                                         param_count = param_no;
                                         param_no = 0;
                                         $$ = $2;
@@ -2015,6 +2017,25 @@ function_call               :       CALL variable param
                                             if(func->no_of_params != param_no)
                                                 printf("Function parameter error: %s\n", func->name);
                                         }
+
+
+                                        strcat(tac,"\ngoto ");
+                                        strcat(tac,$2); 
+                                        //printf("%d\n",param_no);
+                                        int i;
+                                        for(i=0;i<=param_count-2;i++)
+                                        {
+                                          strcat(tac,param[i]);
+                                          strcat(tac, " , ");
+                                        }
+                                        if (param_count-2>=0)
+                                        strcat(tac,param[i]);
+                                        strcat(tac,"\n");
+
+                                        strcat(tac,"L");
+                                        strcat(tac,$2);
+                                        strcat(tac,":\n");
+
                                         param_count = param_no;
                                         param_no = 0;
                                         $$ = $2;
