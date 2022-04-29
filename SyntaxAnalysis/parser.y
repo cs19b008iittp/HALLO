@@ -780,7 +780,7 @@ rightside_types             :       function_call
 
                                         strcat(tac,"\ngoto ");
                                         strcat(tac,$1); 
-                                        printf("%d\n",param_no);
+                                        //printf("%d\n",param_no);
                                         int i;
                                         for(i=0;i<=param_count-2;i++)
                                         {
@@ -1818,7 +1818,7 @@ repeat_statement            :       REPEAT variable initialization termination i
                                         strcat(tac,temp_label);    
                                         strcat(tac,"\n");
 
-                                        printf("\nT values: %d %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2], repeat_array[3]);
+                                        //printf("\nT values: %d %d %d %d\n", repeat_array[0], repeat_array[1], repeat_array[2], repeat_array[3]);
 
                                         strcat(tac,"goto L");
                                         repeat_array_count++;
@@ -1935,7 +1935,7 @@ repeat_statement            :       REPEAT variable initialization termination i
 initialization              :       FROM rightside_types
                                     {
                                         $$ = $2;
-                                        printf("\nT value for initialisation is: %d\n", temp_number);
+                                        //printf("\nT value for initialisation is: %d\n", temp_number);
                                         repeat_array[repeat_array_count] = temp_number - 1;
                                         repeat_array_count++;
                                      
@@ -1949,7 +1949,7 @@ initialization              :       FROM rightside_types
 termination                 :       TO rightside_types 
                                     {
                                         $$ = $2; 
-                                        printf("\nT value for termination is: %d\n", temp_number);
+                                        //printf("\nT value for termination is: %d\n", temp_number);
                                         repeat_array[repeat_array_count] = temp_number - 1;
                                         repeat_array_count++;
                                     }
@@ -1962,7 +1962,7 @@ termination                 :       TO rightside_types
 incrementation              :       UPDATE ARITHMETIC rightside_types
                                     {
                                         $$ = $3;
-                                        printf("\nT value for incrementation is: %d\n", temp_number);
+                                        //printf("\nT value for incrementation is: %d\n", temp_number);
                                         repeat_array[repeat_array_count] = temp_number - 1;
                                         repeat_array_count++;
                                         if(strcmp($2,"inc by")==0){
@@ -1971,7 +1971,7 @@ incrementation              :       UPDATE ARITHMETIC rightside_types
                                             repeat_array_count++;
                                         }
                                         else if(strcmp($2,"dec by")==0){
-                                            printf("\nim dec by\n");
+                                            //printf("\nim dec by\n");
                                             repeat_array[repeat_array_count] = 0;
                                             repeat_array_count++;
                                         }
