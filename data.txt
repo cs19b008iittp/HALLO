@@ -1,2 +1,2 @@
-a: .word 1, 2, 3, 8
-sum: .asciiz "sum is : "
+te: .asciiz "Before swapping, values of a and b respectively are:"
+tem: .asciiz "After swapping, values of a and b respectively are:"

@@ -13,7 +13,8 @@ def replaceMacros(line, macros):
 # filename = "./Examples/input.hallo"
 # filename = "./Examples/conditional_tac_example.hallo"
 #filename = "./Examples/bubbleSort.hallo"
-filename = "./Examples/matrix.hallo"
+#filename = "./Examples/matrix.hallo"
+filename = "./Examples/paragraph.hallo"
 
 # filename = "./Examples/paragraph.hallo"
 

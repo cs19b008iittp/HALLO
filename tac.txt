@@ -1,19 +1,15 @@
 start:
-T1 = 4 * 1
-T2 = 4 * 0
-T3 = 2 * T1
-T4 = T2 + T3
-T5 = a(T4)
-tempx = T5
-T6 = 4 * 1
-T7 = 4 * 1
-T8 = 2 * T6
-T9 = T7 + T8
-T10 = a(T9)
-tempy = T10
-disp tempx
-disp tempy
-T11 = tempx + tempy
-tempz = T11
-disp $sum
-disp tempz
+a = 10
+b = 20
+disp $te
+disp a
+disp b
+T1 = a
+temp = T1
+T2 = b
+a = T2
+T3 = temp
+b = T3
+disp $tem
+disp a
+disp b
