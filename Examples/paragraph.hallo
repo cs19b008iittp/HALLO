@@ -1,0 +1,3 @@
+start num a is 10. num b is 20. num temp. string t1 is "Before swapping, values of a and b respectively are:". 
+display t1. display a. display b. temp is a. a is b. b is temp. string t2 is 
+"After swapping, values of a and b respectively are:". display t2. display a. display b. end.

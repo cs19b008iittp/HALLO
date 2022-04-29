@@ -13,6 +13,8 @@ filename = "./Examples/example3.hallo"
 # filename = "./Examples/input.hallo"
 # filename = "./Examples/conditional_tac_example.hallo"
 
+# filename = "./Examples/paragraph.hallo"
+
 input_file = open(filename, 'r')
 
 output_file = open("processed_file.hallo", 'w')
