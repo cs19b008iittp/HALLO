@@ -1629,7 +1629,7 @@ if_statement                :       IF cond THEN COLON
                                     {
                                         strcat(tac,"goto L");
                                         if_label = label;
-                                        sprintf(temp_label,"%d",label-1);
+                                        sprintf(temp_label,"%d",label);
                                         strcat(tac,temp_label);
                                         strcat(tac, "\n");
                                         label++;
@@ -1692,7 +1692,7 @@ otherwise                   :       OTHERWISE
                                     done
                                     {
                                         strcat(tac,"goto L");
-                                        sprintf(temp_label,"%d",if_lab-1);
+                                        sprintf(temp_label,"%d",if_lab);
                                         strcat(tac,temp_label);
                                         strcat(tac, "\n");
                                         label++;
@@ -1717,7 +1717,7 @@ otherwise                   :       OTHERWISE
                                         strcat(tac,"\n");
 
                                         strcat(tac,"L");
-                                        sprintf(temp_label,"%d",if_lab-1);
+                                        sprintf(temp_label,"%d",if_lab);
                                         strcat(tac,temp_label);
                                         strcat(tac, ":\n");
                                         label++;
@@ -1727,11 +1727,6 @@ otherwise                   :       OTHERWISE
                                         else_labels[else_labels_iterator] = 0;
                                         else_labels_iterator--;
                                         //printf("\nprinting otherwise line number3: %d\n", lines);
-
-                                        strcat(tac,"L");
-                                        sprintf(temp_label,"%d",if_lab-1);
-                                        strcat(tac,temp_label);
-                                        strcat(tac, ":\n");
                                     }
                                     ;
 
