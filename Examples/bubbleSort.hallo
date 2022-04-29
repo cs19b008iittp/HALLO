@@ -3,9 +3,10 @@ start
    nums arr is 64,34,25,12,22,11,90,69.
    num size_arr is 8.
    num i,j.
-   repeat i from 0 to 7 update inc by 1:
-      repeat j from 0 to 7 - i  update inc by 1:
-         if arr j >= arr j+1 then:
+   repeat i from 0 to size_arr - 1 update inc by 1:
+      repeat j from 0 to size_arr - i -1 update inc by 1: ignore After colon
+         if arr j >= number j+1 then:
+            ignore Inside loop
             num temp.
             temp is arr j.
             arr j is arr j+1.
@@ -13,4 +14,9 @@ start
             done.
          done.
       done.
+
+    repeat i from 0 to size_arr - 1 update inc by 1:
+       j = arr i.
+       display j.
+
 end.

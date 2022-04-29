@@ -10,6 +10,6 @@ start
     num a, b.
     a is 10.
     b is call value_b.
-    display a.
+    display a, b.
     display b.
 end.
