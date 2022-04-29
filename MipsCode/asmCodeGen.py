@@ -27,7 +27,12 @@ for line in input_file:
     command = line.replace("\n","").split(" ")
     if (len(command) == 5 and command[1] == "="):
         output_file.write("#=====Arithmetic Assignment=====\n")
-        if not command[2].isdigit():
+        if ")" in command[len(command)-1]:
+            idx1 = command[len(command)-1].index("(")
+            idx2 = command[len(command)-1].index(")")
+            res = command[len(command)-1][idx1 + len("("): idx2]
+            output_file.write("\tlw $a0, " + mem[res])
+        elif not command[2].isdigit():
             output_file.write("\tlw $t1, " + mem[command[2]] + "\t# " + command[2] + "\n")
             flag = "F"
             fp += 4
@@ -40,24 +45,27 @@ for line in input_file:
             fp += 4
         else:
             flag += "T"
+        
+        if flag == "FF":
+            output_file.write("$t3, $t1, $t2\n")
+        elif flag == "TF":
+            output_file.write("\tli $t1, " + str(command[2]) + "\n")
+        elif flag == "FT":
+            output_file.write("\tli $t2, " + str(command[4]) + "\n")
+        else:
+            output_file.write("\tli $t1, " + str(command[2]) + "\n")
+            output_file.write("\tli $t2, " + str(command[4]) + "\n")
 
         if command[3] == "+":
             output_file.write("\tadd ")
         elif command[3] == "-":
             output_file.write("\tsub ")
         elif command[3] == "*":
-            output_file.write("\tmult ")
+            output_file.write("\tmul ")
         elif command[3] == "/":
             output_file.write("\tdiv ")
         
-        if flag == "FF":
-            output_file.write("$t3, $t1, $t2")
-        elif flag == "TF":
-            output_file.write("$t3, " + str(command[2]) + ", $t2")
-        elif flag == "FT":
-            output_file.write("$t3, $t1, " + str(command[4]))
-        else:
-            output_file.write("$t3, " + str(command[2]) + ", " + str(command[4]))
+        output_file.write("$t3, $t1, $t2")
 
         output_file.write("\n")
         output_file.write("\tadd $t0, $t3, $zero\n")
@@ -70,7 +78,14 @@ for line in input_file:
 
     elif (len(command) == 3 and command[1] == "="):
         output_file.write("#=====Assignment=====\n")
-        if not command[2].isdigit():
+        if ")" in command[len(command)-1]:
+            idx1 = command[len(command)-1].index("(")
+            idx2 = command[len(command)-1].index(")")
+            reg = command[len(command)-1][idx1 + len("("): idx2]
+            m = command[len(command)-1][: idx1 + len("(")-1]
+            output_file.write("\tlw $t0, " + mem[reg] + "\n")
+            output_file.write("\tlw $t0, " + m + "($t0)\n")
+        elif not command[2].isdigit():
             if not mem[command[2]] == "$t6":
                 output_file.write("\tlw $t0, " + mem[command[2]] + "\t# " + command[2] + "\n")
             else:
@@ -113,6 +128,12 @@ for line in input_file:
         output_file.write("\tli $v0, 5\n")
         output_file.write("\tsyscall\n")
         output_file.write("\tmove $t4, $v0\n")
+        if command[1] in mem:
+            output_file.write("\tsw $t4, " + mem[command[1]] + "\t#"+ command[1] + "\n")
+        else:
+            output_file.write("\tsw $t4, " + str(fp) + "($s0)\t#"+ command[1] + "\n")
+            mem[command[1]] = str(fp) + "($s0)"
+            fp += 4
     elif command[0] == "if":
         output_file.write("#=====If Condition=====\n")
         output_file.write("\tlw $t1, " + mem[command[1]] + "\t# " + command[1] + "\n")

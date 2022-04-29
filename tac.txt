@@ -36,11 +36,11 @@ T16 = 4 * j
 T17 = j + 1
 T18 = 4 * T17
 T19 = arr(T18)
-arr[T16] = T19
+arr(T16) = T19
 T20 = j + 1
 T21 = 4 * T20
 T22 = temp
-arr[T21] = T22
+arr(T21) = T22
 goto L11
 T5 = T5 + T8
 j = T5

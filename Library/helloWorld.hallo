@@ -1,8 +1,5 @@
-start
+note helloWorld:
     string h.
     h is "Hello World".
     display h.
-    num a is 10.
-    get a.
-    display a.
-end.
+    send.

@@ -3,7 +3,6 @@ start
     num sum is 0.
     num prod is 1.
     num diff is 0.
-    nums SHIT.
     num quotient is 0.
     num a.
 
@@ -20,5 +19,10 @@ start
     otherwise:
         a is 30.
         done.
+    
+    num b, c.
+    b is 10.
+    c is a * b.
+    display c.
 end.
  
