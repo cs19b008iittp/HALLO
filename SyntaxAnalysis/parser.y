@@ -608,12 +608,12 @@ leftside_types              :       variable_name assignment_types
                                                         strcat(tac,string);
                                                         strcat(tac,"\n");
                                                     }
-                                                    strcat(leftside,"[");
+                                                    strcat(leftside,"(");
                                                     strcat(leftside,"T");
                                                     char string[20];
                                                     sprintf(string, "%d", temp_number-1);
                                                     strcat(leftside,string);
-                                                    strcat(leftside,"]");
+                                                    strcat(leftside,")");
                                                 }
 
                                             }

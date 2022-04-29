@@ -1,2 +1,0 @@
-a: .asciiz "Sowmya"
-arr: .word 64,34,25,12,22,11,90,69
